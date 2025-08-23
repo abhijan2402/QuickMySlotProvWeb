@@ -1,0 +1,65 @@
+.scroll-tracker-btn.hidden {
+    display: none;
+}
+
+.scroll-tracker {
+    position: fixed;
+    bottom: 20px;
+    left: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: end;
+    gap: 10px;
+    z-index: 1;
+}
+
+.scroll-tracker-btn {
+
+    width: 50px;
+    height: 50px;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #022B57;
+    color: #fff;
+    font-size: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.scroll-tracker-btn .arrow {
+    font-size: 35px;
+}
+
+.scroll-tracker-btn.scrolling-down {
+    transform: rotate(180deg);
+}
+
+.scroll-tracker-btn {
+    border-top-color: transparent;
+    border-top-width: 0%;
+}
+
+.scroll-tracker-btn:focus {
+    outline: none;
+}
+
+/* Fill animation on scroll */
+.scroll-tracker-btn {
+    animation: fillBorder 0.5s forwards;
+}
+
+@keyframes fillBorder {
+    from {
+        border-top-color: transparent;
+        border-top-width: 0%;
+    }
+
+    to {
+        border-top-color: #022B57;
+        border-top-width: 100%;
+    }
+}
