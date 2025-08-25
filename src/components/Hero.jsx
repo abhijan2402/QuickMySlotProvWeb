@@ -1,60 +1,77 @@
+import React from "react";
+import Slider from "react-slick";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-const services = [
-  "Salon",
-  "Healthcare",
-  "Spa",
-  "Pet Clinic",
-  "Automotive Car",
-  "Retail/Designer",
-  "Tattoo & Piercing",
+const serviceImages = [
+  {
+    src: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1920&q=80",
+    alt: "Salon Services",
+  },
+  {
+    src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNM-EBaeIFmRXeyCa_td5D083wA3nE3gYsxg&s",
+    alt: "Healthcare Excellence",
+  },
+  {
+    src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5lK5IT4Y_9T1hepyuIPLIFcrE0rCMUzN3qw&s",
+    alt: "Relaxing Spa Treatments",
+  },
+  {
+    src: "https://thumbs.dreamstime.com/b/vet-dog-cat-puppy-kitten-doctor-examining-veterinarian-animal-clinic-pet-check-up-vaccination-health-care-dogs-156067334.jpg",
+    alt: "Pet Clinic Care",
+  },
 ];
 
-export default function ServicesSlider() {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % services.length);
-    }, 5000); // Change every 5 seconds
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleIndicatorClick = (index) => {
-    setCurrent(index);
+const HeroIntro = () => {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 700,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 4000,
+    arrows: false,
+    pauseOnHover: true,
   };
 
   return (
     <section
-      id="Services"
-      className="relative min-h-[30vh] sm:min-h-[40vh] md:min-h-[50vh] flex flex-col items-center justify-center px-4 text-center pt-28 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white"
+      className="relative w-full mb-8"
+      style={{ height: "50vh", minHeight: 300 }}
     >
-      {/* Animated service name */}
-      <motion.h2
-        key={services[current]}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.8 }}
-        className="text-4xl sm:text-5xl font-bold"
-      >
-        {services[current]}
-      </motion.h2>
-
-      {/* Indicators */}
-      <div className="flex mt-6 gap-3">
-        {services.map((_, index) => (
-          <button
-            key={index}
-            aria-label={`Go to ${services[index]}`}
-            onClick={() => handleIndicatorClick(index)}
-            className={`w-4 h-4 rounded-full transition-colors ${
-              current === index ? "bg-white" : "bg-white/50 hover:bg-white"
-            }`}
-          />
+      <Slider {...settings}>
+        {serviceImages.map(({ src, alt }) => (
+          <motion.div
+            key={alt}
+            initial={{ opacity: 0.8 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5 }}
+            className="w-full h-[50vh] min-h-[300px]"
+          >
+            <img
+              src={src}
+              alt={alt}
+              className="w-full h-full object-cover object-center rounded-none"
+            />
+          </motion.div>
         ))}
-      </div>
+      </Slider>
+
+      {/* Overlay text content */}
+      <motion.div
+        className="absolute inset-0 flex flex-col justify-center items-start p-8 md:p-20 bg-black bg-opacity-40 text-white pointer-events-none"
+        initial={{ opacity: 0, x: -40 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1 }}
+      >
+        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight max-w-2xl">
+          Empowering Your Lifestyle
+        </h1>
+      </motion.div>
     </section>
   );
-}
+};
+
+export default HeroIntro;

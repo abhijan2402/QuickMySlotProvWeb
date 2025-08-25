@@ -134,99 +134,117 @@ export default function Appointments() {
     }
 
     return (
-      <motion.ul
-        className="space-y-6  overflow-y-auto pr-2"
-        variants={tabVariants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        key="appointments-list"
-      >
-        {currentAppointments.map((appt) => (
-          <li
-            key={appt.id}
-            className="p-6 bg-white rounded-xl shadow-md border flex flex-col space-y-4 hover:shadow-lg transition cursor-default"
-          >
-            <div className="flex justify-between items-center">
-              <h4 className="font-semibold text-gray-800">{appt.title}</h4>
-              <FaCalendarAlt className="text-blue-500 text-lg" />
-            </div>
+      <div>
+        <motion.ul
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 w-full"
+          variants={tabVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          key="appointments-list"
+        >
+          {currentAppointments.map((appt) => (
+            <>
+              <li
+                key={appt.id}
+                className="p-6 bg-white rounded-xl shadow-md border flex flex-col space-y-4 hover:shadow-lg transition cursor-default"
+              >
+                <div className="flex justify-between items-center">
+                  <h4 className="font-semibold text-gray-800">{appt.title}</h4>
+                  <FaCalendarAlt className="text-blue-500 text-lg" />
+                </div>
 
-            {/* Customer Details */}
-            <div className="text-gray-700 text-sm ">
-              <p className="text-black font-medium">Booking Details:</p>
-              <div className="ml-5">
-                <p>Customer: {appt.customer.name}</p>
-                <p>Phone: {appt.customer.phone}</p>
-                <p>Address: {appt.customer.address}</p>
-              </div>
-            </div>
+                {/* Customer Details */}
+                <div className="text-gray-700 text-sm ">
+                  <p className="text-black font-medium">Booking Details:</p>
+                  <div className="ml-5">
+                    <p className="flex justify-between">
+                      <span>Customer:</span> {appt.customer.name}
+                    </p>
+                    <p className="flex justify-between">
+                      <span>Phone:</span> {appt.customer.phone}
+                    </p>
+                    <p className="flex justify-between">
+                      <span>Address:</span> {appt.customer.address}
+                    </p>
+                  </div>
+                </div>
 
-            {/* Services Booked */}
-            <div>
-              <p className="text-black font-medium text-sm">Services Booked:</p>
-              <ul className="list-disc list-inside ml-5 text-gray-700 text-sm">
-                {appt.services.map((svc, i) => (
-                  <li key={i}>
-                    {svc.name} - ₹{svc.price}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                {/* Services Booked */}
+                <div>
+                  <p className="text-black font-medium text-sm">
+                    Services Booked:
+                  </p>
+                  <ul className="list-disc list-inside ml-5 text-gray-700 text-sm">
+                    {appt.services.map((svc, i) => (
+                      <li key={i} className="flex justify-between">
+                        <span>{svc.name}:</span> ₹{svc.price}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-            {/* Total Amount */}
-            <p className=" text-sm mt-1 text-gray-900">
-              <span className="text-black tezt-sm font-medium">
-                Total Amount:
-              </span>{" "}
-              ₹{appt.totalAmount}
-            </p>
+                {/* Booking Details */}
+                <div className="text-gray-700 space-x-4">
+                  <p className="text-black font-medium text-sm">
+                    Booking Details:
+                  </p>
+                  <span className="text-sm">
+                    Date:
+                    {new Date(appt.bookingDetails.date).toLocaleDateString()}
+                  </span>
+                  <span className="text-sm">
+                    Time: {appt.bookingDetails.time}
+                  </span>
+                  <span className="text-sm">
+                    Duration: {appt.bookingDetails.duration}
+                  </span>
+                </div>
 
-            {/* Booking Details */}
-            <div className="text-gray-700 space-x-4">
-              <p className="text-black font-medium text-sm">Booking Details:</p>
-              <span className="text-sm">
-                Date:
-                {new Date(appt.bookingDetails.date).toLocaleDateString()}
-              </span>
-              <span className="text-sm">Time: {appt.bookingDetails.time}</span>
-              <span className="text-sm">
-                Duration: {appt.bookingDetails.duration}
-              </span>
-            </div>
+                {/* Total Amount */}
+                <p className=" text-sm mt-1 text-gray-900 flex justify-between ">
+                  <span className="text-black tezt-sm font-medium">
+                    Total Amount:
+                  </span>{" "}
+                  <span className="border bg-green-200 px-8 py-1 rounded-md">
+                    ₹{appt.totalAmount}
+                  </span>
+                </p>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4 mt-2">
-              {activeTab === "upcoming" ? (
-                <>
-                  <button
-                    onClick={() => handleAccept(appt.id)}
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-                    aria-label="Accept appointment"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => handleReject(appt.id)}
-                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                    aria-label="Reject appointment"
-                  >
-                    Reject
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => handleFeedback(appt.id)}
-                  className="bg-[#6961AB] text-white px-4 py-2 rounded hover:bg-purple-700 transition"
-                  aria-label="Give feedback"
-                >
-                  Give Feedback
-                </button>
-              )}
-            </div>
-          </li>
-        ))}
-      </motion.ul>
+                {/* Action Buttons */}
+                <div className="flex gap-4 mt-2">
+                  {activeTab === "upcoming" ? (
+                    <>
+                      <button
+                        onClick={() => handleAccept(appt.id)}
+                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                        aria-label="Accept appointment"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleReject(appt.id)}
+                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+                        aria-label="Reject appointment"
+                      >
+                        Reject
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => handleFeedback(appt.id)}
+                      className="bg-[#6961AB] text-white px-4 py-2 rounded hover:bg-purple-700 transition"
+                      aria-label="Give feedback"
+                    >
+                      Give Feedback
+                    </button>
+                  )}
+                </div>
+              </li>
+            </>
+          ))}
+        </motion.ul>
+      </div>
     );
   };
 
@@ -265,7 +283,7 @@ export default function Appointments() {
           </div>
 
           {/* Animated content */}
-          {renderAppointments()}
+          <div>{renderAppointments()}</div>
         </div>
       </div>
     </>

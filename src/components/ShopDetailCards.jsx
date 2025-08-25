@@ -4,6 +4,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from "react-router-dom";
 import { FaUserAlt, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { CgLock } from "react-icons/cg";
+import { BsClock } from "react-icons/bs";
 
 const shopData = [
   {
@@ -14,6 +16,8 @@ const shopData = [
     description:
       "Unleash your beauty with expert styling and personalized care.",
     address: "123 Main Street, New Delhi",
+    opentime:"10:00AM",
+    closetime:"10:00PM",
     images: [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGF3MiZ7vAAl58bi9m6YHS4FYTevIZzpxX3A&s",
       "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=700&q=80",
@@ -37,7 +41,7 @@ export default function ShopDetailCards() {
     pauseOnHover: true,
   };
 
-  const { id, vendorName, mobile, shopName, description, address, images } =
+  const { id, vendorName, mobile, shopName, description, address, images, opentime, closetime } =
     shopData[0];
 
   return (
@@ -105,6 +109,12 @@ export default function ShopDetailCards() {
                 <FaMapMarkerAlt className="text-purple-600" />
                 <span className="font-semibold">Address:</span>
                 <span>{address}</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <BsClock className="text-purple-600" />
+                <span className="font-semibold">Time:</span>
+                <span>{opentime}-{closetime}</span>
               </div>
             </div>
 

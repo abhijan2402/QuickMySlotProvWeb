@@ -224,53 +224,52 @@ export default function ManageServicesPage() {
               {service.description}
             </div>
             <div className=" flex justify-between">
-
-            {/* Price and Duration */}
-            <div className="flex items-center justify-between gap-4">
-              <div className="font-bold text-sm text-black">
-                ${service.price.toFixed(2)}
+              {/* Price and Duration */}
+              <div className="flex items-center justify-between gap-4">
+                <div className="font-bold text-sm text-black">
+                  ${service.price.toFixed(2)}
+                </div>
+                <Tag
+                  color="blue"
+                  style={{
+                    borderRadius: 8,
+                    fontWeight: 500,
+                    fontSize: 14,
+                    padding: "2px 16px",
+                  }}
+                >
+                  {service.duration} mins
+                </Tag>
               </div>
-              <Tag
-                color="blue"
-                style={{
-                  borderRadius: 8,
-                  fontWeight: 500,
-                  fontSize: 14,
-                  padding: "2px 16px",
-                }}
-              >
-                {service.duration} mins
-              </Tag>
-            </div>
-            {/* Tags */}
-            <div className="flex gap-2 mb-2 flex-wrap">
-              {service.tags.includes("Peak Eligible") && (
-                <Tag
-                  color="orange"
-                  style={{
-                    borderRadius: 8,
-                    fontWeight: 500,
-                    fontSize: 12,
-                    padding: "2.5px 10px",
-                  }}
-                >
-                  Peak Eligible
-                </Tag>
-              )}
-              {service.tags.includes("Discount Eligible") && (
-                <Tag
-                  color="green"
-                  style={{
-                    borderRadius: 8,
-                    fontWeight: 500,
-                    fontSize: 12,
-                    padding: "2.5px 10px",
-                  }}
-                >
-                  Discount Eligible
-                </Tag>
-              )}
-            </div>
+              {/* Tags */}
+              <div className="flex gap-2 mb-2 flex-wrap">
+                {service.tags.includes("Peak Eligible") && (
+                  <Tag
+                    color="orange"
+                    style={{
+                      borderRadius: 8,
+                      fontWeight: 500,
+                      fontSize: 12,
+                      padding: "2.5px 10px",
+                    }}
+                  >
+                    Peak Eligible
+                  </Tag>
+                )}
+                {service.tags.includes("Discount Eligible") && (
+                  <Tag
+                    color="green"
+                    style={{
+                      borderRadius: 8,
+                      fontWeight: 500,
+                      fontSize: 12,
+                      padding: "2.5px 10px",
+                    }}
+                  >
+                    Discount Eligible
+                  </Tag>
+                )}
+              </div>
             </div>
           </div>
         ))}
@@ -293,22 +292,37 @@ export default function ManageServicesPage() {
         <Form form={form} layout="vertical" onFinish={handleAddFinish}>
           <Form.Item
             name="name"
-            label="Service Name"
-            rules={[{ required: true }]}
+            label={
+              <span>
+                Name <span style={{ color: "red" }}>*</span>
+              </span>
+            }
+            rules={[{ required: true, message: "Services name required" }]}
+            required={false}
           >
             <Input placeholder="Enter service name" />
           </Form.Item>
           <Form.Item
             name="description"
-            label="Description"
-            rules={[{ required: true }]}
+            label={
+              <span>
+                Description <span style={{ color: "red" }}>*</span>
+              </span>
+            }
+            rules={[{ required: true, message: "Description is required" }]}
+            required={false}
           >
             <Input.TextArea rows={2} placeholder="Enter description" />
           </Form.Item>
           <Form.Item
             name="category"
-            label="Category"
-            rules={[{ required: true }]}
+            label={
+              <span>
+                Category <span style={{ color: "red" }}>*</span>
+              </span>
+            }
+            rules={[{ required: true, message: "Category is required" }]}
+            required={false}
           >
             <Select>
               {categories.map((cat) => (
@@ -320,24 +334,49 @@ export default function ManageServicesPage() {
           </Form.Item>
           <Form.Item
             name="price"
-            label="Price (USD)"
-            rules={[{ required: true }]}
+            label={
+              <span>
+                Price <span style={{ color: "red" }}>*</span>
+              </span>
+            }
+            rules={[{ required: true, message: "Price required" }]}
+            required={false}
           >
             <Input type="number" min={1} step="0.01" placeholder="e.g. 45.00" />
           </Form.Item>
           <Form.Item
             name="duration"
-            label="Estimated Duration (mins)"
-            rules={[{ required: true }]}
+            label={
+              <span>
+                Estimated Duration (mins){" "}
+                <span style={{ color: "red" }}>*</span>
+              </span>
+            }
+            rules={[
+              {
+                required: true,
+                message: "Estimated Duration (mins) is required",
+              },
+            ]}
+            required={false}
           >
             <Input type="number" min={1} max={240} placeholder="e.g. 45" />
           </Form.Item>
           <Form.Item
             name="images"
-            label="Service Images"
+            label={
+              <span>
+                Services Images
+                <span style={{ color: "red" }}>*</span>
+              </span>
+            }
             rules={[
-              { required: true, message: "At least 1 image is required" },
+              {
+                required: true,
+                message: "At least 1 image is required",
+              },
             ]}
+            required={false}
             valuePropName="fileList"
             getValueFromEvent={(file) => file?.fileList}
           >

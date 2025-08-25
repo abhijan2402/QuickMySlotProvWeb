@@ -219,7 +219,7 @@ export default function ProfilePage() {
         <div className="mb-6">
           <p className="font-semibold mb-3">Choose Plan</p>
           <Radio.Group
-            className="w-full space-y-2 flex flex-col"
+            className="w-full flex flex-col"
             value={selectedPlan}
             onChange={(e) => setSelectedPlan(e.target.value)}
             style={{ width: "100%" }}
@@ -227,7 +227,7 @@ export default function ProfilePage() {
             {promotionPlans.map((plan) => (
               <div
                 key={plan.key}
-                className={`flex justify-between items-center border rounded-xl px-4 py-3 mb-3 cursor-pointer ${
+                className={`flex items-center border rounded-xl px-4 py-3 mb-3 cursor-pointer ${
                   selectedPlan === plan.key
                     ? "border-[#6961AB] bg-purple-100"
                     : "border-gray-200 bg-white"
@@ -237,16 +237,16 @@ export default function ProfilePage() {
                 }}
                 onClick={() => setSelectedPlan(plan.key)}
               >
-                <div>
-                  <Radio checked={selectedPlan === plan.key} value={plan.key} />
-                  <span className="ml-2 font-medium block text-black">
+                <Radio checked={selectedPlan === plan.key} value={plan.key} />
+                <div className="flex flex-col ml-2 flex-1 min-w-0">
+                  <span className="font-medium text-black truncate">
                     {plan.name}
                   </span>
-                  <span className="ml-8 text-black text-sm block">
+                  <span className="text-black text-sm truncate">
                     {plan.description}
                   </span>
                 </div>
-                <div className="text-xl font-semibold text-[#6961AB] ml-4 min-w-[85px] text-right">
+                <div className="text-xl font-semibold text-[#6961AB] ml-4 min-w-[70px] text-right">
                   ${plan.price.toFixed(2)}
                 </div>
               </div>

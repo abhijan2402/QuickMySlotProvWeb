@@ -4,8 +4,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/clogo.png";
 import { FaLocationPin } from "react-icons/fa6";
-import { BiHeart } from "react-icons/bi";
+import { BiHeart, BiLocationPlus } from "react-icons/bi";
 import { BsBellFill } from "react-icons/bs";
+import { CiLocationOn } from "react-icons/ci";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -126,7 +127,7 @@ export default function Navbar() {
                 <div className="flex flex-col">
                   <div className="flex gap-1 items-center">
                     <div className="relative p-0 rounded-full  text-[#6961ab] transition duration-300">
-                      <FaLocationPin className="w-4 h-4" />
+                      <FaMapMarkerAlt className="w-4 h-4" />
                     </div>
                     <span className="font-semibold text-[#6961ab] text-[14px]">
                       {"Jaipur"}
@@ -147,7 +148,7 @@ export default function Navbar() {
                 <div className="flex flex-col">
                   <div className="flex gap-1 items-center">
                     <div className="relative p-0 rounded-full  text-[#6961ab] transition duration-300">
-                      <FaLocationPin className="w-4 h-4" />
+                      <FaMapMarkerAlt className="w-4 h-4" />
                     </div>
                     <span className="font-semibold text-[#6961ab] text-[14px]">
                       {"Jaipur"}
