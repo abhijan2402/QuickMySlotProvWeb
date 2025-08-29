@@ -20,6 +20,9 @@ import {
   Divider,
 } from "antd";
 import { ArrowUpOutlined, UploadOutlined } from "@ant-design/icons";
+import DashboardTabs from "./DashboardTabs";
+import ShopDetails from "../components/ShopDetails";
+import { initialShopData } from "../utils/shopdata";
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -64,30 +67,48 @@ export default function ProfilePage() {
     image: null,
   });
 
-  // Wallet History
-  const walletHistory = [
+  const [accounts, setAccounts] = useState([
     {
       id: 1,
-      type: "Credit",
-      amount: 500,
-      date: "2025-08-10",
-      desc: "Monthly cashback",
+      name: "Primary Account",
+      email: "primary@example.com",
+      isDefault: true,
     },
-    {
-      id: 2,
-      type: "Debit",
-      amount: 300,
-      date: "2025-08-15",
-      desc: "Payment for appointment",
-    },
-    {
-      id: 3,
-      type: "Credit",
-      amount: 200,
-      date: "2025-08-18",
-      desc: "Referral bonus",
-    },
-  ];
+  ]);
+  const [walletHistory, setWalletHistory] = useState([
+    { id: 1, type: "Credit", amount: 1500, date: "2025-08-20" },
+    { id: 2, type: "Debit", amount: 300, date: "2025-08-22" },
+  ]);
+  const [walletTotal, setWalletTotal] = useState(1200);
+  const [transactions, setTransactions] = useState([
+    { id: "tx1", amount: 2300, date: "2025-07-15" },
+    { id: "tx2", amount: 500, date: "2025-08-05" },
+  ]);
+
+  const setDefaultAccount = (id) => {
+    const updated = accounts.map((acc) => ({
+      ...acc,
+      isDefault: acc.id === id,
+    }));
+    setAccounts(updated);
+  };
+
+  const addAmount = (amount) => {
+    const amtNum = parseInt(amount, 10);
+    if (!isNaN(amtNum) && amtNum > 0) {
+      setWalletTotal(walletTotal + amtNum);
+      setWalletHistory([
+        ...walletHistory,
+        {
+          id: Date.now(),
+          type: "Credit",
+          amount: amtNum,
+          date: new Date().toISOString(),
+        },
+      ]);
+      message.success("Amount added successfully");
+    }
+  };
 
   // For image preview
   const [previewImage, setPreviewImage] = useState(null);
@@ -130,13 +151,13 @@ export default function ProfilePage() {
   // Forgot Password form submit
   const onForgotFinish = (values) => {
     console.log("Forgot Password Data Submitted:", values);
-    // Here you would normally call API to trigger password reset
+
     closeForgotModal();
   };
 
   return (
     <div className="max-w-full sm:max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 space-y-8">
-      <div className="flex flex-col md:flex-row md:gap-8 max-w-7xl mx-auto p-6">
+      <div className="flex flex-col md:flex-row md:gap-4 max-w-7xl mx-auto py-6">
         {/* Left Section: Profile Card */}
         <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col gap-6 flex-grow md:w-2/3 relative">
           {/* Forgot Password Button top right */}
@@ -177,33 +198,56 @@ export default function ProfilePage() {
             </div> */}
             <button
               onClick={showModal}
-              className="bg-[#6961AB] text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition whitespace-nowrap"
+              className="bg-[#6961AB] text-white text-sm px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition whitespace-nowrap"
             >
               Edit Profile
             </button>
-            <button className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition whitespace-nowrap">
+            <button className="flex items-center text-sm gap-2 bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition whitespace-nowrap">
               <FaSignOutAlt /> Logout
             </button>
           </div>
         </div>
 
-        {/* Right Section: Boost your Business */}
+        {/* Right Section: Upgrade your Business Plan */}
         <div className="bg-purple-50 p-6 rounded-2xl shadow-md mt-8 md:mt-0 md:w-1/3 flex flex-col justify-center">
-          <h3 className="text-black text-xl font-medium mb-2">
-            Promote Your Business
+          <h3 className="text-black text-xl font-medium flex mb-2 justify-between">
+            Current Plan: <span className="text-[#6961AB]">$25</span>
           </h3>
-          <p className="text-black mb-6">
-            Increase Profile Visibility. Get noticed by more customers.
-          </p>
-          <button
-            className="flex items-center gap-2 border border-[#6961AB] bg-purple-200 text-black px-4 py-2 rounded-lg shadow hover:bg-[#6961AB] hover:text-white transition whitespace-nowrap justify-center"
-            onClick={showBoostModal}
-          >
-            Boost Profile
-          </button>
+          <div className=" flex flex-col">
+            <h2 className="text-black font-medium">Basic Visibility Boost</h2>
+            <p className="text-gray-500 text-sm">
+              Apper higher in search results for 7 days.
+            </p>
+          </div>
+          <div className="flex  mt-4 ">
+            <Button
+              onClick={showBoostModal}
+              style={{ backgroundColor: "#6961AB", color: "#fff" }}
+            >
+              Upgrade Plan
+            </Button>
+          </div>
         </div>
       </div>
-
+      {/*  Boost your Business  */}
+      <div className="bg-purple-50 p-6 rounded-2xl shadow-md mt-2  flex justify-between items-center md:flex-row md:gap-8 max-w-7xl mx-auto ">
+        <div>
+          <h3 className="text-black text-xl font-medium ">
+            Promote Your Business
+          </h3>
+          <p className="text-black ">
+            Increase Profile Visibility. Get noticed by more customers.
+          </p>
+        </div>
+        <button
+          className="flex items-center gap-2 border border-[#6961AB] bg-purple-200 text-black px-4 py-2 rounded-lg shadow hover:bg-[#6961AB] hover:text-white transition whitespace-nowrap justify-center"
+          onClick={showBoostModal}
+        >
+          Boost Profile
+        </button>
+      </div>
+      <ShopDetails initialData={initialShopData} />;{/* Dashboard MAnagement */}
+      <DashboardTabs />
       {/* Boost Modal */}
       <Modal
         open={boostModalOpen}
@@ -284,67 +328,6 @@ export default function ProfilePage() {
           Checkout
         </Button>
       </Modal>
-
-      {/* Tabs for Analytics and Wallet History */}
-      <Tabs
-        defaultActiveKey="analytics"
-        type="line"
-        className="bg-white rounded-2xl p-6 shadow-md"
-      >
-        <TabPane tab="My Analytics" key="analytics">
-          <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="p-4 rounded-xl shadow bg-gradient-to-r from-blue-50 to-blue-100">
-                <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-                  <FaWallet className="text-blue-500" /> Revenue This Month
-                </h4>
-                <p className="text-2xl font-bold text-gray-900 mt-2">₹2,300</p>
-              </div>
-              <div className="p-4 rounded-xl shadow bg-gradient-to-r from-green-50 to-green-100">
-                <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-                  <FaGift className="text-green-500" /> Total Customers
-                </h4>
-                <p className="text-2xl font-bold text-gray-900 mt-2">450</p>
-              </div>
-              <div className="p-4 rounded-xl shadow bg-gradient-to-r from-purple-50 to-purple-100">
-                <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-                  <FaChartPie className="text-purple-500" /> Reach (vs Last
-                  Month)
-                </h4>
-                <p className="text-2xl font-bold text-gray-900 mt-2">
-                  18% <ArrowUpOutlined />{" "}
-                </p>
-              </div>
-              <div className="p-4 rounded-xl shadow bg-gradient-to-r from-pink-50 to-pink-100">
-                <h4 className="text-gray-700 font-semibold flex items-center gap-2">
-                  <FaHeart className="text-pink-500" /> Estimated Footfall
-                </h4>
-                <p className="text-2xl font-bold text-gray-900 mt-2">
-                  40 / Day
-                </p>
-              </div>
-            </div>
-          </div>
-        </TabPane>
-
-        <TabPane tab="Wallet History" key="wallet">
-          <List
-            itemLayout="horizontal"
-            dataSource={walletHistory}
-            renderItem={(item) => (
-              <List.Item>
-                <List.Item.Meta
-                  title={`${item.type} - ₹${item.amount}`}
-                  description={`${item.desc} on ${new Date(
-                    item.date
-                  ).toLocaleDateString()}`}
-                />
-              </List.Item>
-            )}
-          />
-        </TabPane>
-      </Tabs>
-
       {/* Edit Profile Modal */}
       <Modal
         title="Edit Profile"
@@ -423,7 +406,6 @@ export default function ProfilePage() {
           </Form.Item>
         </Form>
       </Modal>
-
       {/* Forgot Password Modal */}
       <Modal
         title="Forgot Password"

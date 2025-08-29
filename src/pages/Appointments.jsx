@@ -8,6 +8,7 @@ import {
 import Breadcrumb from "../components/Breadcrumb";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Form, Input, Modal, Rate } from "antd";
 
 const noDataVariants = {
   initial: { opacity: 0, y: -10 },
@@ -33,6 +34,12 @@ const tabVariants = {
 
 export default function Appointments() {
   const [activeTab, setActiveTab] = useState("upcoming");
+
+  // Feedback Modal State
+  const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
+  const [currentFeedbackId, setCurrentFeedbackId] = useState(null);
+
+  const [feedbackForm] = Form.useForm();
 
   // Example appointment data for vendor side
   const appointments = {
@@ -109,9 +116,21 @@ export default function Appointments() {
     // Implement API call or state update here
   };
 
-  const handleFeedback = (id) => {
-    console.log("Give feedback for appointment", id);
-    // Implement modal or page redirect here
+  const handleGiveFeedbackClick = (id) => {
+    setCurrentFeedbackId(id);
+    feedbackForm.resetFields();
+    setFeedbackModalVisible(true);
+  };
+
+  const handleFeedbackSubmit = () => {
+    feedbackForm
+      .validateFields()
+      .then((values) => {
+        console.log("Feedback for appointment", currentFeedbackId, values);
+        setFeedbackModalVisible(false);
+        // Here, you could send feedback to backend API and then update UI accordingly
+      })
+      .catch(() => {});
   };
 
   const renderAppointments = () => {
@@ -232,7 +251,7 @@ export default function Appointments() {
                     </>
                   ) : (
                     <button
-                      onClick={() => handleFeedback(appt.id)}
+                      onClick={() => handleGiveFeedbackClick(appt.id)}
                       className="bg-[#6961AB] text-white px-4 py-2 rounded hover:bg-purple-700 transition"
                       aria-label="Give feedback"
                     >
@@ -286,6 +305,32 @@ export default function Appointments() {
           <div>{renderAppointments()}</div>
         </div>
       </div>
+      <Modal
+        title="Give Feedback"
+        visible={feedbackModalVisible}
+        onOk={handleFeedbackSubmit}
+        onCancel={() => setFeedbackModalVisible(false)}
+        okText="Submit"
+        cancelText="Cancel"
+        destroyOnClose
+      >
+        <Form form={feedbackForm} layout="vertical">
+          <Form.Item
+            name="rating"
+            label="Rate Customer"
+            rules={[{ required: true, message: "Please provide a rating" }]}
+          >
+            <Rate />
+          </Form.Item>
+          <Form.Item
+            name="review"
+            label="Review / Comments"
+            rules={[{ required: true, message: "Please write your review" }]}
+          >
+            <Input.TextArea rows={4} placeholder="Write your feedback here" />
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 }
