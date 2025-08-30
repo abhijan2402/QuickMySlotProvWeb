@@ -23,6 +23,7 @@ import { ArrowUpOutlined, UploadOutlined } from "@ant-design/icons";
 import DashboardTabs from "./DashboardTabs";
 import ShopDetails from "../components/ShopDetails";
 import { initialShopData } from "../utils/shopdata";
+import { useNavigate } from "react-router-dom";
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -56,6 +57,7 @@ const promotionPlans = [
 ];
 
 export default function ProfilePage() {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [boostModalOpen, setBoostModalOpen] = useState(false);
   const [forgotModalOpen, setForgotModalOpen] = useState(false);
@@ -221,7 +223,7 @@ export default function ProfilePage() {
           </div>
           <div className="flex  mt-4 ">
             <Button
-              onClick={showBoostModal}
+              onClick={() => navigate("/pricing")}
               style={{ backgroundColor: "#6961AB", color: "#fff" }}
             >
               Upgrade Plan
@@ -241,7 +243,8 @@ export default function ProfilePage() {
         </div>
         <button
           className="flex items-center gap-2 border border-[#6961AB] bg-purple-200 text-black px-4 py-2 rounded-lg shadow hover:bg-[#6961AB] hover:text-white transition whitespace-nowrap justify-center"
-          onClick={showBoostModal}
+          // onClick={showBoostModal}
+          onClick={() => navigate("/pricing")}
         >
           Boost Profile
         </button>

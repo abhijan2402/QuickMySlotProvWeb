@@ -19,12 +19,14 @@ export default function Navbar() {
     "Home",
     "Appointment",
     "Services",
+    "Subscription",
     "Support",
   ];
   const routeToNavItem = {
     "/": "Home",
     "/appointments": "Appointment",
     "/manageshop": "Services",
+    "/pricing": "Subscription",
     "/support": "Support",
   };
   const [active, setActive] = useState(routeToNavItem[location.pathname] || "");

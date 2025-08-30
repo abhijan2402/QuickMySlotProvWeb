@@ -14,6 +14,7 @@ import Appointments from "../pages/Appointments";
 import Support from "../pages/Support";
 import ManageServicesPage from "../pages/ManageServices/ManageServicesPage";
 import NotificationsPage from "../pages/NotificationsPage";
+import PricingModal from "../components/PricingModal";
 
 export default function AppRoutes() {
   return (
@@ -26,6 +27,7 @@ export default function AppRoutes() {
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/support" element={<Support />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/pricing" element={<PricingModal />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
       </Route>

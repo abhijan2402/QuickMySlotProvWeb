@@ -24,8 +24,28 @@ const DashboardTabs = () => {
   ]);
   const [walletTotal, setWalletTotal] = useState(1200);
   const [transactions, setTransactions] = useState([
-    { id: "tx1", amount: 2300, date: "2025-07-15" },
-    { id: "tx2", amount: 500, date: "2025-08-05" },
+    {
+      id: "tx1",
+      amount: 2300,
+      date: "2025-07-15",
+      type: "credit",
+      userName: "Amit Sharma",
+      phone: "+91-9876543210",
+      account: "1234567890",
+      email: "amit.sharma@email.com",
+      // note: "Salary deposit",
+    },
+    {
+      id: "tx2",
+      amount: 500,
+      date: "2025-08-05",
+      type: "credit",
+      userName: "Priya Singh",
+      phone: "+91-9812345678",
+      account: "9876543210",
+      email: "priya.singh@email.com",
+      // note: "Mobile recharge",
+    },
   ]);
 
   const setDefaultAccount = (id) => {
@@ -89,7 +109,7 @@ const DashboardTabs = () => {
 
       {/* Offer Managemnet */}
       <TabPane tab="Offer Management " key="offer">
-        <OfferManagement/>
+        <OfferManagement />
       </TabPane>
       {/* Prcing Managemnet */}
       {/* <TabPane tab="Pricing Management " key="price">

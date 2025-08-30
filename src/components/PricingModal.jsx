@@ -108,13 +108,18 @@ const PricingModal = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6 text-center">
-      {/* Heading Section */}
-      <Title level={2}>Choose the Right Plan for You</Title>
-      <Paragraph type="secondary" className="mb-8 text-gray-600">
-        Whether you’re just starting out or running a large organization, we
-        have a plan that fits your needs. Switch between{" "}
-        <strong>monthly</strong> and <strong>yearly billing</strong> anytime.
-      </Paragraph>
+      <div className="mt-8 text-center max-w-lg mx-auto">
+        <Title level={2} >
+          Boost Your Profile Visibility
+        </Title>
+        <Title level={4} className="mb-2 text-gray-600 font-semibold">
+          Choose the Right Plan for You
+        </Title>
+        <Paragraph type="secondary" className="text-gray-700">
+          Increase your customer impressions, likes, and engagement by selecting
+          a plan that fits your needs.
+        </Paragraph>
+      </div>
 
       {/* Billing Toggle */}
       <div className="flex justify-center mb-8">
