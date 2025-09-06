@@ -18,12 +18,19 @@ import {
   Radio,
   Typography,
   Divider,
+  Select,
 } from "antd";
 import { ArrowUpOutlined, UploadOutlined } from "@ant-design/icons";
 import DashboardTabs from "./DashboardTabs";
 import ShopDetails from "../components/ShopDetails";
 import { initialShopData } from "../utils/shopdata";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import {
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+} from "../services/profileApi";
+import { toast } from "react-toastify";
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -57,60 +64,14 @@ const promotionPlans = [
 ];
 
 export default function ProfilePage() {
+  const user = useSelector((state) => state.auth.user);
+  const { data: profile, error, isLoading } = useGetProfileQuery();
   const navigate = useNavigate();
+  const [updateProfile, { isLoading: isUpdating, error: updateError }] =
+    useUpdateProfileMutation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [boostModalOpen, setBoostModalOpen] = useState(false);
   const [forgotModalOpen, setForgotModalOpen] = useState(false);
-  const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "johndoe@gmail.com",
-    phone: "+91 9876543210",
-    wallet: 1200,
-    image: null,
-  });
-
-  const [accounts, setAccounts] = useState([
-    {
-      id: 1,
-      name: "Primary Account",
-      email: "primary@example.com",
-      isDefault: true,
-    },
-  ]);
-  const [walletHistory, setWalletHistory] = useState([
-    { id: 1, type: "Credit", amount: 1500, date: "2025-08-20" },
-    { id: 2, type: "Debit", amount: 300, date: "2025-08-22" },
-  ]);
-  const [walletTotal, setWalletTotal] = useState(1200);
-  const [transactions, setTransactions] = useState([
-    { id: "tx1", amount: 2300, date: "2025-07-15" },
-    { id: "tx2", amount: 500, date: "2025-08-05" },
-  ]);
-
-  const setDefaultAccount = (id) => {
-    const updated = accounts.map((acc) => ({
-      ...acc,
-      isDefault: acc.id === id,
-    }));
-    setAccounts(updated);
-  };
-
-  const addAmount = (amount) => {
-    const amtNum = parseInt(amount, 10);
-    if (!isNaN(amtNum) && amtNum > 0) {
-      setWalletTotal(walletTotal + amtNum);
-      setWalletHistory([
-        ...walletHistory,
-        {
-          id: Date.now(),
-          type: "Credit",
-          amount: amtNum,
-          date: new Date().toISOString(),
-        },
-      ]);
-      message.success("Amount added successfully");
-    }
-  };
 
   // For image preview
   const [previewImage, setPreviewImage] = useState(null);
@@ -126,15 +87,31 @@ export default function ProfilePage() {
   const showForgotModal = () => setForgotModalOpen(true);
   const closeForgotModal = () => setForgotModalOpen(false);
 
-  const onFinish = (values) => {
-    setProfile((prev) => ({
-      ...prev,
-      name: values.name,
-      email: values.email,
-      phone: values.phone,
-      image: previewImage || prev.image,
-    }));
-    setIsModalOpen(false);
+  const onFinish = async (values) => {
+    try {
+      console.log("Form Values:", values);
+
+      const formData = new FormData();
+
+      Object.entries(values).forEach(([key, value]) => {
+        if (key === "image" && Array.isArray(value)) {
+          // AntD Upload file list
+          if (value[0]?.originFileObj) {
+            formData.append("profile_picture", value[0].originFileObj);
+          }
+        } else {
+          formData.append(key, value);
+        }
+      });
+
+      await updateProfile(formData).unwrap();
+      setIsModalOpen(false);
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      const errorMessage =
+        error?.data?.message || error.message || "Failed to update profile";
+      toast.error(errorMessage);
+    }
   };
 
   const handleUploadChange = (info) => {
@@ -157,6 +134,17 @@ export default function ProfilePage() {
     closeForgotModal();
   };
 
+  const defaultFileList = profile?.data?.image_url
+    ? [
+        {
+          uid: "-1", // unique id (must be string)
+          name: "profile.png", // a filename
+          status: "done", // marks file as uploaded
+          url: profile?.data?.image, // image URL for preview
+        },
+      ]
+    : [];
+
   return (
     <div className="max-w-full sm:max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 space-y-8">
       <div className="flex flex-col md:flex-row md:gap-4 max-w-7xl mx-auto py-6">
@@ -172,9 +160,9 @@ export default function ProfilePage() {
 
           {/* Profile Info */}
           <div className="flex items-center gap-4 min-w-0">
-            {profile.image ? (
+            {profile?.data?.image ? (
               <img
-                src={profile.image}
+                src={profile?.data?.image}
                 alt="Profile"
                 className="w-20 h-20 rounded-full object-cover flex-shrink-0"
               />
@@ -183,10 +171,12 @@ export default function ProfilePage() {
             )}
             <div className="min-w-0 truncate">
               <h2 className="text-xl font-bold text-gray-800 truncate">
-                {profile.name}
+                {profile?.data?.name}
               </h2>
-              <p className="text-gray-500 truncate">{profile.email}</p>
-              <p className="text-sm text-gray-400 truncate">{profile.phone}</p>
+              <p className="text-gray-500 truncate">{profile?.data?.email}</p>
+              <p className="text-sm text-gray-400 truncate">
+                {profile?.data?.phone_number}
+              </p>
             </div>
           </div>
 
@@ -342,38 +332,36 @@ export default function ProfilePage() {
         <Form
           layout="vertical"
           initialValues={{
-            name: profile.name,
-            email: profile.email,
-            phone: profile.phone,
+            profile_picture: defaultFileList,
+            name: profile?.data?.name,
+            email: profile?.data?.email,
+            phone: profile?.data?.phone_number,
+            business_name: profile?.data?.business_name,
+            location_area_served: profile?.data?.location_area_served,
+            service_category: profile?.data?.service_category,
           }}
           onFinish={onFinish}
         >
-          <Form.Item label="Profile Image">
+          <Form.Item
+            label="Profile Image"
+            name="image"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e && e.fileList}
+          >
             <Upload
               beforeUpload={() => false}
-              onChange={handleUploadChange}
-              showUploadList={false}
-              accept="image/*"
+              listType="picture"
               maxCount={1}
+              accept="image/*"
             >
               <Button icon={<UploadOutlined />}>Click to Upload</Button>
             </Upload>
-            {previewImage && (
-              <img
-                src={previewImage}
-                alt="Preview"
-                className="mt-3 rounded-full w-24 h-24 object-cover"
-              />
-            )}
           </Form.Item>
 
           <Form.Item
             label="Name"
             name="name"
-            rules={[
-              { required: true, message: "Please input your name!" },
-              { min: 3, message: "Name must be at least 3 characters" },
-            ]}
+            rules={[{ min: 3, message: "Name must be at least 3 characters" }]}
           >
             <Input placeholder="Enter your name" />
           </Form.Item>
@@ -381,10 +369,7 @@ export default function ProfilePage() {
           <Form.Item
             label="Email"
             name="email"
-            rules={[
-              { required: true, message: "Please input your email!" },
-              { type: "email", message: "Please enter a valid email!" },
-            ]}
+            rules={[{ type: "email", message: "Please enter a valid email!" }]}
           >
             <Input placeholder="Enter your email" />
           </Form.Item>
@@ -392,11 +377,61 @@ export default function ProfilePage() {
           <Form.Item
             label="Phone Number"
             name="phone"
-            rules={[
-              { required: true, message: "Please input your phone number!" },
-            ]}
+            rules={[{ message: "Please input your phone number!" }]}
           >
             <Input placeholder="Enter your phone number" />
+          </Form.Item>
+
+          <Form.Item label="Address" name="address">
+            <Input placeholder="Enter your complete address" />
+          </Form.Item>
+
+          <Form.Item label="City" name="city">
+            <Input placeholder="Enter your city" />
+          </Form.Item>
+
+          <Form.Item label="State" name="state">
+            <Input placeholder="Enter your state" />
+          </Form.Item>
+
+          <Form.Item label="Country" name="country">
+            <Input placeholder="Enter your country" />
+          </Form.Item>
+
+          <Form.Item label="Zip Code" name="zip_code">
+            <Input placeholder="Enter your Zip/Pin Code" />
+          </Form.Item>
+
+          <Form.Item label="Company Name" name="company_name">
+            <Input placeholder="Enter your Company Name" />
+          </Form.Item>
+
+          <Form.Item label="Website" name="website">
+            <Input placeholder="Enter your website" />
+          </Form.Item>
+
+          <Form.Item label="Business Name" name="business_name">
+            <Input placeholder="Enter your Businees Name" />
+          </Form.Item>
+
+          <Form.Item label="Services Location Area" name="location_area_served">
+            <Input placeholder="Enter your service location area" />
+          </Form.Item>
+
+          <Form.Item
+            name="service_category"
+            label="Services Category"
+            rules={[{ required: true }]}
+          >
+            <Select placeholder="Select category" size="medium">
+              <Option value="salon">Salon</Option>
+              <Option value="healthcare">Healthcare</Option>
+              <Option value="spa">Spa</Option>
+              <Option value="pet_clinic">Pet Clinic</Option>
+              <Option value="automotive_car">Automotive Car</Option>
+              <Option value="retail_designer">Retail/Designer</Option>
+              <Option value="tattoo_piercing">Tattoo & Piercing</Option>
+            </Select>
           </Form.Item>
 
           <Form.Item className="text-right">
@@ -437,8 +472,13 @@ export default function ProfilePage() {
             <Button onClick={closeForgotModal} className="mr-3">
               Cancel
             </Button>
-            <Button type="primary" htmlType="submit" className="bg-[#6961AB]">
-              Submit
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={isUpdating}
+              className="bg-[#6961AB]"
+            >
+              {isUpdating ? "Updating" : "Submit"}
             </Button>
           </Form.Item>
         </Form>

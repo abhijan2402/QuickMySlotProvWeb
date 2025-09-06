@@ -7,10 +7,13 @@ import { FaLocationPin } from "react-icons/fa6";
 import { BiHeart, BiLocationPlus } from "react-icons/bi";
 import { BsBellFill } from "react-icons/bs";
 import { CiLocationOn } from "react-icons/ci";
+import { useSelector } from "react-redux";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const user = useSelector((state) => state.auth.user);
+  console.log(user)
 
   // Example username for profile icon (replace with actual user data)
   const username = "JohnDoe";
