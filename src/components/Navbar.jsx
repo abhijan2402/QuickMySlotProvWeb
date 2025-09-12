@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { FaHeart, FaMapMarkerAlt, FaUserCircle } from "react-icons/fa"; // For wishlist and location icons
+import {
+  FaChevronDown,
+  FaHeart,
+  FaMapMarkerAlt,
+  FaUserCircle,
+} from "react-icons/fa"; // For wishlist and location icons
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/clogo.png";
@@ -8,12 +13,13 @@ import { BiHeart, BiLocationPlus } from "react-icons/bi";
 import { BsBellFill } from "react-icons/bs";
 import { CiLocationOn } from "react-icons/ci";
 import { useSelector } from "react-redux";
+import { MdOutlineMyLocation } from "react-icons/md";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((state) => state.auth.user);
-  console.log(user)
+  console.log(user);
 
   // Example username for profile icon (replace with actual user data)
   const username = "JohnDoe";
@@ -99,15 +105,15 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-4">
               <button
                 onClick={() => navigate("/notifications")}
-                className="relative p-2 rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
+                className="relative p-2  rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
               >
                 <div
-                  className="relative p-2 rounded-full border bg-[#6961ab] border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
+                  className="relative p-1  rounded-full border bg-[#6961ab] border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
                   onClick={() => {
                     setIsMobileMenuOpen(false);
                   }}
                 >
-                  <span className=" text-center text-[#fff] text-xl">
+                  <span className=" text-center text-[#fff] text-sm">
                     {" "}
                     <BsBellFill />
                   </span>
@@ -122,56 +128,68 @@ export default function Navbar() {
                 className="relative p-2 rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
               >
                 <div
-                  className="w-8 h-8 rounded-full bg-[#6961ab] text-white flex items-center justify-center font-semibold cursor-pointer select-none"
+                  className="w-6 h-6 rounded-full bg-[#6961ab] text-white flex items-center justify-center font-semibold cursor-pointer select-none"
                   title={username}
                 >
                   {username.charAt(0).toUpperCase()}
                 </div>
               </button>
-              <div className="flex items-center space-x-3 bg-transparent rounded-lg px-0 py-0  ">
-                <div className="flex flex-col">
-                  <div className="flex gap-1 items-center">
-                    <div className="relative p-0 rounded-full  text-[#6961ab] transition duration-300">
-                      <FaMapMarkerAlt className="w-4 h-4" />
-                    </div>
-                    <span className="font-semibold text-[#6961ab] text-[14px]">
-                      {"Jaipur"}
+              <div
+                role="button"
+                className="flex items-center space-x-3 bg-white rounded-lg px-4 py-2 border border-gray-300 hover:shadow-md transition-shadow duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7C0902]"
+                title="Click to select a different location"
+              >
+                <div className="flex items-center space-x-2">
+                  <MdOutlineMyLocation
+                    className="w-5 h-5 text-[#6961ab] "
+                    aria-hidden="true"
+                  />
+                  <div className="flex flex-col leading-none">
+                    <span className="font-bold text-[#6961ab] text-[14px]">
+                      {user?.location_area_served || "NA"}
                     </span>
+                    <p className="text-[10px] mt-1 text-gray-600">
+                      {user?.exact_location || "NA"}
+                    </p>
                   </div>
-                  <p className="text-[12px] pl-1 text-[#6961ab] font-semibold">
-                    {"Abc, Jaipur, Rajasthan"}
-                  </p>
                 </div>
               </div>
             </div>
           )}
 
           {/* Mobile Menu Toggle */}
-          {!isMinimalPage && (
-            <>
-              <div className="md:hidden flex items-center space-x-3 bg-transparent rounded-lg px-0 py-0  ">
-                <div className="flex flex-col">
-                  <div className="flex gap-1 items-center">
-                    <div className="relative p-0 rounded-full  text-[#6961ab] transition duration-300">
-                      <FaMapMarkerAlt className="w-4 h-4" />
+          <div className="flex gap-4">
+            {!isMinimalPage && (
+              <>
+                <div
+                  role="button"
+                  className="md:hidden flex items-center space-x-3 bg-white rounded-lg px-4 py-2 border border-gray-300 hover:shadow-md transition-shadow duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7C0902]"
+                  title="Click to select a different location"
+                >
+                  <div className="flex items-center space-x-2">
+                    <MdOutlineMyLocation
+                      className="w-5 h-5 text-[#6961ab] "
+                      aria-hidden="true"
+                    />
+                    <div className="flex flex-col leading-none">
+                      <span className="font-bold text-[#6961ab] text-[14px]">
+                        {user?.location_area_served || "NA"}
+                      </span>
+                      <p className="text-[10px] mt-1 text-gray-600">
+                        {user?.exact_location || "NA"}
+                      </p>
                     </div>
-                    <span className="font-semibold text-[#6961ab] text-[14px]">
-                      {"Jaipur"}
-                    </span>
                   </div>
-                  <p className="text-[12px] pl-1 text-[#6961ab] font-semibold">
-                    {"Abc, Jaipur, Rajasthan"}
-                  </p>
                 </div>
-              </div>
-              <button
-                className="md:hidden text-[#000] text-3xl"
-                onClick={() => setIsMobileMenuOpen(true)}
-              >
-                ☰
-              </button>
-            </>
-          )}
+                <button
+                  className="md:hidden text-[#000] text-3xl"
+                  onClick={() => setIsMobileMenuOpen(true)}
+                >
+                  ☰
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </nav>
 

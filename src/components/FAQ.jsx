@@ -1,43 +1,46 @@
-import { Collapse } from "antd";
+import { Collapse, Empty, Spin } from "antd";
+import { useGetfaqQuery } from "../services/faq.Api";
 const { Panel } = Collapse;
+
 const FAQ = () => {
-  const faqData = [
-    {
-      type: "Account",
-      questions: [
-        {
-          q: "How to create an account?",
-          a: "Click add account and fill details.",
-        },
-        { q: "How to edit account?", a: "Use edit button next to account." },
-      ],
-    },
-    {
-      type: "Wallet",
-      questions: [
-        { q: "How to add funds?", a: "Use Add Amount button in Wallet tab." },
-        { q: "How to view history?", a: "Check Wallet History section." },
-      ],
-    },
-  ];
+  const { data, isLoading } = useGetfaqQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-40">
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!data?.data || data.data.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-40">
+        <Empty description="No FAQs available yet" />
+      </div>
+    );
+  }
 
   return (
     <>
       <h3 className="mb-4 font-semibold text-lg">FAQs</h3>
-      {faqData.map((section, idx) => (
-        <Collapse key={idx} defaultActiveKey={["1"]}>
-          <Panel header={section.type} key="1">
-            {section.questions.map((item, idx) => (
-              <Collapse key={idx} ghost>
-                <Panel header={item.q} key={idx}>
-                  <p>{item.a}</p>
-                </Panel>
-              </Collapse>
-            ))}
+      <Collapse accordion>
+        {data.data.map((faq) => (
+          <Panel header={faq.category} key={faq.id}>
+            <Collapse ghost>
+              <Panel header={faq.question} key={`q-${faq.id}`}>
+                <p>{faq.answer}</p>
+                <div className="mt-2 text-sm text-gray-500">
+                  Added by:{" "}
+                  <span className="font-medium">{faq.user?.name ?? "N/A"}</span>
+                </div>
+              </Panel>
+            </Collapse>
           </Panel>
-        </Collapse>
-      ))}
+        ))}
+      </Collapse>
     </>
   );
 };
-export default FAQ; 
+
+export default FAQ;

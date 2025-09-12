@@ -1,5 +1,6 @@
 // services/authApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { feDiffuseLighting } from "framer-motion/m";
 
 export const authApi = createApi({
   reducerPath: "authApi",
@@ -33,32 +34,26 @@ export const authApi = createApi({
         body,
       }),
     }),
-    signin: builder.mutation({
-      query: (body) => ({
-        // url: "signup",
-        url: "login",
-        method: "POST",
-        body,
-      }),
+    setProfile: builder.mutation({
+      query: (fd) => {
+        // ✅ Debug FormData content
+        for (let pair of fd.entries()) {
+          console.log(pair[0], pair[1]);
+        }
+
+        return {
+          url: `update/business-profile/2`,
+          method: "POST",
+          body: fd,
+        };
+      },
     }),
-    forgotPassword: builder.mutation({
-      query: (body) => ({
-        url: "forgot-password",
+
+    setAvailability: builder.mutation({
+      query: (fd) => ({
+        url: `update/business-availability/3`,
         method: "POST",
-        body,
-      }),
-    }),
-    resetPassword: builder.mutation({
-      query: (body) => ({
-        url: "reset-password",
-        method: "POST",
-        body,
-      }),
-    }),
-    logout: builder.mutation({
-      query: () => ({
-        url: "/auth/logout",
-        method: "POST",
+        body: fd,
       }),
     }),
   }),
@@ -66,10 +61,8 @@ export const authApi = createApi({
 
 export const {
   useSignupMutation,
-  useSigninMutation,
   useVerifyOtpMutation,
   useResendOtpMutation,
-  useForgotPasswordMutation,
-  useResetPasswordMutation,
-  useLogoutMutation,
+  useSetAvailabilityMutation,
+  useSetProfileMutation,
 } = authApi;

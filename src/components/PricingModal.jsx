@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button, Card, Radio, Typography, Tag } from "antd";
+import { useGetsubscriptionQuery } from "../services/subscriptionApi";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -89,6 +90,8 @@ const plans = {
 };
 
 const PricingModal = () => {
+  const { data } = useGetsubscriptionQuery();
+  console.log(data)
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);

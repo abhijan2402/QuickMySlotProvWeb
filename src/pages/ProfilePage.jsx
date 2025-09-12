@@ -25,12 +25,14 @@ import DashboardTabs from "./DashboardTabs";
 import ShopDetails from "../components/ShopDetails";
 import { initialShopData } from "../utils/shopdata";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useGetProfileQuery,
   useUpdateProfileMutation,
 } from "../services/profileApi";
 import { toast } from "react-toastify";
+import { useGetsubscriptionQuery } from "../services/subscriptionApi";
+import { logout } from "../slices/authSlice";
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -65,6 +67,8 @@ const promotionPlans = [
 
 export default function ProfilePage() {
   const user = useSelector((state) => state.auth.user);
+
+  const { data: currentPlan } = useGetsubscriptionQuery();
   const { data: profile, error, isLoading } = useGetProfileQuery();
   const navigate = useNavigate();
   const [updateProfile, { isLoading: isUpdating, error: updateError }] =
@@ -72,6 +76,10 @@ export default function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [boostModalOpen, setBoostModalOpen] = useState(false);
   const [forgotModalOpen, setForgotModalOpen] = useState(false);
+
+  console.log(profile);
+
+  const dispatch = useDispatch();
 
   // For image preview
   const [previewImage, setPreviewImage] = useState(null);
@@ -151,12 +159,12 @@ export default function ProfilePage() {
         {/* Left Section: Profile Card */}
         <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col gap-6 flex-grow md:w-2/3 relative">
           {/* Forgot Password Button top right */}
-          <button
+          {/* <button
             onClick={showForgotModal}
             className="absolute top-4 right-4 text-sm underline text-[#6961AB] hover:text-[#4e3b9e] transition whitespace-nowrap"
           >
             Forgot Password?
-          </button>
+          </button> */}
 
           {/* Profile Info */}
           <div className="flex items-center gap-4 min-w-0">
@@ -171,11 +179,13 @@ export default function ProfilePage() {
             )}
             <div className="min-w-0 truncate">
               <h2 className="text-xl font-bold text-gray-800 truncate">
-                {profile?.data?.name}
+                {profile?.data?.name || "NA"}
               </h2>
-              <p className="text-gray-500 truncate">{profile?.data?.email}</p>
+              <p className="text-gray-500 truncate">
+                {profile?.data?.email || "NA"}
+              </p>
               <p className="text-sm text-gray-400 truncate">
-                {profile?.data?.phone_number}
+                {profile?.data?.phone_number || "NA"}
               </p>
             </div>
           </div>
@@ -194,7 +204,10 @@ export default function ProfilePage() {
             >
               Edit Profile
             </button>
-            <button className="flex items-center text-sm gap-2 bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition whitespace-nowrap">
+            <button
+              className="flex items-center text-sm gap-2 bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition whitespace-nowrap"
+              onClick={() => dispatch(logout())}
+            >
               <FaSignOutAlt /> Logout
             </button>
           </div>
@@ -203,12 +216,17 @@ export default function ProfilePage() {
         {/* Right Section: Upgrade your Business Plan */}
         <div className="bg-purple-50 p-6 rounded-2xl shadow-md mt-8 md:mt-0 md:w-1/3 flex flex-col justify-center">
           <h3 className="text-black text-xl font-medium flex mb-2 justify-between">
-            Current Plan: <span className="text-[#6961AB]">$25</span>
+            Current Plan:{" "}
+            <span className="text-[#6961AB]">
+              ${currentPlan?.data?.[0]?.price}
+            </span>
           </h3>
           <div className=" flex flex-col">
-            <h2 className="text-black font-medium">Basic Visibility Boost</h2>
+            <h2 className="text-black font-medium">
+              {currentPlan?.data?.[0]?.subscription_name}
+            </h2>
             <p className="text-gray-500 text-sm">
-              Apper higher in search results for 7 days.
+              {currentPlan?.data?.[0]?.description}
             </p>
           </div>
           <div className="flex  mt-4 ">
@@ -239,7 +257,7 @@ export default function ProfilePage() {
           Boost Profile
         </button>
       </div>
-      <ShopDetails initialData={initialShopData} />;{/* Dashboard MAnagement */}
+      <ShopDetails initialData={initialShopData} />;
       <DashboardTabs />
       {/* Boost Modal */}
       <Modal

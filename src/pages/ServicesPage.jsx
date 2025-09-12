@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import Slider from "react-slick"; // Install with: npm i react-slick slick-carousel
 import "slick-carousel/slick/slick.css";
@@ -6,9 +5,12 @@ import "slick-carousel/slick/slick-theme.css";
 import { useNavigate, useParams } from "react-router-dom";
 import Breadcrumb from "../components/Breadcrumb";
 import { salondata } from "../utils/slaondata";
+import { useSelector } from "react-redux";
 
 export default function ServicesPage() {
- 
+  const user = useSelector((state) => state.auth.user);
+
+  console.log(user)
 
   // Extract unique locations
   const locations = [...new Set(salondata.map((s) => s.location))];
@@ -17,7 +19,7 @@ export default function ServicesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const { type } = useParams();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // Filtered Shops
   const filteredShops = salondata.filter((s) => {

@@ -1,49 +1,61 @@
 import React, { useState } from "react";
 import {
-  Table,
+  Card,
   Button,
   Modal,
   Form,
   Input,
   Select,
   DatePicker,
-  Space,
+  Switch,
+  Tag,
+  Row,
+  Col,
   Popconfirm,
-  Collapse,
 } from "antd";
 import moment from "moment";
+import {
+  useAddofferMutation,
+  useDeleteofferMutation,
+  useGetofferQuery,
+  useUpdateofferMutation,
+} from "../services/offersApi";
+import { toast } from "react-toastify";
+import { CalendarOutlined, PercentageOutlined } from "@ant-design/icons";
 
-const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
+
 const discountTypes = [
-  { label: "Percentage", value: "percentage" },
   { label: "Fixed Amount", value: "fixed" },
+  { label: "Flat", value: "flat" },
 ];
 
 const OfferManagement = () => {
-  const [offers, setOffers] = useState([]);
-  const [editingOffer, setEditingOffer] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const [couponModalVisible, setCouponModalVisible] = useState(false);
-  const [editingCoupon, setEditingCoupon] = useState(null);
-  const [currentOfferId, setCurrentOfferId] = useState(null);
-
+  const [editingOffer, setEditingOffer] = useState(null);
   const [offerForm] = Form.useForm();
-  const [couponForm] = Form.useForm();
 
-  // Open offer modal for create/edit
+  // API hooks
+  const { data: offers, refetch, isLoading } = useGetofferQuery();
+  const [addOffer] = useAddofferMutation();
+  const [updateOffer] = useUpdateofferMutation();
+  const [deleteOffer] = useDeleteofferMutation();
+
+  // Open modal
   const openOfferModal = (offer) => {
     if (offer) {
-      const values = {
-        ...offer,
-        validity:
-          offer.validFrom && offer.validTo
-            ? [moment(offer.validFrom), moment(offer.validTo)]
-            : null,
-      };
       setEditingOffer(offer);
-      offerForm.setFieldsValue(values);
+      offerForm.setFieldsValue({
+        promo_code: offer.promo_code,
+        type: offer.type,
+        amount: offer.amount,
+        description: offer.description,
+        isActive: offer.isActive === 1,
+        validity:
+          offer.start_on && offer.expired_on
+            ? [moment(offer.start_on), moment(offer.expired_on)]
+            : null,
+      });
     } else {
       setEditingOffer(null);
       offerForm.resetFields();
@@ -51,294 +63,172 @@ const OfferManagement = () => {
     setModalVisible(true);
   };
 
-  // Offer form submit
-  const handleOfferSubmit = () => {
-    offerForm
-      .validateFields()
-      .then((values) => {
-        const newOffer = {
-          ...values,
-          validFrom: values.validity ? values.validity[0].toISOString() : null,
-          validTo: values.validity ? values.validity[1].toISOString() : null,
-          id: editingOffer ? editingOffer.id : Date.now(),
-          coupons: editingOffer?.coupons || [],
-        };
-        if (editingOffer) {
-          setOffers(
-            offers.map((offer) =>
-              offer.id === editingOffer.id ? newOffer : offer
-            )
-          );
-        } else {
-          setOffers([...offers, newOffer]);
-        }
-        setModalVisible(false);
-      })
-      .catch(() => {});
-  };
+  // Submit form
+  const handleOfferSubmit = async () => {
+    try {
+      const values = await offerForm.validateFields();
+      const formData = new FormData();
+      formData.append("promo_code", values.promo_code);
+      formData.append("type", values.type);
+      formData.append("amount", values.amount);
+      formData.append("description", values.description || "");
+      formData.append("isActive", values.isActive ? 1 : 0);
+      if (values.validity) {
+        formData.append("start_on", values.validity[0].format("YYYY-MM-DD"));
+        formData.append("expired_on", values.validity[1].format("YYYY-MM-DD"));
+      }
 
-  // Delete offer
-  const handleDeleteOffer = (id) => {
-    setOffers(offers.filter((offer) => offer.id !== id));
-  };
-
-  // Open coupon modal
-  const openCouponModal = (offerId, coupon) => {
-    setCurrentOfferId(offerId);
-    if (coupon) {
-      setEditingCoupon(coupon);
-      couponForm.setFieldsValue(coupon);
-    } else {
-      setEditingCoupon(null);
-      couponForm.resetFields();
+      if (editingOffer) {
+        await updateOffer({ id: editingOffer.id, formData }).unwrap();
+        toast.success("Offer updated successfully!");
+      } else {
+        await addOffer(formData).unwrap();
+        toast.success("Offer added successfully!");
+      }
+      setModalVisible(false);
+      refetch();
+    } catch {
+      toast.error("Failed to save offer!");
     }
-    setCouponModalVisible(true);
   };
 
-  // Submit coupon form
-  const handleCouponSubmit = () => {
-    couponForm
-      .validateFields()
-      .then((values) => {
-        setOffers((prevOffers) => {
-          return prevOffers.map((offer) => {
-            if (offer.id === currentOfferId) {
-              let updatedCoupons;
-              if (editingCoupon) {
-                updatedCoupons = offer.coupons.map((c) =>
-                  c.id === editingCoupon.id ? { ...c, ...values } : c
-                );
-              } else {
-                const newCoupon = { id: Date.now(), ...values };
-                updatedCoupons = [...(offer.coupons || []), newCoupon];
-              }
-              return { ...offer, coupons: updatedCoupons };
-            }
-            return offer;
-          });
-        });
-        setCouponModalVisible(false);
-      })
-      .catch(() => {});
+  // Delete
+  const handleDelete = async (id) => {
+    try {
+      await deleteOffer(id).unwrap();
+      toast.success("Offer deleted!");
+      refetch();
+    } catch {
+      toast.error("Delete failed!");
+    }
   };
-
-  // Delete coupon
-  const handleDeleteCoupon = (offerId, couponId) => {
-    setOffers((prevOffers) =>
-      prevOffers.map((offer) => {
-        if (offer.id === offerId) {
-          return {
-            ...offer,
-            coupons: offer.coupons.filter((c) => c.id !== couponId),
-          };
-        }
-        return offer;
-      })
-    );
-  };
-
-  const offerColumns = [
-    { title: "Title", dataIndex: "title", key: "title" },
-    { title: "Description", dataIndex: "description", key: "description" },
-    {
-      title: "Discount",
-      key: "discount",
-      render: (_, record) =>
-        record.discountType === "percentage"
-          ? `${record.discountValue}%`
-          : `₹${record.discountValue}`,
-    },
-    {
-      title: "Validity",
-      key: "validity",
-      render: (_, record) =>
-        record.validFrom && record.validTo
-          ? `${moment(record.validFrom).format("YYYY-MM-DD")} to ${moment(
-              record.validTo
-            ).format("YYYY-MM-DD")}`
-          : "---",
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record) => (
-        <Space>
-          <Button onClick={() => openOfferModal(record)} type="link">
-            Edit
-          </Button>
-          <Popconfirm
-            title="Delete this offer?"
-            onConfirm={() => handleDeleteOffer(record.id)}
-          >
-            <Button danger type="link">
-              Delete
-            </Button>
-          </Popconfirm>
-          <Button onClick={() => openCouponModal(record.id, null)} type="link">
-            Add Coupon
-          </Button>
-        </Space>
-      ),
-    },
-  ];
 
   return (
-    <>
-      <Button
-        type="primary"
-        onClick={() => openOfferModal(null)}
-        className="mb-4"
-      >
-        Add New Offer
-      </Button>
+    <div className="p-4">
+      <Row justify="space-between" align="middle" className="mb-6">
+        <Col>
+          <h2 style={{ fontSize: 22, fontWeight: 600 }}>🎁 Offer Management</h2>
+        </Col>
+        <Col>
+          <Button type="primary" onClick={() => openOfferModal(null)}>
+            + Add New Offer
+          </Button>
+        </Col>
+      </Row>
 
-      <Table
-        dataSource={offers}
-        columns={offerColumns}
-        rowKey="id"
-        expandable={{
-          expandedRowRender: (record) => (
-            <Collapse defaultActiveKey={["coupons"]}>
-              <Panel header="Coupons" key="coupons">
-                {!record.coupons || record.coupons.length === 0 ? (
-                  <p>No coupons added</p>
-                ) : (
-                  <Table
-                    size="small"
-                    dataSource={record.coupons}
-                    pagination={false}
-                    rowKey="id"
-                    columns={[
-                      { title: "Code", dataIndex: "code", key: "code" },
-                      {
-                        title: "Description",
-                        dataIndex: "description",
-                        key: "description",
-                      },
-                      {
-                        title: "Actions",
-                        key: "actions",
-                        render: (_, coupon) => (
-                          <Space>
-                            <Button
-                              type="link"
-                              onClick={() => openCouponModal(record.id, coupon)}
-                            >
-                              Edit
-                            </Button>
-                            <Popconfirm
-                              title="Delete this coupon?"
-                              onConfirm={() =>
-                                handleDeleteCoupon(record.id, coupon.id)
-                              }
-                            >
-                              <Button danger type="link">
-                                Delete
-                              </Button>
-                            </Popconfirm>
-                          </Space>
-                        ),
-                      },
-                    ]}
-                  />
-                )}
-              </Panel>
-            </Collapse>
-          ),
-        }}
-        pagination={{ pageSize: 5 }}
-      />
+      <Row gutter={[20, 20]}>
+        {isLoading ? (
+          <p>Loading offers...</p>
+        ) : (
+          offers?.data?.map((offer) => (
+            <Col xs={24} sm={12} md={8} lg={8} key={offer.id}>
+              <Card
+                hoverable
+                style={{
+                  borderRadius: 16,
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                }}
+                title={
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <span style={{ fontWeight: 600 }}>{offer.promo_code}</span>
+                    {offer.isActive ? (
+                      <Tag color="green">Active</Tag>
+                    ) : (
+                      <Tag color="red">Inactive</Tag>
+                    )}
+                  </div>
+                }
+                actions={[
+                  <Button type="link" onClick={() => openOfferModal(offer)}>
+                    ✏️ Edit
+                  </Button>,
+                  <Popconfirm
+                    title="Delete this offer?"
+                    onConfirm={() => handleDelete(offer.id)}
+                  >
+                    <Button type="link" danger>
+                      🗑 Delete
+                    </Button>
+                  </Popconfirm>,
+                ]}
+              >
+                <div className="flex mb-1">
+                  <p>
+                    <Tag color="blue">{offer.type}</Tag>
+                  </p>
+                  <p style={{ fontSize: 16, fontWeight: 500 }}>
+                    <PercentageOutlined /> {offer.amount}
+                  </p>
+                </div>
+                <p style={{ color: "#555" }}>{offer.description}</p>
+                <p style={{ fontSize: 13, color: "#888" }}>
+                  <CalendarOutlined />{" "}
+                  {offer.start_on && offer.expired_on
+                    ? `${moment(offer.start_on).format(
+                        "MMM DD, YYYY"
+                      )} → ${moment(offer.expired_on).format("MMM DD, YYYY")}`
+                    : "No validity"}
+                </p>
+              </Card>
+            </Col>
+          ))
+        )}
+      </Row>
 
-      {/* Offer Modal */}
+      {/* Modal for Add/Edit */}
       <Modal
         title={editingOffer ? "Edit Offer" : "Add Offer"}
-        visible={modalVisible}
+        open={modalVisible}
         onOk={handleOfferSubmit}
         onCancel={() => setModalVisible(false)}
         okText={editingOffer ? "Update" : "Add"}
         destroyOnClose
       >
-        <Form form={offerForm} layout="vertical" preserve={false}>
+        <Form form={offerForm} layout="vertical">
           <Form.Item
-            label="Offer Title"
-            name="title"
-            rules={[{ required: true, message: "Please enter offer title" }]}
+            label="Promo Code"
+            name="promo_code"
+            rules={[{ required: true, message: "Please enter promo code" }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item
-            label="Description"
-            name="description"
-            rules={[{ required: true, message: "Please enter description" }]}
-          >
-            <Input.TextArea rows={3} />
-          </Form.Item>
-
-          <Form.Item
-            label="Discount Type"
-            name="discountType"
-            rules={[{ required: true, message: "Please select discount type" }]}
+            label="Type"
+            name="type"
+            rules={[{ required: true, message: "Please select type" }]}
           >
             <Select options={discountTypes} />
           </Form.Item>
 
           <Form.Item
             label="Discount Value"
-            name="discountValue"
-            rules={[
-              { required: true, message: "Please enter discount value" },
-              {
-                validator: (_, value) => {
-                  if (!value || value <= 0)
-                    return Promise.reject("Must be positive");
-                  return Promise.resolve();
-                },
-              },
-            ]}
+            name="amount"
+            rules={[{ required: true, message: "Please enter discount value" }]}
           >
-            <Input type="number" min="1" />
+            <Input type="number" min={1} />
           </Form.Item>
 
-          <Form.Item label="Validity Period" name="validity">
+          <Form.Item label="Description" name="description">
+            <Input.TextArea rows={3} />
+          </Form.Item>
+
+          <Form.Item label="Validity" name="validity">
             <RangePicker />
           </Form.Item>
-        </Form>
-      </Modal>
-
-      {/* Coupon Modal */}
-      <Modal
-        title={editingCoupon ? "Edit Coupon" : "Add Coupon"}
-        visible={couponModalVisible}
-        onOk={handleCouponSubmit}
-        onCancel={() => setCouponModalVisible(false)}
-        okText={editingCoupon ? "Update" : "Add"}
-        destroyOnClose
-      >
-        <Form form={couponForm} layout="vertical" preserve={false}>
-          <Form.Item
-            label="Coupon Code"
-            name="code"
-            rules={[
-              { required: true, message: "Please enter coupon code" },
-              { min: 3, message: "Minimum 3 characters required" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
 
           <Form.Item
-            label="Coupon Description"
-            name="description"
-            rules={[
-              { required: true, message: "Please enter coupon description" },
-            ]}
+            label="Active Status"
+            name="isActive"
+            valuePropName="checked"
           >
-            <Input.TextArea rows={2} />
+            <Switch />
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

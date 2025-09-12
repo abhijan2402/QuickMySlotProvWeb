@@ -1,103 +1,119 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Input, Select, message } from "antd";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { Modal, Button, Form, Input, Select, message, Spin } from "antd";
+import { FaEdit, FaTrash, FaPlus, FaCheckCircle } from "react-icons/fa";
+import {
+  useGetbankQuery,
+  useAddbankMutation,
+  useUpdatebankMutation,
+  useDeletebankMutation,
+} from "../services/bankApi";
+import { toast } from "react-toastify";
 
 const { Option } = Select;
 
-const initialAccounts = [
-  {
-    id: 1,
-    bankName: "HDFC Bank",
-    accountHolderName: "John Doe",
-    accountNumber: "123456789012",
-    ifscCode: "HDFC0001234",
-    branch: "Mumbai",
-    accountType: "Savings",
-    isDefault: true,
-  },
-  {
-    id: 2,
-    bankName: "State Bank of India",
-    accountHolderName: "Jane Smith",
-    accountNumber: "987654321098",
-    ifscCode: "SBIN0005678",
-    branch: "Delhi",
-    accountType: "Current",
-    isDefault: false,
-  },
-];
-
 const AccountManagement = () => {
-  const [accounts, setAccounts] = useState(initialAccounts);
+  const { data, isLoading, refetch } = useGetbankQuery();
+  const [addbank] = useAddbankMutation();
+  const [updatebank] = useUpdatebankMutation();
+  const [deletebank] = useDeletebankMutation();
+
+  const [accounts, setAccounts] = useState([]);
+  const [defaultAccountId, setDefaultAccountId] = useState(null);
+
   const [editingAccount, setEditingAccount] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const [form] = Form.useForm();
 
+  // Load accounts into local state when API returns data
   useEffect(() => {
-    if (editingAccount) {
-      form.setFieldsValue(editingAccount);
+    if (data?.data) {
+      setAccounts(data.data);
+      if (!defaultAccountId && data.data.length > 0) {
+        setDefaultAccountId(data.data[0].id); // first one default by default
+      }
+    }
+  }, [data]);
+
+  // Open modal
+  const showModal = (account) => {
+    setEditingAccount(account || null);
+    if (account) {
+      form.setFieldsValue({
+        bank_name: account.bank_name,
+        account_number: account.account_number,
+        ifsc_code: account.ifsc_code,
+        bank_type: account.bank_type,
+      });
     } else {
       form.resetFields();
     }
-  }, [editingAccount, form]);
-
-  const showModal = (account) => {
-    setEditingAccount(account || null);
     setIsModalVisible(true);
   };
 
+  // Close modal
   const closeModal = () => {
     setIsModalVisible(false);
     setEditingAccount(null);
     form.resetFields();
   };
 
-  const handleOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        if (editingAccount) {
-          const updated = accounts.map((acc) =>
-            acc.id === editingAccount.id ? { ...acc, ...values } : acc
-          );
-          console.log("Bank account updated:", values);
-          setAccounts(updated);
-        } else {
-          const newAccount = {
-            id: Date.now(),
-            ...values,
-            isDefault: accounts.length === 0, // first account default
-          };
-          console.log("Bank account added:", newAccount);
-          setAccounts([...accounts, newAccount]);
-        }
-        closeModal();
-      })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
-      });
-  };
+  // Save (Add / Update)
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
 
-  const handleDelete = (id) => {
-    const filtered = accounts.filter((acc) => acc.id !== id);
-    console.log("Bank account deleted:", id);
-    const wasDefault = accounts.find((acc) => acc.id === id)?.isDefault;
-    // If deleted account was default, reset default to first account if available
-    if (wasDefault && filtered.length) {
-      filtered[0].isDefault = true;
+      const formData = new FormData();
+      formData.append("bank_name", values.bank_name);
+      formData.append("account_number", values.account_number);
+      formData.append("ifsc_code", values.ifsc_code);
+      formData.append("bank_type", values.bank_type.toLowerCase());
+
+      if (editingAccount) {
+        await updatebank({ id: editingAccount.id, formData }).unwrap();
+        toast.success("Bank account updated successfully");
+      } else {
+        await addbank(formData).unwrap();
+        toast.success("Bank account added successfully");
+      }
+
+      refetch();
+      closeModal();
+    } catch (err) {
+      console.error("Error saving bank account:", err);
+      toast.error("Failed to save bank account");
     }
-    setAccounts(filtered);
   };
 
-  const setDefaultAccount = (id) => {
-    const updated = accounts.map((acc) => ({
-      ...acc,
-      isDefault: acc.id === id,
-    }));
-    console.log("Set default bank account:", id);
-    setAccounts(updated);
+  // Delete
+  const handleDelete = async (id) => {
+    try {
+      await deletebank(id).unwrap();
+      toast.success("Bank account deleted successfully");
+      refetch();
+
+      // if deleted account was default, reset
+      if (defaultAccountId === id) {
+        setDefaultAccountId(null);
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+      toast.error("Failed to delete bank account");
+    }
   };
+
+  // Set default account
+  const handleSetDefault = (id) => {
+    setDefaultAccountId(id);
+    toast.info("Default bank account set");
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-40">
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -117,25 +133,25 @@ const AccountManagement = () => {
         {accounts.map((item) => (
           <div
             key={item.id}
-            className="border rounded-lg p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow"
+            className={`border rounded-lg p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow ${
+              defaultAccountId === item.id ? "border-indigo-500" : ""
+            }`}
           >
             <div>
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">
-                  {item.bankName}
+                  {item.bank_name}
                 </h3>
-                {item.isDefault && (
-                  <span className="text-xs text-white bg-indigo-600 px-2 py-1 rounded">
-                    Default
+                {defaultAccountId === item.id && (
+                  <span className="text-xs text-white bg-indigo-600 px-2 py-1 rounded flex items-center gap-1">
+                    <FaCheckCircle /> Default
                   </span>
                 )}
               </div>
-              <p className="text-gray-700 mt-1">{item.accountHolderName}</p>
               <p className="text-gray-600 mt-3 text-sm">
-                <span className="block">Acc No: {item.accountNumber}</span>
-                <span className="block">IFSC: {item.ifscCode}</span>
-                <span className="block">Branch: {item.branch || "-"}</span>
-                <span className="block">Type: {item.accountType}</span>
+                <span className="block">Acc No: {item.account_number}</span>
+                <span className="block">IFSC: {item.ifsc_code}</span>
+                <span className="block capitalize">Type: {item.bank_type}</span>
               </p>
             </div>
 
@@ -157,10 +173,10 @@ const AccountManagement = () => {
               </Button>
               <Button
                 size="small"
-                type={item.isDefault ? "primary" : "default"}
-                onClick={() => setDefaultAccount(item.id)}
+                type={defaultAccountId === item.id ? "primary" : "default"}
+                onClick={() => handleSetDefault(item.id)}
               >
-                {item.isDefault ? "Default" : "Set Default"}
+                {defaultAccountId === item.id ? "Default" : "Set Default"}
               </Button>
             </div>
           </div>
@@ -169,45 +185,24 @@ const AccountManagement = () => {
 
       <Modal
         title={editingAccount ? "Edit Bank Account" : "Add Bank Account"}
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleOk}
         onCancel={closeModal}
         okText={editingAccount ? "Update" : "Add"}
-        destroyOnClose={true}
+        destroyOnClose
       >
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{
-            bankName: "",
-            accountHolderName: "",
-            accountNumber: "",
-            ifscCode: "",
-            branch: "",
-            accountType: "Savings",
-          }}
-        >
+        <Form form={form} layout="vertical">
           <Form.Item
             label="Bank Name"
-            name="bankName"
+            name="bank_name"
             rules={[{ required: true, message: "Please enter bank name" }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item
-            label="Account Holder Name"
-            name="accountHolderName"
-            rules={[
-              { required: true, message: "Please enter account holder name" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
             label="Account Number"
-            name="accountNumber"
+            name="account_number"
             rules={[
               { required: true, message: "Please enter account number" },
               { pattern: /^\d+$/, message: "Account number must be numeric" },
@@ -218,11 +213,10 @@ const AccountManagement = () => {
 
           <Form.Item
             label="IFSC Code"
-            name="ifscCode"
+            name="ifsc_code"
             rules={[
               { required: true, message: "Please enter IFSC code" },
               {
-                pattern: /^[A-Za-z]{4}\d{7}$/,
                 message: "Invalid IFSC format (e.g., ABCD0123456)",
               },
             ]}
@@ -230,17 +224,13 @@ const AccountManagement = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item label="Branch" name="branch">
-            <Input />
-          </Form.Item>
-
           <Form.Item
             label="Account Type"
-            name="accountType"
+            name="bank_type"
             rules={[{ required: true, message: "Please select account type" }]}
           >
             <Select>
-              <Option value="Savings">Savings</Option>
+              <Option value="Saving">Savings</Option>
               <Option value="Current">Current</Option>
             </Select>
           </Form.Item>

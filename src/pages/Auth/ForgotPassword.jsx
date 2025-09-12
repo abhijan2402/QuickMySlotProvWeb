@@ -1,14 +1,14 @@
 // pages/ForgotPassword.jsx
 import { Form, Input, Button, message } from "antd";
-import { useForgotPasswordMutation } from "../../services/authApi";
+// import { useForgotPasswordMutation } from "../../services/authApi";
 
 export default function ForgotPassword() {
-  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+  // const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
 
   const handleForgot = async (values) => {
     try {
-      await forgotPassword(values).unwrap();
-      message.success("Password reset link/OTP sent!");
+      // await forgotPassword(values).unwrap();
+      // message.success("Password reset link/OTP sent!");
     } catch (err) {
       message.error("Failed to send reset instructions!");
     }
