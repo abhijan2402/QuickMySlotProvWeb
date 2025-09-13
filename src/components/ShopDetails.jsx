@@ -11,10 +11,12 @@ import {
   Col,
 } from "antd";
 import { PlusOutlined, EditOutlined } from "@ant-design/icons";
+import { useGetProfileQuery } from "../services/profileApi";
 
 const { Title, Text } = Typography;
 
 const ShopDetails = ({ initialData }) => {
+   const { data: profile, error, isLoading } = useGetProfileQuery();
   const [form] = Form.useForm();
   const [shopDetails, setShopDetails] = useState(initialData);
   const [editing, setEditing] = useState(false);
@@ -81,11 +83,11 @@ const ShopDetails = ({ initialData }) => {
         <Title level={3} className="m-0">
           Shop Details
         </Title>
-        {!editing && (
+        {/* {!editing && (
           <Button icon={<EditOutlined />} onClick={() => setEditing(true)}>
             Edit Details
           </Button>
-        )}
+        )} */}
       </div>
       {editing ? (
         <Form
@@ -242,42 +244,48 @@ const ShopDetails = ({ initialData }) => {
           <div className="md:w-2/3 flex flex-col justify-between">
             <div className="space-y-3 text-gray-800">
               <Title level={4} className="mb-1">
-                {shopDetails.shopName}
+                {profile?.data?.business_name}
               </Title>
 
               <div className="flex justify-between">
                 <Text strong>Vendor:</Text>
-                <span>{shopDetails.vendorName}</span>
+                <span>{profile?.data?.name}</span>
               </div>
 
               <div className="flex justify-between">
                 <Text strong>Mobile:</Text>
-                <span>{shopDetails.mobile}</span>
+                <span>{profile?.data?.phone_number}</span>
               </div>
 
               <div className="flex justify-between">
                 <Text strong>Opening Time:</Text>
-                <span>{shopDetails.opentime}</span>
+                <span>{profile?.data?.daily_start_time}</span>
               </div>
 
               <div className="flex justify-between">
                 <Text strong>Closing Time:</Text>
-                <span>{shopDetails.closetime}</span>
+                <span>{profile?.data?.daily_end_time}</span>
               </div>
 
               <div className="flex justify-between">
                 <Text strong>GST Number:</Text>
-                <span>{shopDetails.gstNo || "Not Provided"}</span>
+                <span>{profile?.data?.gstin_number || "Not Provided"}</span>
               </div>
 
               <div className="flex justify-between">
                 <Text strong>Description:</Text>
-                <p className="ml-4 flex-1">{shopDetails.description}</p>
+                <p className="ml-4 flex-1">
+                  {profile?.data?.business_description}
+                </p>
               </div>
 
               <div className="flex justify-between">
                 <Text strong>Address:</Text>
-                <p className="ml-4 flex-1">{shopDetails.address}</p>
+                <p className="ml-4 flex-1">
+                  {" "}
+                  {profile?.data?.location_area_served},{" "}
+                  {profile?.data?.exact_location}
+                </p>
               </div>
             </div>
           </div>

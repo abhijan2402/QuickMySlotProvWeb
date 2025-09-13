@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { FaUserAlt, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { CgLock } from "react-icons/cg";
 import { BsClock } from "react-icons/bs";
+import { useGetProfileQuery } from "../services/profileApi";
 
 const shopData = [
   {
@@ -16,8 +17,8 @@ const shopData = [
     description:
       "Unleash your beauty with expert styling and personalized care.",
     address: "123 Main Street, New Delhi",
-    opentime:"10:00AM",
-    closetime:"10:00PM",
+    opentime: "10:00AM",
+    closetime: "10:00PM",
     images: [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGF3MiZ7vAAl58bi9m6YHS4FYTevIZzpxX3A&s",
       "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=700&q=80",
@@ -28,7 +29,8 @@ const shopData = [
 
 export default function ShopDetailCards() {
   const navigate = useNavigate();
-
+  const { data: profile, error, isLoading } = useGetProfileQuery();
+  console.log(profile);
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -41,8 +43,17 @@ export default function ShopDetailCards() {
     pauseOnHover: true,
   };
 
-  const { id, vendorName, mobile, shopName, description, address, images, opentime, closetime } =
-    shopData[0];
+  const {
+    id,
+    vendorName,
+    mobile,
+    shopName,
+    description,
+    address,
+    images,
+    opentime,
+    closetime,
+  } = shopData[0];
 
   return (
     <section className="py-12 px-4 bg-white">
@@ -85,36 +96,42 @@ export default function ShopDetailCards() {
           {/* Details Panel */}
           <div className="lg:w-1/2 w-full p-8 flex flex-col justify-center gap-6 bg-purple-50">
             <h1 className="text-4xl font-extrabold text-purple-700">
-              {shopName}
+              {profile?.data?.business_name}
             </h1>
 
             <p className="text-lg text-gray-700 italic max-w-md">
-              {description}
+              {profile?.data?.business_description}
             </p>
 
             <div className="space-y-4 text-gray-700 max-w-md">
               <div className="flex items-center gap-3">
                 <FaUserAlt className="text-purple-600" />
                 <span className="font-semibold">Vendor:</span>
-                <span>{vendorName}</span>
+                <span>{profile?.data?.name}</span>
               </div>
 
               <div className="flex items-center gap-3">
                 <FaPhoneAlt className="text-purple-600" />
                 <span className="font-semibold">Mobile:</span>
-                <span>{mobile}</span>
+                <span>{profile?.data?.phone_number}</span>
               </div>
 
               <div className="flex items-center gap-3">
                 <FaMapMarkerAlt className="text-purple-600" />
                 <span className="font-semibold">Address:</span>
-                <span>{address}</span>
+                <span>
+                  {profile?.data?.location_area_served},{" "}
+                  {profile?.data?.exact_location}
+                </span>
               </div>
 
               <div className="flex items-center gap-3">
                 <BsClock className="text-purple-600" />
                 <span className="font-semibold">Time:</span>
-                <span>{opentime}-{closetime}</span>
+                <span>
+                  {profile?.data?.daily_start_time}-
+                  {profile?.data?.daily_end_time}
+                </span>
               </div>
             </div>
 

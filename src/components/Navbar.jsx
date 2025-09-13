@@ -22,7 +22,6 @@ export default function Navbar() {
   const user = useSelector((state) => state.auth.user);
   const { data: profile, error, isLoading } = useGetProfileQuery();
 
-
   // Example username for profile icon (replace with actual user data)
   const username = "JohnDoe";
 
@@ -68,8 +67,8 @@ export default function Navbar() {
   const wishlistCount = 3;
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full h-[85px] z-50 bg-white bg-opacity-90 backdrop-blur-md shadow-md transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <nav className="border fixed top-0 left-0 w-full py-2 z-50 justify-center items-center bg-white bg-opacity-90 backdrop-blur-md shadow-md transition-all duration-300">
+        <div className="max-w-7xl mx-auto py-0 flex items-center justify-center gap-20">
           {/* Right Part: Logo */}
 
           <div
@@ -83,81 +82,85 @@ export default function Navbar() {
             />
           </div>
 
-          {/* Center Part: Nav Items */}
-          {!isMinimalPage && (
-            <ul className="hidden md:flex gap-6 text-[#000] font-medium">
-              {navItems.map((item) => (
-                <li
-                  key={item}
-                  onClick={() => handleClick(item)}
-                  className={`cursor-pointer px-3 py-1 rounded transition ${
-                    active === item
-                      ? "bg-[#6961ab] text-white"
-                      : "hover:bg-[#eee]"
-                  }`}
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
-          )}
+          <div>
+            {/* Center Part: Nav Items */}
+            {!isMinimalPage && (
+              <ul className="hidden md:flex gap-6 text-[#000] font-medium">
+                {navItems.map((item) => (
+                  <li
+                    key={item}
+                    onClick={() => handleClick(item)}
+                    className={`cursor-pointer px-3 text-sm py-1 rounded transition ${
+                      active === item
+                        ? "bg-[#6961ab] text-white"
+                        : "hover:bg-[#eee]"
+                    }`}
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
-          {/* Left Part: Wishlist, Location, User Profile */}
-          {!isMinimalPage && (
-            <div className="hidden md:flex items-center gap-4">
-              <button
-                onClick={() => navigate("/notifications")}
-                className="relative p-2  rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
-              >
-                <div
-                  className="relative p-1  rounded-full border bg-[#6961ab] border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                  }}
+          <div>
+            {/* Left Part: Wishlist, Location, User Profile */}
+            {!isMinimalPage && (
+              <div className="hidden md:flex items-center  gap-4">
+                <button
+                  onClick={() => navigate("/notifications")}
+                  className="relative p-2  rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
                 >
-                  <span className=" text-center text-[#fff] text-sm">
-                    {" "}
-                    <BsBellFill />
-                  </span>
-                  {/* {wishlistCount > 0 && (
+                  <div
+                    className="relative p-1  rounded-full border bg-[#6961ab] border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <span className=" text-center text-[#fff] text-sm">
+                      {" "}
+                      <BsBellFill />
+                    </span>
+                    {/* {wishlistCount > 0 && (
                     <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"></span>
                   )} */}
-                </div>
-              </button>
+                  </div>
+                </button>
 
-              <button
-                onClick={() => navigate("/profile")}
-                className="relative p-2 rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
-              >
-                <div
-                  className="w-6 h-6 rounded-full bg-[#6961ab] text-white flex items-center justify-center font-semibold cursor-pointer select-none"
-                  title={username}
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="relative p-2 rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition duration-300"
                 >
-                  {username.charAt(0).toUpperCase()}
-                </div>
-              </button>
-              <div
-                role="button"
-                className="flex items-center space-x-3 bg-white rounded-lg px-4 py-2 border border-gray-300 hover:shadow-md transition-shadow duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7C0902]"
-                title="Click to select a different location"
-              >
-                <div className="flex items-center space-x-2">
-                  <MdOutlineMyLocation
-                    className="w-5 h-5 text-[#6961ab] "
-                    aria-hidden="true"
-                  />
-                  <div className="flex flex-col leading-none">
-                    <span className="font-bold text-[#6961ab] text-[14px]">
-                      {profile?.data?.location_area_served || "NA"}
-                    </span>
-                    <p className="text-[10px] mt-1 text-gray-600">
-                      {profile?.data?.exact_location || "NA"}
-                    </p>
+                  <div
+                    className="w-6 h-6 rounded-full bg-[#6961ab] text-white flex items-center justify-center font-semibold cursor-pointer select-none"
+                    title={username}
+                  >
+                    {username.charAt(0).toUpperCase()}
+                  </div>
+                </button>
+                <div
+                  role="button"
+                  className="flex items-center space-x-3 bg-white rounded-lg px-4 py-2 border border-gray-300 hover:shadow-md transition-shadow duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7C0902]"
+                  title="Click to select a different location"
+                >
+                  <div className="flex items-center space-x-2">
+                    <MdOutlineMyLocation
+                      className="w-5 h-5 text-[#6961ab] "
+                      aria-hidden="true"
+                    />
+                    <div className="flex flex-col leading-none">
+                      <span className="font-bold text-[#6961ab] text-[14px]">
+                        {profile?.data?.location_area_served || "NA"}
+                      </span>
+                      <p className="text-[10px] mt-1 text-gray-600">
+                        {profile?.data?.exact_location || "NA"}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Mobile Menu Toggle */}
           <div className="flex gap-4">
