@@ -1,5 +1,5 @@
 import { BellOutlined, ClockCircleOutlined } from "@ant-design/icons";
-import { useGetnotificationQuery } from "../services/notification.Api";
+import { useGetnotificationQuery } from "../services/notificationApi";
 
 // Dummy notifications data
 const notifications = [
@@ -49,8 +49,7 @@ const notifications = [
 ];
 
 export default function NotificationsPage() {
-  const { data } = useGetnotificationQuery();
-  console.log(data)
+  const { data, isLoading } = useGetnotificationQuery();
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}

@@ -14,12 +14,14 @@ import { BsBellFill } from "react-icons/bs";
 import { CiLocationOn } from "react-icons/ci";
 import { useSelector } from "react-redux";
 import { MdOutlineMyLocation } from "react-icons/md";
+import { useGetProfileQuery } from "../services/profileApi";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((state) => state.auth.user);
-  console.log(user);
+  const { data: profile, error, isLoading } = useGetProfileQuery();
+
 
   // Example username for profile icon (replace with actual user data)
   const username = "JohnDoe";
@@ -146,10 +148,10 @@ export default function Navbar() {
                   />
                   <div className="flex flex-col leading-none">
                     <span className="font-bold text-[#6961ab] text-[14px]">
-                      {user?.location_area_served || "NA"}
+                      {profile?.data?.location_area_served || "NA"}
                     </span>
                     <p className="text-[10px] mt-1 text-gray-600">
-                      {user?.exact_location || "NA"}
+                      {profile?.data?.exact_location || "NA"}
                     </p>
                   </div>
                 </div>
@@ -173,10 +175,10 @@ export default function Navbar() {
                     />
                     <div className="flex flex-col leading-none">
                       <span className="font-bold text-[#6961ab] text-[14px]">
-                        {user?.location_area_served || "NA"}
+                        {profile?.data?.location_area_served || "NA"}
                       </span>
                       <p className="text-[10px] mt-1 text-gray-600">
-                        {user?.exact_location || "NA"}
+                        {profile?.data?.exact_location || "NA"}
                       </p>
                     </div>
                   </div>

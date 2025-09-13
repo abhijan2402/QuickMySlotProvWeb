@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-export const notificationApi = createApi({
-  reducerPath: "notificationApi",
+export const supportApi = createApi({
+  reducerPath: "supportApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "https://lemonchiffon-walrus-503913.hostingersite.com/public/api/",
     prepareHeaders: (headers, { getState }) => {
@@ -10,15 +10,23 @@ export const notificationApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    // Get notification (GET request)
-    getnotification: builder.query({
+    // Get support (GET request)
+    getsupport: builder.query({
       query: () => ({
-        url: "notifications/list",
+        url: `support`,
         method: "GET",
       }),
-      providesTags: ["notification"],
+      providesTags: ["support"],
+    }),
+    addsupport: builder.mutation({
+      query: (formData) => ({
+        url: `support`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["support"],
     }),
   }),
 });
 
-export const { useGetnotificationQuery } = notificationApi;
+export const { useGetsupportQuery, useAddsupportMutation } = supportApi;

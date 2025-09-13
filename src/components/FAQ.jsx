@@ -1,5 +1,5 @@
 import { Collapse, Empty, Spin } from "antd";
-import { useGetfaqQuery } from "../services/faq.Api";
+import { useGetfaqQuery } from "../services/faqApi";
 const { Panel } = Collapse;
 
 const FAQ = () => {

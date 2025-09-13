@@ -5,12 +5,15 @@ import { profileApi } from "../services/profileApi";
 import { categoryApi } from "../services/categoryApi";
 import { manageServicesApi } from "../services/manageServicesApi";
 import { subscriptionApi } from "../services/subscriptionApi";
-import { faqApi } from "../services/faq.Api";
 import { cmsApi } from "../services/cmsApi";
 import { bankApi } from "../services/bankApi";
 import { analyticsApi } from "../services/analyticsApi";
 import { offerApi } from "../services/offersApi";
-import { notificationApi } from "../services/notification.Api";
+import { walletApi } from "../services/walletApi";
+import { vendorTransactionApi } from "../services/vendorTransactionListApi";
+import { notificationApi } from "../services/notificationApi";
+import { faqApi } from "../services/faqApi";
+import { supportApi } from "../services/supportApi";
 
 const store = configureStore({
   reducer: {
@@ -25,6 +28,9 @@ const store = configureStore({
     [analyticsApi.reducerPath]: analyticsApi.reducer,
     [offerApi.reducerPath]: offerApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
+    [walletApi.reducerPath]: walletApi.reducer,
+    [vendorTransactionApi.reducerPath]: vendorTransactionApi.reducer,
+    [supportApi.reducerPath]: supportApi.reducer,
     auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -39,6 +45,9 @@ const store = configureStore({
       analyticsApi.middleware,
       offerApi.middleware,
       notificationApi.middleware,
+      walletApi.middleware,
+      vendorTransactionApi.middleware,
+      supportApi.middleware,
       subscriptionApi.middleware
     ),
 });
