@@ -46,6 +46,8 @@ export default function MySubServices() {
   const [updateServices, { isLoading: updating }] = useUpdateServicesMutation();
   const [deleteServices, { isLoading: deleting }] = useDeleteServicesMutation();
 
+  console.log(data);
+
   const [subServices, setSubServices] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSubService, setEditingSubService] = useState(null);

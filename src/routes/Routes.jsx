@@ -3,9 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
-import SignIn from "../pages/Auth/SignIn";
 import SignUp from "../pages/Auth/SignUp";
-import ForgotPassword from "../pages/Auth/ForgotPassword";
 import ProtectedRoute from "./ProtectedRoute";
 import ManageServicesPage from "../pages/ManageServices/ManageServicesPage";
 import NotificationsPage from "../pages/NotificationsPage";
@@ -20,9 +18,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
 
       {/* Protected Routes */}
       <Route

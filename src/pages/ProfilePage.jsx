@@ -357,6 +357,7 @@ export default function ProfilePage() {
             business_name: profile?.data?.business_name,
             location_area_served: profile?.data?.location_area_served,
             service_category: profile?.data?.service_category,
+            website: profile?.data?.business_website,
           }}
           onFinish={onFinish}
         >

@@ -30,10 +30,6 @@ const FAQ = () => {
             <Collapse ghost>
               <Panel header={faq.question} key={`q-${faq.id}`}>
                 <p>{faq.answer}</p>
-                <div className="mt-2 text-sm text-gray-500">
-                  Added by:{" "}
-                  <span className="font-medium">{faq.user?.name ?? "N/A"}</span>
-                </div>
               </Panel>
             </Collapse>
           </Panel>

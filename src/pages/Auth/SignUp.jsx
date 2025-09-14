@@ -133,9 +133,29 @@ export default function Signup() {
                 <Form.Item
                   name="phone_number"
                   label="Phone Number"
-                  rules={[{ required: true }]}
+                  rules={[
+                    { required: true, message: "Phone number is required" },
+                    {
+                      pattern: /^\d{10}$/,
+                      message: "Phone number must be exactly 10 digits",
+                    },
+                  ]}
                 >
-                  <Input placeholder="1234567890" size="large" />
+                  <Input
+                    placeholder="1234567890"
+                    size="large"
+                    maxLength={10}
+                    minLength={10}
+                    type="tel"
+                    inputMode="numeric"
+                    pattern="\d*"
+                    onChange={(e) => {
+                      const val = e.target.value
+                        .replace(/[^\d]/g, "")
+                        .slice(0, 10);
+                      form.setFieldsValue({ phone_number: val });
+                    }}
+                  />
                 </Form.Item>
 
                 <Button

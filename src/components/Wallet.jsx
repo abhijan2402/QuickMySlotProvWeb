@@ -53,7 +53,9 @@ const Wallet = () => {
       dataIndex: "type",
       key: "type",
       render: (type) => (
-        <span className="font-medium text-gray-700">{type}</span>
+        <span className="font-medium text-gray-700">
+          {type === "credit" && "credited"}
+        </span>
       ),
     },
     {

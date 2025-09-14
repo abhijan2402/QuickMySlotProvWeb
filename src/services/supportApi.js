@@ -13,14 +13,14 @@ export const supportApi = createApi({
     // Get support (GET request)
     getsupport: builder.query({
       query: () => ({
-        url: `support`,
+        url: `supports`,
         method: "GET",
       }),
       providesTags: ["support"],
     }),
     addsupport: builder.mutation({
       query: (formData) => ({
-        url: `support`,
+        url: `supports`,
         method: "POST",
         body: formData,
       }),

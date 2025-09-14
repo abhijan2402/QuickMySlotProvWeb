@@ -230,7 +230,7 @@ const AccountManagement = () => {
             rules={[{ required: true, message: "Please select account type" }]}
           >
             <Select>
-              <Option value="Saving">Savings</Option>
+              <Option value="Saving">Saving</Option>
               <Option value="Current">Current</Option>
             </Select>
           </Form.Item>
