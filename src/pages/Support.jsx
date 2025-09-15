@@ -57,19 +57,22 @@ export default function Support() {
     },
     {
       title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-medium ${
-            status === "Resolved"
-              ? "bg-green-100 text-green-700"
-              : "bg-yellow-100 text-yellow-700"
-          }`}
-        >
-          {status}
-        </span>
-      ),
+      dataIndex: "replyed_by",
+      key: "replyed_by",
+      render: (status) => {
+        const isResolved = status !== null && status !== undefined;
+        return (
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-medium ${
+              isResolved
+                ? "bg-green-100 text-green-700"
+                : "bg-yellow-100 text-yellow-700"
+            }`}
+          >
+            {isResolved ? "Resolved" : "Pending"}
+          </span>
+        );
+      },
     },
   ];
 

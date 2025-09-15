@@ -33,6 +33,7 @@ import {
 import { toast } from "react-toastify";
 import { useGetsubscriptionQuery } from "../services/subscriptionApi";
 import { logout } from "../slices/authSlice";
+import { useGetcategoryQuery } from "../services/categoryApi";
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -67,7 +68,7 @@ const promotionPlans = [
 
 export default function ProfilePage() {
   const user = useSelector((state) => state.auth.user);
-
+  const { data: category } = useGetcategoryQuery();
   const { data: currentPlan } = useGetsubscriptionQuery();
   const { data: profile, error, isLoading } = useGetProfileQuery();
   const navigate = useNavigate();
@@ -77,7 +78,7 @@ export default function ProfilePage() {
   const [boostModalOpen, setBoostModalOpen] = useState(false);
   const [forgotModalOpen, setForgotModalOpen] = useState(false);
 
-  console.log(profile);
+  console.log(category?.data);
 
   const dispatch = useDispatch();
 
@@ -142,16 +143,32 @@ export default function ProfilePage() {
     closeForgotModal();
   };
 
-  const defaultFileList = profile?.data?.image_url
+  const defaultFileList = profile?.data?.image
     ? [
         {
           uid: "-1", // unique id (must be string)
-          name: "profile.png", // a filename
+          name: "profile.jpg", // a filename
           status: "done", // marks file as uploaded
           url: profile?.data?.image, // image URL for preview
         },
       ]
     : [];
+
+  const [fileList, setFileList] = React.useState(defaultFileList);
+  React.useEffect(() => {
+    if (profile?.data?.image) {
+      setFileList([
+        {
+          uid: "-1",
+          name: "profile.jpg",
+          status: "done",
+          url: profile.data.image,
+        },
+      ]);
+    } else {
+      setFileList([]);
+    }
+  }, [profile?.data?.image]);
 
   return (
     <div className="max-w-full sm:max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 space-y-8">
@@ -350,7 +367,7 @@ export default function ProfilePage() {
         <Form
           layout="vertical"
           initialValues={{
-            profile_picture: defaultFileList,
+            image: fileList,
             name: profile?.data?.name,
             email: profile?.data?.email,
             phone: profile?.data?.phone_number,
@@ -358,6 +375,8 @@ export default function ProfilePage() {
             location_area_served: profile?.data?.location_area_served,
             service_category: profile?.data?.service_category,
             website: profile?.data?.business_website,
+            location_area_served: profile?.data?.location_area_served,
+            exact_location: profile?.data?.exact_location,
           }}
           onFinish={onFinish}
         >
@@ -365,16 +384,32 @@ export default function ProfilePage() {
             label="Profile Image"
             name="image"
             valuePropName="fileList"
-            getValueFromEvent={(e) => e && e.fileList}
+            getValueFromEvent={(e) => (Array.isArray(e) ? e : e && e.fileList)}
           >
             <Upload
               beforeUpload={() => false}
               listType="picture"
               maxCount={1}
               accept="image/*"
+              fileList={fileList}
+              onChange={({ fileList }) => setFileList(fileList)}
             >
               <Button icon={<UploadOutlined />}>Click to Upload</Button>
             </Upload>
+          </Form.Item>
+
+          <Form.Item
+            name="service_category"
+            label="Services Category"
+            rules={[{ required: true, message: "Please select a category!" }]}
+          >
+            <Select placeholder="Select category" size="medium">
+              {category?.data?.map((cat) => (
+                <Select.Option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -401,28 +436,12 @@ export default function ProfilePage() {
             <Input placeholder="Enter your phone number" />
           </Form.Item>
 
-          <Form.Item label="Address" name="address">
-            <Input placeholder="Enter your complete address" />
-          </Form.Item>
-
-          <Form.Item label="City" name="city">
+          <Form.Item label="City" name="location_area_served">
             <Input placeholder="Enter your city" />
           </Form.Item>
 
-          <Form.Item label="State" name="state">
-            <Input placeholder="Enter your state" />
-          </Form.Item>
-
-          <Form.Item label="Country" name="country">
-            <Input placeholder="Enter your country" />
-          </Form.Item>
-
-          <Form.Item label="Zip Code" name="zip_code">
-            <Input placeholder="Enter your Zip/Pin Code" />
-          </Form.Item>
-
-          <Form.Item label="Company Name" name="company_name">
-            <Input placeholder="Enter your Company Name" />
+          <Form.Item label="Address" name="exact_location">
+            <Input placeholder="Enter your complete address" />
           </Form.Item>
 
           <Form.Item label="Website" name="website">
@@ -435,22 +454,6 @@ export default function ProfilePage() {
 
           <Form.Item label="Services Location Area" name="location_area_served">
             <Input placeholder="Enter your service location area" />
-          </Form.Item>
-
-          <Form.Item
-            name="service_category"
-            label="Services Category"
-            rules={[{ required: true }]}
-          >
-            <Select placeholder="Select category" size="medium">
-              <Option value="salon">Salon</Option>
-              <Option value="healthcare">Healthcare</Option>
-              <Option value="spa">Spa</Option>
-              <Option value="pet_clinic">Pet Clinic</Option>
-              <Option value="automotive_car">Automotive Car</Option>
-              <Option value="retail_designer">Retail/Designer</Option>
-              <Option value="tattoo_piercing">Tattoo & Piercing</Option>
-            </Select>
           </Form.Item>
 
           <Form.Item className="text-right">

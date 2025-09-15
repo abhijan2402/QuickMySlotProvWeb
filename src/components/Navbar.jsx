@@ -187,7 +187,7 @@ export default function Navbar() {
                     ${
                       active === item
                         ? "bg-[#6961ab] text-white"
-                        : "hover:bg-[#eee]"
+                        : "hover:bg-[#eee] text-black"
                     }`}
                 >
                   {item}

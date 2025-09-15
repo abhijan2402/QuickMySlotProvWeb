@@ -20,20 +20,18 @@ export default function ManageServicesPage() {
         <TabPane tab="My Services" key="1">
           <div className="p-4">
             <p className="text-gray-600">
-              Here you can manage all your **main services**.
-            </p>
-            <MyServices />
-            {/* 🔹 Add your My Services list / table / components here */}
-          </div>
-        </TabPane>
-
-        <TabPane tab="My Sub Services" key="2">
-          <div className="p-4">
-            <p className="text-gray-600">
-              Here you can manage all your **sub services** under categories.
+              Here you can manage all your **services** under sub services.
             </p>
             <MySubServices />
-            {/* 🔹 Add your My Sub Services list / table / components here */}
+          </div>
+        </TabPane>
+        <TabPane tab="My Sub-Services" key="2">
+          <div className="p-4">
+            <p className="text-gray-600">
+              Here you can manage all your **sub services** under business
+              category.
+            </p>
+            <MyServices />
           </div>
         </TabPane>
       </Tabs>

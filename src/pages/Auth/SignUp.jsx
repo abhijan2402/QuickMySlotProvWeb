@@ -7,25 +7,27 @@ import {
   useSignupMutation,
   useVerifyOtpMutation,
 } from "../../services/authApi";
-import { logout, setCredentials } from "../../slices/authSlice";
+import { logout, setToken, setUser } from "../../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Password from "antd/es/input/Password";
 import AvailabilityModal from "./AvailabilityModal";
 import ProfileModal from "./ProfileModal";
+import { useGetProfileQuery } from "../../services/profileApi";
 
 const { Option } = Select;
 
 export default function Signup() {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [step, setStep] = useState("form"); // form | otp
+  const [step, setStep] = useState("form");
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [userID, setUserID] = useState("");
-  const [token, setToken] = useState("");
-  const [otp, setOtp] = useState(Array(6).fill("")); // 6-digit OTP
+  // const [token, setToken] = useState("");
+  const [otp, setOtp] = useState(Array(6).fill(""));
   const inputRefs = useRef([]);
 
+  const { data: profile } = useGetProfileQuery();
   const [signup, { isLoading: signingUp }] = useSignupMutation();
   const [verifyOtp, { isLoading: verifying }] = useVerifyOtpMutation();
   const [resendOtp, { isLoading: resending }] = useResendOtpMutation();
@@ -62,14 +64,18 @@ export default function Signup() {
         otp: finalOtp,
         user_id: userID,
       }).unwrap();
-      console.log(res?.user);
-      dispatch(setCredentials(res));
-      // setToken(res?.token);
+      console.log("user before login", res?.user);
+      dispatch(setToken(res?.token));
+
       if (res?.user?.steps == null || res?.user?.steps === "1") {
         setShowProfileModal(true);
       } else if (res?.user?.steps === "2") {
         setShowAvailabilityModal(true);
       } else if (res?.user?.steps === "3") {
+        // const profileResult = await dispatch(
+        //   profile.endpoints.getProfile.initiate()
+        // ).unwrap();
+        // dispatch(setUser(profileResult?.data));
         toast.success("Signup successful!");
         navigate("/");
       }
@@ -247,7 +253,6 @@ export default function Signup() {
           setShowAvailabilityModal(true);
         }}
         userID={userID}
-        token={token}
       />
 
       {/* ✅ Availability Modal */}

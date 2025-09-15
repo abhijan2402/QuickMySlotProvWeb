@@ -14,6 +14,7 @@ import {
   message,
   TimePicker,
   Tag,
+  DatePicker,
 } from "antd";
 import {
   PlusOutlined,
@@ -45,8 +46,6 @@ export default function MySubServices() {
   const [addServices, { isLoading: adding }] = useAddServicesMutation();
   const [updateServices, { isLoading: updating }] = useUpdateServicesMutation();
   const [deleteServices, { isLoading: deleting }] = useDeleteServicesMutation();
-
-  console.log(data);
 
   const [subServices, setSubServices] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -115,6 +114,13 @@ export default function MySubServices() {
       formdata.append(`peak_hours[${timeStr}]`, p.value);
     });
 
+    // Availability (Dates with multiple time slots)
+    values.availability?.forEach((item) => {
+      const dateStr = item.date.format("DD/MM/YYYY");
+      const slots = item.slots?.map((t) => t.format("hh:mm A")) || [];
+      formdata.append(`date[${dateStr}]`, JSON.stringify(slots));
+    });
+
     // Images
     values.images?.forEach((file) => {
       if (file.originFileObj) formdata.append("image", file.originFileObj);
@@ -155,7 +161,7 @@ export default function MySubServices() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-        <h2 className="text-xl font-semibold text-black">My Sub Services</h2>
+        <h2 className="text-xl font-semibold text-black">My Services</h2>
         <Button
           type="primary"
           icon={<PlusOutlined />}
@@ -350,6 +356,71 @@ export default function MySubServices() {
               <Option value="Unisex">Unisex</Option>
             </Select>
           </Form.Item>
+
+          {/* Availability (Dates + Time Slots) */}
+          <Form.List name="availability">
+            {(fields, { add, remove }) => (
+              <div className="space-y-2">
+                <label className="font-medium">Availability</label>
+                {fields.map(({ key, name, ...restField }) => (
+                  <div key={key} className="border p-3 rounded-lg space-y-2">
+                    {/* Date Picker */}
+                    <Form.Item
+                      {...restField}
+                      name={[name, "date"]}
+                      label="Select Date"
+                      rules={[{ required: true, message: "Select a date" }]}
+                    >
+                      <DatePicker format="DD/MM/YYYY" />
+                    </Form.Item>
+
+                    {/* Time Slots for this Date */}
+                    <Form.List name={[name, "slots"]}>
+                      {(slotFields, { add: addSlot, remove: removeSlot }) => (
+                        <>
+                          {slotFields.map(
+                            ({ key: slotKey, name: slotName, ...slotRest }) => (
+                              <Space
+                                key={slotKey}
+                                className="flex"
+                                align="baseline"
+                              >
+                                <Form.Item
+                                  {...slotRest}
+                                  name={slotName}
+                                  rules={[
+                                    { required: true, message: "Select time" },
+                                  ]}
+                                >
+                                  <TimePicker format="hh:mm A" use12Hours />
+                                </Form.Item>
+                                <Button
+                                  danger
+                                  onClick={() => removeSlot(slotName)}
+                                >
+                                  Delete
+                                </Button>
+                              </Space>
+                            )
+                          )}
+                          <Button type="dashed" onClick={() => addSlot()} block>
+                            + Add Time Slot
+                          </Button>
+                        </>
+                      )}
+                    </Form.List>
+
+                    <Button danger onClick={() => remove(name)} block>
+                      Remove Date
+                    </Button>
+                  </div>
+                ))}
+                <Button type="dashed" onClick={() => add()} block>
+                  + Add Date
+                </Button>
+              </div>
+            )}
+          </Form.List>
 
           {/* Addons */}
           <Form.List name="addons">

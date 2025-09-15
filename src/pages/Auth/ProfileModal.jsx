@@ -1,11 +1,10 @@
 import React from "react";
-import { Modal, Form, Input, Upload, Button, Select, InputNumber } from "antd";
+import { Modal, Form, Input, Upload, Button, Select } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { useSetProfileMutation } from "../../services/authApi";
 import { useGetcategoryQuery } from "../../services/categoryApi";
 
-const { Dragger } = Upload;
 const { Option } = Select;
 
 export default function ProfileModal({ visible, onClose, onNext, userID }) {
@@ -13,15 +12,18 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
   const { data: category } = useGetcategoryQuery();
   const [form] = Form.useForm();
 
+  // Normalize event to retrieve fileList from Upload component events
   const normFile = (e) => {
     if (Array.isArray(e)) return e;
     return e && e.fileList;
   };
 
+  // Handle form submission
   const handleFinish = async (values) => {
     try {
       const fd = new FormData();
 
+      // Helper to append single file
       const pushSingleFile = (fieldValue, key) => {
         if (fieldValue && fieldValue.length > 0) {
           const file = fieldValue[0].originFileObj || fieldValue[0];
@@ -29,11 +31,13 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
         }
       };
 
+      // Append all document fields (single file each)
       pushSingleFile(values.photo, "photo_verification");
       pushSingleFile(values.business_proof, "business_proof");
       pushSingleFile(values.aadhaar, "adhaar_card_verification");
       pushSingleFile(values.pan, "pan_card");
 
+      // Append business-related fields
       fd.append("business_description", values.about || "");
       fd.append("years_of_experience", values.experience || "");
       fd.append("exact_location", values.location || "");
@@ -41,8 +45,18 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
       fd.append("gstin_number", values.gstin || "");
       fd.append("user_id", userID);
 
-      // ✅ Category required
+      // Required category field (single select with id)
       fd.append("service_category", values.service_category);
+
+      // Append multiple portfolio images (if any)
+      if (values.portfolio && values.portfolio.length > 0) {
+        values.portfolio.forEach((file, index) => {
+          const originFile = file.originFileObj || file;
+          if (originFile) {
+            fd.append("portfolio_images[]", originFile);
+          }
+        });
+      }
 
       await setProfile(fd)
         .unwrap()
@@ -60,10 +74,10 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
     }
   };
 
-  const uploadProps = {
+  // Upload config shared by single file Upload.Dragger components
+  const singleFileUploadProps = {
     beforeUpload: () => false,
     maxCount: 1,
-    listType: "picture-card",
     accept: "image/*",
   };
 
@@ -93,13 +107,17 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
           },
         }}
       >
-        {/* ✅ Category Dropdown */}
+        {/* Business Category Dropdown */}
         <Form.Item
           name="service_category"
           label="Select Business Category"
           rules={[{ required: true }]}
         >
-          <Select placeholder="Choose a category">
+          <Select
+            placeholder="Choose a category"
+            showSearch
+            optionFilterProp="children"
+          >
             {category?.data?.map((cat) => (
               <Option key={cat.id} value={cat.id}>
                 {cat.name}
@@ -108,85 +126,130 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
           </Select>
         </Form.Item>
 
-        {/* Photo Verification */}
+        {/* Photo Verification (Single Image) */}
         <Form.Item
           name="photo"
           label="Photo Verification"
           valuePropName="fileList"
           getValueFromEvent={normFile}
-          rules={[{ required: true }]}
+          rules={[
+            {
+              required: true,
+              message: "Please upload a photo verification image.",
+            },
+          ]}
         >
-          <Upload.Dragger {...uploadProps}>
-            <p className="ant-upload-drag-icon">
+          <Upload.Dragger {...singleFileUploadProps}>
+            <p className="text-[20px]">
               <InboxOutlined style={{ color: "#6961AB" }} />
             </p>
-            <p className="ant-upload-text">Click or drag photo to upload</p>
+            <p>Click or drag photo to upload</p>
           </Upload.Dragger>
         </Form.Item>
 
-        {/* Business Proof */}
+        {/* Business Proof (Single Image) */}
         <Form.Item
           name="business_proof"
           label="Business Proof"
           valuePropName="fileList"
           getValueFromEvent={normFile}
-          rules={[{ required: true }]}
+          rules={[
+            {
+              required: true,
+              message: "Please upload business proof document.",
+            },
+          ]}
         >
-          <Upload.Dragger {...uploadProps}>
-            <p className="ant-upload-drag-icon">
+          <Upload.Dragger {...singleFileUploadProps}>
+            <p className="text-[20px]">
               <InboxOutlined style={{ color: "#6961AB" }} />
             </p>
-            <p className="ant-upload-text">Click or drag file to upload</p>
+            <p>Click or drag file to upload</p>
           </Upload.Dragger>
         </Form.Item>
 
-        {/* Aadhaar */}
+        {/* Aadhaar Card (Single Image) */}
         <Form.Item
           name="aadhaar"
           label="Aadhaar Card"
           valuePropName="fileList"
           getValueFromEvent={normFile}
-          rules={[{ required: true }]}
+          rules={[{ required: true, message: "Please upload Aadhaar card." }]}
         >
-          <Upload.Dragger {...uploadProps}>
-            <p className="ant-upload-drag-icon">
+          <Upload.Dragger {...singleFileUploadProps}>
+            <p className="text-[20px]">
               <InboxOutlined style={{ color: "#6961AB" }} />
             </p>
-            <p className="ant-upload-text">Upload Aadhaar (front/back)</p>
+            <p>Upload Aadhaar (front/back)</p>
           </Upload.Dragger>
         </Form.Item>
 
-        {/* PAN */}
+        {/* PAN Card (Single Image) */}
         <Form.Item
           name="pan"
           label="PAN Card"
           valuePropName="fileList"
           getValueFromEvent={normFile}
-          rules={[{ required: true }]}
+          rules={[{ required: true, message: "Please upload PAN card." }]}
         >
-          <Upload.Dragger {...uploadProps}>
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined style={{ color: "#6961AB" }} />
-            </p>
-            <p className="ant-upload-text">Upload PAN card</p>
-          </Upload.Dragger>
+            <Upload.Dragger {...singleFileUploadProps}>
+              <p className="text-[20px]">
+                <InboxOutlined style={{ color: "#6961AB" }} />
+              </p>
+              <p className="">Upload PAN card</p>
+            </Upload.Dragger>
         </Form.Item>
 
-        {/* About */}
+        {/* Portfolio Images (Multiple Images) */}
+        <Form.Item
+          name="portfolio"
+          label="Portfolio Images"
+          valuePropName="fileList"
+          getValueFromEvent={normFile}
+          rules={[
+            {
+              required: true,
+              message: "Please upload at least 1 photo",
+              validator: (_, value) =>
+                value && value.length >= 1
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Please upload at least 1 photo")),
+            },
+          ]}
+        >
+          <Upload
+            multiple
+            maxCount={10}
+            accept="image/*"
+            listType="picture-card"
+            beforeUpload={() => false}
+          >
+            <div>
+              <InboxOutlined style={{ color: "#6961AB", fontSize: 28 }} />
+              <div style={{ marginTop: 8, fontSize: 10 }}>
+                Click or drag photos to upload
+              </div>
+            </div>
+          </Upload>
+        </Form.Item>
+
+        {/* About Business */}
         <Form.Item
           name="about"
           label="About Your Business"
-          rules={[{ required: true }]}
+          rules={[
+            { required: true, message: "Please describe your business." },
+          ]}
         >
           <Input.TextArea rows={3} placeholder="Brief description" />
         </Form.Item>
 
-        {/* Experience */}
+        {/* Years of Experience */}
         <Form.Item
           name="experience"
           label="Years of Experience"
           rules={[
-            { required: true },
+            { required: true, message: "Please enter years of experience." },
             {
               pattern: /^[0-9]+$/,
               message: "Please enter a valid number",
@@ -204,17 +267,17 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
             }}
           />
         </Form.Item>
-        
-        {/* Location */}
+
+        {/* Exact Location */}
         <Form.Item
           name="location"
           label="Exact Location"
-          rules={[{ required: true }]}
+          rules={[{ required: true, message: "Please enter the location." }]}
         >
           <Input placeholder="Branch / city / street address" />
         </Form.Item>
 
-        {/* Website - optional */}
+        {/* Website */}
         <Form.Item
           name="website"
           label="Business Website"
@@ -228,7 +291,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
           <Input placeholder="https://your-business.com" />
         </Form.Item>
 
-        {/* GSTIN */}
+        {/* GSTIN Number */}
         <Form.Item
           name="gstin"
           label="GSTIN No."

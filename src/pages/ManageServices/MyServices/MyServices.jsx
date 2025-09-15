@@ -120,7 +120,7 @@ export default function MyServices() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-        <h2 className="text-xl font-semibold text-black">My Services</h2>
+        <h2 className="text-xl font-semibold text-black">My Sub Services</h2>
         <Button
           type="primary"
           icon={<PlusOutlined />}
