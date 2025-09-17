@@ -143,20 +143,20 @@ export default function ProfilePage() {
     closeForgotModal();
   };
 
-  const defaultFileList = profile?.data?.image
+  const defaultFileList = user ?.image
     ? [
         {
           uid: "-1", // unique id (must be string)
           name: "profile.jpg", // a filename
           status: "done", // marks file as uploaded
-          url: profile?.data?.image, // image URL for preview
+          url: user?.image, // image URL for preview
         },
       ]
     : [];
 
   const [fileList, setFileList] = React.useState(defaultFileList);
   React.useEffect(() => {
-    if (profile?.data?.image) {
+    if (user ?.image) {
       setFileList([
         {
           uid: "-1",
@@ -168,7 +168,7 @@ export default function ProfilePage() {
     } else {
       setFileList([]);
     }
-  }, [profile?.data?.image]);
+  }, [user ?.image]);
 
   return (
     <div className="max-w-full sm:max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 space-y-8">
@@ -185,9 +185,9 @@ export default function ProfilePage() {
 
           {/* Profile Info */}
           <div className="flex items-center gap-4 min-w-0">
-            {profile?.data?.image ? (
+            {user?.image ? (
               <img
-                src={profile?.data?.image}
+                src={user?.image}
                 alt="Profile"
                 className="w-20 h-20 rounded-full object-cover flex-shrink-0"
               />
@@ -196,13 +196,11 @@ export default function ProfilePage() {
             )}
             <div className="min-w-0 truncate">
               <h2 className="text-xl font-bold text-gray-800 truncate">
-                {profile?.data?.name || "NA"}
+                {user?.name || "NA"}
               </h2>
-              <p className="text-gray-500 truncate">
-                {profile?.data?.email || "NA"}
-              </p>
+              <p className="text-gray-500 truncate">{user?.email || "NA"}</p>
               <p className="text-sm text-gray-400 truncate">
-                {profile?.data?.phone_number || "NA"}
+                {user?.phone_number || "NA"}
               </p>
             </div>
           </div>
@@ -368,15 +366,14 @@ export default function ProfilePage() {
           layout="vertical"
           initialValues={{
             image: fileList,
-            name: profile?.data?.name,
-            email: profile?.data?.email,
-            phone: profile?.data?.phone_number,
-            business_name: profile?.data?.business_name,
-            location_area_served: profile?.data?.location_area_served,
-            service_category: profile?.data?.service_category,
-            website: profile?.data?.business_website,
-            location_area_served: profile?.data?.location_area_served,
-            exact_location: profile?.data?.exact_location,
+            name: user?.name,
+            email: user?.email,
+            phone: user?.phone_number,
+            business_name: user?.business_name,
+            service_category: user?.service_category,
+            website: user?.business_website,
+            location_area_served: user?.location_area_served,
+            exact_location: user?.exact_location,
           }}
           onFinish={onFinish}
         >
@@ -436,12 +433,16 @@ export default function ProfilePage() {
             <Input placeholder="Enter your phone number" />
           </Form.Item>
 
-          <Form.Item label="City" name="location_area_served">
+          {/* <Form.Item label="City" name="location_area_served">
             <Input placeholder="Enter your city" />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item label="Address" name="exact_location">
             <Input placeholder="Enter your complete address" />
+          </Form.Item>
+
+          <Form.Item label="Services Location Area" name="location_area_served">
+            <Input placeholder="Enter your service location area" />
           </Form.Item>
 
           <Form.Item label="Website" name="website">
@@ -450,10 +451,6 @@ export default function ProfilePage() {
 
           <Form.Item label="Business Name" name="business_name">
             <Input placeholder="Enter your Businees Name" />
-          </Form.Item>
-
-          <Form.Item label="Services Location Area" name="location_area_served">
-            <Input placeholder="Enter your service location area" />
           </Form.Item>
 
           <Form.Item className="text-right">

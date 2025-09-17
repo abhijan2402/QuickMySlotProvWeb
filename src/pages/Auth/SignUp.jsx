@@ -14,6 +14,7 @@ import Password from "antd/es/input/Password";
 import AvailabilityModal from "./AvailabilityModal";
 import ProfileModal from "./ProfileModal";
 import { useGetProfileQuery } from "../../services/profileApi";
+const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const { Option } = Select;
 
@@ -23,7 +24,7 @@ export default function Signup() {
   const [step, setStep] = useState("form");
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [userID, setUserID] = useState("");
-  // const [token, setToken] = useState("");
+  const [tempToken, setTempToken] = useState("");
   const [otp, setOtp] = useState(Array(6).fill(""));
   const inputRefs = useRef([]);
 
@@ -64,23 +65,32 @@ export default function Signup() {
         otp: finalOtp,
         user_id: userID,
       }).unwrap();
-      console.log("user before login", res?.user);
-      dispatch(setToken(res?.token));
 
-      if (res?.user?.steps == null || res?.user?.steps === "1") {
+      if (!res?.user?.steps || res?.user?.steps === "1") {
         setShowProfileModal(true);
       } else if (res?.user?.steps === "2") {
         setShowAvailabilityModal(true);
       } else if (res?.user?.steps === "3") {
-        // const profileResult = await dispatch(
-        //   profile.endpoints.getProfile.initiate()
-        // ).unwrap();
-        // dispatch(setUser(profileResult?.data));
+        // First, fetch profile with token from OTP response
+        const profileResponse = await fetch(`${baseUrl}profile`, {
+          headers: { Authorization: `Bearer ${res?.token}` },
+        });
+
+        if (!profileResponse.ok) {
+          throw new Error("Failed to fetch profile");
+        }
+
+        const profileData = await profileResponse.json();
+
+        // Save token only after profile success
+        dispatch(setToken(res.token));
+        dispatch(setUser(profileData.data));
+
         toast.success("Signup successful!");
         navigate("/");
       }
     } catch (err) {
-      toast.error(err?.data?.message || "Invalid OTP!");
+      toast.error(err?.data?.message || err.message || "Invalid OTP!");
     }
   };
 

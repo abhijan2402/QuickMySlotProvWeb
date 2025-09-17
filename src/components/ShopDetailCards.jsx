@@ -7,6 +7,7 @@ import { FaUserAlt, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 import { CgLock } from "react-icons/cg";
 import { BsClock } from "react-icons/bs";
 import { useGetProfileQuery } from "../services/profileApi";
+import { useSelector } from "react-redux";
 
 const shopData = [
   {
@@ -29,8 +30,10 @@ const shopData = [
 
 export default function ShopDetailCards() {
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+
   const { data: profile, error, isLoading } = useGetProfileQuery();
-  console.log(profile);
+  console.log(user);
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -96,32 +99,32 @@ export default function ShopDetailCards() {
           {/* Details Panel */}
           <div className="lg:w-1/2 w-full p-8 flex flex-col justify-center gap-6 bg-purple-50">
             <h1 className="text-4xl font-extrabold text-purple-700">
-              {profile?.data?.business_name}
+              {user.business_name}
             </h1>
 
             <p className="text-lg text-gray-700 italic max-w-md">
-              {profile?.data?.business_description}
+              {user.business_description}
             </p>
 
             <div className="space-y-4 text-gray-700 max-w-md">
               <div className="flex items-center gap-3">
                 <FaUserAlt className="text-purple-600" />
                 <span className="font-semibold">Vendor:</span>
-                <span>{profile?.data?.name}</span>
+                <span>{user.name}</span>
               </div>
 
               <div className="flex items-center gap-3">
                 <FaPhoneAlt className="text-purple-600" />
                 <span className="font-semibold">Mobile:</span>
-                <span>{profile?.data?.phone_number}</span>
+                <span>{user.phone_number}</span>
               </div>
 
               <div className="flex items-center gap-3">
                 <FaMapMarkerAlt className="text-purple-600" />
                 <span className="font-semibold">Address:</span>
                 <span>
-                  {profile?.data?.location_area_served},{" "}
-                  {profile?.data?.exact_location}
+                  {user.location_area_served},{" "}
+                  {user.exact_location}
                 </span>
               </div>
 
@@ -129,8 +132,8 @@ export default function ShopDetailCards() {
                 <BsClock className="text-purple-600" />
                 <span className="font-semibold">Time:</span>
                 <span>
-                  {profile?.data?.daily_start_time}-
-                  {profile?.data?.daily_end_time}
+                  {user.daily_start_time}-
+                  {user.daily_end_time}
                 </span>
               </div>
             </div>

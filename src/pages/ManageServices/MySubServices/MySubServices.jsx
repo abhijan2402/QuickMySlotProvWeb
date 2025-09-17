@@ -118,7 +118,7 @@ export default function MySubServices() {
     values.availability?.forEach((item) => {
       const dateStr = item.date.format("DD/MM/YYYY");
       const slots = item.slots?.map((t) => t.format("hh:mm A")) || [];
-      formdata.append(`date[${dateStr}]`, JSON.stringify(slots));
+      formdata.append(`available_schedule[${dateStr}]`, JSON.stringify(slots));
     });
 
     // Images

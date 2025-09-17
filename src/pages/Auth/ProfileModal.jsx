@@ -48,12 +48,11 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
       // Required category field (single select with id)
       fd.append("service_category", values.service_category);
 
-      // Append multiple portfolio images (if any)
       if (values.portfolio && values.portfolio.length > 0) {
         values.portfolio.forEach((file, index) => {
           const originFile = file.originFileObj || file;
           if (originFile) {
-            fd.append("portfolio_images[]", originFile);
+            fd.append(`portfolio_images[${index}]`, originFile);
           }
         });
       }
@@ -192,12 +191,12 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
           getValueFromEvent={normFile}
           rules={[{ required: true, message: "Please upload PAN card." }]}
         >
-            <Upload.Dragger {...singleFileUploadProps}>
-              <p className="text-[20px]">
-                <InboxOutlined style={{ color: "#6961AB" }} />
-              </p>
-              <p className="">Upload PAN card</p>
-            </Upload.Dragger>
+          <Upload.Dragger {...singleFileUploadProps}>
+            <p className="text-[20px]">
+              <InboxOutlined style={{ color: "#6961AB" }} />
+            </p>
+            <p className="">Upload PAN card</p>
+          </Upload.Dragger>
         </Form.Item>
 
         {/* Portfolio Images (Multiple Images) */}
