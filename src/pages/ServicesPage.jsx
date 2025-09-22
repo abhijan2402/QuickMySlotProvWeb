@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 export default function ServicesPage() {
   const user = useSelector((state) => state.auth.user);
 
-  console.log(user)
+  console.log(user);
 
   // Extract unique locations
   const locations = [...new Set(salondata.map((s) => s.location))];
@@ -48,9 +48,9 @@ export default function ServicesPage() {
         {/* Heading & Subheading */}
         <div className="flex flex-col items-center mb-10 px-4 max-w-2xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center w-full gap-4">
-            <div className="flex-grow border-t-2 w-10 border-purple-700"></div>
+            <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
             <div className="text-center px-6">
-              <h2 className="text-4xl font-extrabold text-purple-700">
+              <h2 className="text-4xl font-extrabold text-[#EE4E34]">
                 Our Services
               </h2>
               <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-md mx-auto">
@@ -58,7 +58,7 @@ export default function ServicesPage() {
                 across different locations.
               </p>
             </div>
-            <div className="flex-grow border-t-2 w-10 border-purple-700"></div>
+            <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
           </div>
         </div>
 
@@ -127,7 +127,7 @@ export default function ServicesPage() {
 
               {/* Shop Info */}
               <div className="p-4">
-                <h3 className="text-lg font-bold text-purple-700">
+                <h3 className="text-lg font-bold text-[#EE4E34]">
                   {shop.name}
                 </h3>
                 <p className="text-gray-600 text-sm">{shop.address}</p>

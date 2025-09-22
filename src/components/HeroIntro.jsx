@@ -35,7 +35,7 @@ const HeroIntro = () => {
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight mb-6">
           Empowering Your Lifestyle
           <br />
-          <span className="text-violet-600">
+          <span className="text-[#EE4E34]">
             From Wellness to Style — All in One Place
           </span>
         </h1>

@@ -140,7 +140,7 @@ export default function Signup() {
             ) : (
               <p className=" text-gray-500 mb-6">
                 Start your journey with just one step –{" "}
-                <span className="text-purple-600">OTP!</span>
+                <span className="text-[#EE4E34]">OTP!</span>
               </p>
             )}
 
@@ -180,7 +180,7 @@ export default function Signup() {
                   block
                   size="large"
                   loading={signingUp}
-                  className="bg-[#6961AB] hover:bg-purple-800"
+                  className="bg-[#EE4E34] hover:bg-purple-800"
                 >
                   Continue
                 </Button>
@@ -221,7 +221,7 @@ export default function Signup() {
                     onClick={handleVerifyOtp}
                     size="large"
                     loading={verifying}
-                    className="bg-purple-700 text-white hover:bg-purple-800 text-sm py-1"
+                    className="bg-[#EE4E34] text-white hover:bg-purple-800 text-sm py-1"
                   >
                     Verify OTP
                   </Button>

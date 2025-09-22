@@ -72,7 +72,7 @@ export default function Navbar() {
                   className={`cursor-pointer px-3 py-1 text-sm rounded transition
                       ${
                         active === item
-                          ? "bg-[#6961ab] text-white"
+                          ? "bg-[#EE4E34] text-white"
                           : "hover:bg-[#eee]"
                       }`}
                 >
@@ -86,23 +86,23 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-3">
               <button
                 onClick={() => navigate("/notifications")}
-                className="relative p-2 rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition"
+                className="relative p-2 rounded-full border border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition"
               >
                 <div
-                  className="w-6 h-6 rounded-full bg-[#6961ab] text-white flex items-center justify-center font-semibold"
+                  className="w-6 h-6 rounded-full bg-[#EE4E34] text-white flex items-center justify-center font-semibold"
                   title={profile?.data?.name}
                 >
-                  <span className="relative p-1 rounded-full bg-[#6961ab]">
+                  <span className="relative p-1 rounded-full bg-[#EE4E34]">
                     <BsBellFill className="text-sm text-white" />
                   </span>
                 </div>
               </button>
               <button
                 onClick={() => navigate("/profile")}
-                className="relative p-2 rounded-full border border-[#6961ab] text-[#6961ab] hover:bg-[#6961ab] hover:text-white transition"
+                className="relative p-2 rounded-full border border-[#EE4E34] text-[#EE4E34] hover:bg-[#EE4E34] hover:text-white transition"
               >
                 <div
-                  className="w-6 h-6 rounded-full bg-[#6961ab] text-white flex items-center justify-center font-semibold"
+                  className="w-6 h-6 rounded-full bg-[#EE4E34] text-white flex items-center justify-center font-semibold"
                   title={profile?.data?.name}
                 >
                   {profile?.data?.name?.charAt(0)?.toUpperCase() || "-"}
@@ -114,11 +114,11 @@ export default function Navbar() {
                 title="Click to select a different location"
               >
                 <MdOutlineMyLocation
-                  className="w-5 h-5 text-[#6961ab]"
+                  className="w-5 h-5 text-[#EE4E34]"
                   aria-hidden="true"
                 />
                 <div className="flex flex-col leading-none">
-                  <span className="font-bold text-[#6961ab] text-[14px]">
+                  <span className="font-bold text-[#EE4E34] text-[14px]">
                     {profile?.data?.location_area_served || "NA"}
                   </span>
                   <p className="text-[10px] mt-1 text-gray-600">
@@ -137,11 +137,11 @@ export default function Navbar() {
                   title="Click to select a different location"
                 >
                   <MdOutlineMyLocation
-                    className="w-5 h-5 text-[#6961ab]"
+                    className="w-5 h-5 text-[#EE4E34]"
                     aria-hidden="true"
                   />
                   <div className="flex flex-col leading-none ml-2">
-                    <span className="font-bold text-[#6961ab] text-[14px]">
+                    <span className="font-bold text-[#EE4E34] text-[14px]">
                       {profile?.data?.location_area_served || "NA"}
                     </span>
                     <p className="text-[10px] mt-1 text-gray-600">
@@ -150,7 +150,7 @@ export default function Navbar() {
                   </div>
                 </div>
                 <button
-                  className="text-3xl text-[#6961ab] px-2"
+                  className="text-3xl text-[#EE4E34] px-2"
                   onClick={() => setIsMobileMenuOpen(true)}
                   aria-label="Open menu"
                 >
@@ -186,7 +186,7 @@ export default function Navbar() {
                   className={`cursor-pointer text-center transition px-6 py-2 rounded w-[220px]
                     ${
                       active === item
-                        ? "bg-[#6961ab] text-white"
+                        ? "bg-[#EE4E34] text-white"
                         : "hover:bg-[#eee] text-black"
                     }`}
                 >

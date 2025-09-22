@@ -125,7 +125,7 @@ export default function MyServices() {
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => openModal()}
-          style={{ background: "#6961AB", borderColor: "#6961AB" }}
+          style={{ background: "#EE4E34", borderColor: "#EE4E34" }}
         >
           Add Service
         </Button>

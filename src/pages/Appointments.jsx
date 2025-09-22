@@ -252,7 +252,7 @@ export default function Appointments() {
                   ) : (
                     <button
                       onClick={() => handleGiveFeedbackClick(appt.id)}
-                      className="bg-[#6961AB] text-white px-4 py-2 rounded hover:bg-purple-700 transition"
+                      className="bg-[#EE4E34] text-white px-4 py-2 rounded hover:bg-[#EE4E34] transition"
                       aria-label="Give feedback"
                     >
                       Give Feedback
@@ -290,7 +290,7 @@ export default function Appointments() {
                 whileTap={{ scale: 0.95 }}
                 className={`px-5 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap text-sm font-semibold select-none transition ${
                   activeTab === id
-                    ? "bg-[#6961AB] text-white shadow-lg"
+                    ? "bg-[#EE4E34] text-white shadow-lg"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 }`}
                 aria-current={activeTab === id ? "true" : undefined}

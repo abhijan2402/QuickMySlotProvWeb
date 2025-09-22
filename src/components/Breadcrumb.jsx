@@ -9,7 +9,7 @@ export default function Breadcrumb({ propertyTitle }) {
       {/* Home */}
       <Link
         to={"/"}
-        className="flex items-center hover:text-[#6961AB] shrink-0"
+        className="flex items-center hover:text-[#EE4E34] shrink-0"
       >
         <FaHome className="mr-1" /> Home
       </Link>
@@ -23,7 +23,7 @@ export default function Breadcrumb({ propertyTitle }) {
 
       <button
         onClick={() => navigate(-1)}
-        className="ml-auto text-[#6961AB] text-xs underline hover:text-[#6961AB] shrink-0"
+        className="ml-auto text-[#EE4E34] text-xs underline hover:text-[#EE4E34] shrink-0"
       >
         ← Go Back
       </button>

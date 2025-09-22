@@ -36,7 +36,7 @@ const VendorUpcomingBookings = () => {
           display: "block",
           right: "-35px",
           fontSize: "30px",
-          color: "#722ed1",
+          color: "#EE4E34",
           cursor: "pointer",
         }}
         onClick={onClick}
@@ -55,7 +55,7 @@ const VendorUpcomingBookings = () => {
           display: "block",
           left: "-35px",
           fontSize: "30px",
-          color: "#722ed1",
+          color: "#EE4E34",
           cursor: "pointer",
         }}
         onClick={onClick}
@@ -104,13 +104,13 @@ const VendorUpcomingBookings = () => {
     <div className="w-full max-w-7xl mx-auto py-8">
       <div className="flex flex-col items-center mb-10 px-4 max-w-2xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center w-full gap-4">
-          <div className="flex-grow border-t-2 w-10 border-[#6961AB]"></div>
+          <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
           <div className="text-center px-6">
-            <h2 className="text-4xl font-extrabold text-[#6961AB]">
+            <h2 className="text-4xl font-extrabold text-[#EE4E34]">
               Upcoming Bookings
             </h2>
           </div>
-          <div className="flex-grow border-t-2 w-10 border-[#6961AB]"></div>
+          <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
         </div>
       </div>
       {upcomingBookings.length > 0 ? (
@@ -119,7 +119,7 @@ const VendorUpcomingBookings = () => {
             <div key={booking.id} className="px-3 ">
               <div className="bg-white rounded-2xl h-[300px] shadow-lg p-6 border border-gray-200 flex flex-col justify-between overflow-y-auto">
                 {/* Customer Name */}
-                <h3 className="text-xl font-semibold text-[#6961AB] mb-2">
+                <h3 className="text-xl font-semibold text-[#EE4E34] mb-2">
                   {booking.customerName}
                 </h3>
 
@@ -151,7 +151,7 @@ const VendorUpcomingBookings = () => {
                 {/* View Details Button */}
                 <button
                   onClick={() => handleViewDetails(booking)}
-                  className="mt-auto bg-[#6961AB] text-white px-4 py-2 rounded-lg shadow hover:bg-[#6961AB] transition"
+                  className="mt-auto bg-[#EE4E34] text-white px-4 py-2 rounded-lg shadow hover:bg-[#EE4E34] transition"
                 >
                   View Details
                 </button>

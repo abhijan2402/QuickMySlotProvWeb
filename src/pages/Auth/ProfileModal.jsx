@@ -140,7 +140,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
         >
           <Upload.Dragger {...singleFileUploadProps}>
             <p className="text-[20px]">
-              <InboxOutlined style={{ color: "#6961AB" }} />
+              <InboxOutlined style={{ color: "#EE4E34" }} />
             </p>
             <p>Click or drag photo to upload</p>
           </Upload.Dragger>
@@ -161,7 +161,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
         >
           <Upload.Dragger {...singleFileUploadProps}>
             <p className="text-[20px]">
-              <InboxOutlined style={{ color: "#6961AB" }} />
+              <InboxOutlined style={{ color: "#EE4E34" }} />
             </p>
             <p>Click or drag file to upload</p>
           </Upload.Dragger>
@@ -177,7 +177,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
         >
           <Upload.Dragger {...singleFileUploadProps}>
             <p className="text-[20px]">
-              <InboxOutlined style={{ color: "#6961AB" }} />
+              <InboxOutlined style={{ color: "#EE4E34" }} />
             </p>
             <p>Upload Aadhaar (front/back)</p>
           </Upload.Dragger>
@@ -193,7 +193,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
         >
           <Upload.Dragger {...singleFileUploadProps}>
             <p className="text-[20px]">
-              <InboxOutlined style={{ color: "#6961AB" }} />
+              <InboxOutlined style={{ color: "#EE4E34" }} />
             </p>
             <p className="">Upload PAN card</p>
           </Upload.Dragger>
@@ -224,7 +224,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
             beforeUpload={() => false}
           >
             <div>
-              <InboxOutlined style={{ color: "#6961AB", fontSize: 28 }} />
+              <InboxOutlined style={{ color: "#EE4E34", fontSize: 28 }} />
               <div style={{ marginTop: 8, fontSize: 10 }}>
                 Click or drag photos to upload
               </div>

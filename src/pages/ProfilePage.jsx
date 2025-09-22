@@ -32,7 +32,7 @@ import {
 } from "../services/profileApi";
 import { toast } from "react-toastify";
 import { useGetsubscriptionQuery } from "../services/subscriptionApi";
-import { logout } from "../slices/authSlice";
+import { logout, setUser } from "../slices/authSlice";
 import { useGetcategoryQuery } from "../services/categoryApi";
 
 const { TabPane } = Tabs;
@@ -113,7 +113,8 @@ export default function ProfilePage() {
         }
       });
 
-      await updateProfile(formData).unwrap();
+      const res = await updateProfile(formData).unwrap();
+      dispatch(setUser(res.data));
       setIsModalOpen(false);
       toast.success("Profile updated successfully!");
     } catch (error) {
@@ -143,7 +144,7 @@ export default function ProfilePage() {
     closeForgotModal();
   };
 
-  const defaultFileList = user ?.image
+  const defaultFileList = user?.image
     ? [
         {
           uid: "-1", // unique id (must be string)
@@ -156,7 +157,7 @@ export default function ProfilePage() {
 
   const [fileList, setFileList] = React.useState(defaultFileList);
   React.useEffect(() => {
-    if (user ?.image) {
+    if (user?.image) {
       setFileList([
         {
           uid: "-1",
@@ -168,7 +169,7 @@ export default function ProfilePage() {
     } else {
       setFileList([]);
     }
-  }, [user ?.image]);
+  }, [user?.image]);
 
   return (
     <div className="max-w-full sm:max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 space-y-8">
@@ -178,7 +179,7 @@ export default function ProfilePage() {
           {/* Forgot Password Button top right */}
           {/* <button
             onClick={showForgotModal}
-            className="absolute top-4 right-4 text-sm underline text-[#6961AB] hover:text-[#4e3b9e] transition whitespace-nowrap"
+            className="absolute top-4 right-4 text-sm underline text-[#EE4E34] hover:text-[#4e3b9e] transition whitespace-nowrap"
           >
             Forgot Password?
           </button> */}
@@ -215,7 +216,7 @@ export default function ProfilePage() {
             </div> */}
             <button
               onClick={showModal}
-              className="bg-[#6961AB] text-white text-sm px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition whitespace-nowrap"
+              className="bg-[#EE4E34] text-white text-sm px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition whitespace-nowrap"
             >
               Edit Profile
             </button>
@@ -232,7 +233,7 @@ export default function ProfilePage() {
         <div className="bg-purple-50 p-6 rounded-2xl shadow-md mt-8 md:mt-0 md:w-1/3 flex flex-col justify-center">
           <h3 className="text-black text-xl font-medium flex mb-2 justify-between">
             Current Plan:{" "}
-            <span className="text-[#6961AB]">
+            <span className="text-[#EE4E34]">
               ${currentPlan?.data?.[0]?.price}
             </span>
           </h3>
@@ -247,7 +248,7 @@ export default function ProfilePage() {
           <div className="flex  mt-4 ">
             <Button
               onClick={() => navigate("/pricing")}
-              style={{ backgroundColor: "#6961AB", color: "#fff" }}
+              style={{ backgroundColor: "#EE4E34", color: "#fff" }}
             >
               Upgrade Plan
             </Button>
@@ -265,7 +266,7 @@ export default function ProfilePage() {
           </p>
         </div>
         <button
-          className="flex items-center gap-2 border border-[#6961AB] bg-purple-200 text-black px-4 py-2 rounded-lg shadow hover:bg-[#6961AB] hover:text-white transition whitespace-nowrap justify-center"
+          className="flex items-center gap-2 border border-[#EE4E34] bg-purple-200 text-black px-4 py-2 rounded-lg shadow hover:bg-[#EE4E34] hover:text-white transition whitespace-nowrap justify-center"
           // onClick={showBoostModal}
           onClick={() => navigate("/pricing")}
         >
@@ -299,7 +300,7 @@ export default function ProfilePage() {
                 key={plan.key}
                 className={`flex items-center border rounded-xl px-4 py-3 mb-3 cursor-pointer ${
                   selectedPlan === plan.key
-                    ? "border-[#6961AB] bg-purple-100"
+                    ? "border-[#EE4E34] bg-purple-100"
                     : "border-gray-200 bg-white"
                 }`}
                 style={{
@@ -316,7 +317,7 @@ export default function ProfilePage() {
                     {plan.description}
                   </span>
                 </div>
-                <div className="text-xl font-semibold text-[#6961AB] ml-4 min-w-[70px] text-right">
+                <div className="text-xl font-semibold text-[#EE4E34] ml-4 min-w-[70px] text-right">
                   ${plan.price.toFixed(2)}
                 </div>
               </div>
@@ -341,7 +342,7 @@ export default function ProfilePage() {
           type="primary"
           block
           style={{
-            background: "#6961AB",
+            background: "#EE4E34",
             color: "#fff",
             fontWeight: 600,
             fontSize: 16,
@@ -457,7 +458,7 @@ export default function ProfilePage() {
             <Button onClick={handleCancel} className="mr-3">
               Cancel
             </Button>
-            <Button type="primary" htmlType="submit" className="bg-[#6961AB]">
+            <Button type="primary" htmlType="submit" className="bg-[#EE4E34]">
               Save
             </Button>
           </Form.Item>
@@ -495,7 +496,7 @@ export default function ProfilePage() {
               type="primary"
               htmlType="submit"
               disabled={isUpdating}
-              className="bg-[#6961AB]"
+              className="bg-[#EE4E34]"
             >
               {isUpdating ? "Updating" : "Submit"}
             </Button>

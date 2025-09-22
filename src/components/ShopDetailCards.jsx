@@ -63,16 +63,16 @@ export default function ShopDetailCards() {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col items-center mb-10 px-4 max-w-2xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center w-full gap-4">
-            <div className="flex-grow border-t-2 w-10 border-purple-700"></div>
+            <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
             <div className="text-center px-6">
-              <h2 className="text-4xl font-extrabold text-purple-700">
+              <h2 className="text-4xl font-extrabold text-[#EE4E34]">
                 My Shop
               </h2>
               <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-md mx-auto">
                 Manage your shop and showcase your services professionally.
               </p>
             </div>
-            <div className="flex-grow border-t-2 w-10 border-purple-700"></div>
+            <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
           </div>
         </div>
 
@@ -98,7 +98,7 @@ export default function ShopDetailCards() {
 
           {/* Details Panel */}
           <div className="lg:w-1/2 w-full p-8 flex flex-col justify-center gap-6 bg-purple-50">
-            <h1 className="text-4xl font-extrabold text-purple-700">
+            <h1 className="text-4xl font-extrabold text-[#EE4E34]">
               {user.business_name}
             </h1>
 
@@ -108,38 +108,36 @@ export default function ShopDetailCards() {
 
             <div className="space-y-4 text-gray-700 max-w-md">
               <div className="flex items-center gap-3">
-                <FaUserAlt className="text-purple-600" />
+                <FaUserAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Vendor:</span>
                 <span>{user.name}</span>
               </div>
 
               <div className="flex items-center gap-3">
-                <FaPhoneAlt className="text-purple-600" />
+                <FaPhoneAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Mobile:</span>
                 <span>{user.phone_number}</span>
               </div>
 
               <div className="flex items-center gap-3">
-                <FaMapMarkerAlt className="text-purple-600" />
+                <FaMapMarkerAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Address:</span>
                 <span>
-                  {user.location_area_served},{" "}
-                  {user.exact_location}
+                  {user.location_area_served}, {user.exact_location}
                 </span>
               </div>
 
               <div className="flex items-center gap-3">
-                <BsClock className="text-purple-600" />
+                <BsClock className="text-[#EE4E34]" />
                 <span className="font-semibold">Time:</span>
                 <span>
-                  {user.daily_start_time}-
-                  {user.daily_end_time}
+                  {user.daily_start_time}-{user.daily_end_time}
                 </span>
               </div>
             </div>
 
             <button
-              className="mt-6 py-3 w-40 rounded-lg text-white bg-purple-700 hover:bg-purple-800 transition font-semibold"
+              className="mt-6 py-3 w-40 rounded-lg text-white bg-[#EE4E34] hover:bg-purple-800 transition font-semibold"
               onClick={() => navigate(`/manageshop`)}
               // aria-label={`View details of ${shopName}`}
             >

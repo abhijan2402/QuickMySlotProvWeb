@@ -114,12 +114,12 @@ export default function Signup() {
           {type === "signin" ? (
             <p className=" text-gray-500 mb-6">
               "Get access your account to unleash your journey"{" "}
-              <span className="text-purple-600">sign In!</span>
+              <span className="text-[#EE4E34]">sign In!</span>
             </p>
           ) : (
             <p className=" text-gray-500 mb-6">
               Start your journey with just one step –{" "}
-              <span className="text-purple-600">sign up!</span>
+              <span className="text-[#EE4E34]">sign up!</span>
             </p>
           )}
 
@@ -210,7 +210,7 @@ export default function Signup() {
                 block
                 size="large"
                 loading={signingUp}
-                className="bg-[#6961AB] hover:bg-purple-800"
+                className="bg-[#EE4E34] hover:bg-purple-800"
               >
                 {type === "signup" ? "Sign Up" : "Sign In"}
               </Button>
@@ -251,7 +251,7 @@ export default function Signup() {
                   onClick={handleVerifyOtp}
                   size="large"
                   loading={verifying}
-                  className="bg-purple-700 text-white hover:bg-purple-800 text-sm py-1"
+                  className="bg-[#EE4E34] text-white hover:bg-purple-800 text-sm py-1"
                 >
                   Verify OTP
                 </Button>
@@ -264,7 +264,7 @@ export default function Signup() {
                 <p className="text-gray-600 text-sm">Already have account?</p>{" "}
                 <span
                   onClick={() => handleFormChange("signin")}
-                  className="text-[#6961AB] text-sm font-medium cursor-pointer"
+                  className="text-[#EE4E34] text-sm font-medium cursor-pointer"
                 >
                   Sign In
                 </span>
@@ -274,7 +274,7 @@ export default function Signup() {
                 <p className="text-gray-600 text-sm">Don't have an account?</p>{" "}
                 <span
                   onClick={() => handleFormChange("signup")}
-                  className="text-[#6961AB] text-sm font-medium cursor-pointer"
+                  className="text-[#EE4E34] text-sm font-medium cursor-pointer"
                 >
                   Sign Up
                 </span>
