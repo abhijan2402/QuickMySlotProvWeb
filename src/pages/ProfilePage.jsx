@@ -114,10 +114,13 @@ export default function ProfilePage() {
       });
 
       const res = await updateProfile(formData).unwrap();
+      console.log(error);
+
       dispatch(setUser(res.data));
       setIsModalOpen(false);
       toast.success("Profile updated successfully!");
     } catch (error) {
+      console.log(error);
       const errorMessage =
         error?.data?.message || error.message || "Failed to update profile";
       toast.error(errorMessage);
