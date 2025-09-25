@@ -67,7 +67,6 @@ export default function Signup() {
       }).unwrap();
 
       dispatch(setToken(res.token));
-
       if (!res?.user?.steps || res?.user?.steps === "1") {
         setShowProfileModal(true);
       } else if (res?.user?.steps === "2") {

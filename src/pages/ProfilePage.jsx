@@ -166,7 +166,7 @@ export default function ProfilePage() {
           uid: "-1",
           name: "profile.jpg",
           status: "done",
-          url: profile.data.image,
+          url: profile?.data?.image,
         },
       ]);
     } else {

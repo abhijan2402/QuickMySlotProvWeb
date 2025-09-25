@@ -57,16 +57,18 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
         });
       }
 
-      await setProfile(fd)
-        .unwrap()
-        .then(() => {
-          toast.success("Profile submitted successfully.");
-          form.resetFields();
-          onNext();
-        })
-        .catch(() => {
-          toast.error("Failed to submit profile. Try again.");
-        });
+      //  cosnt res =  await setProfile(fd)
+      //     .unwrap()
+      //     .then(() => {
+      //       toast.success("Profile submitted successfully.");
+      //       form.resetFields();
+      //       onNext();
+      //     })
+      //     .catch(() => {
+      //       toast.error("Failed to submit profile. Try again.");
+      //     });
+      const res = await setProfile(fd);
+      console.log(res)
     } catch (err) {
       console.error(err);
       toast.error("Failed to submit profile. Try again.");

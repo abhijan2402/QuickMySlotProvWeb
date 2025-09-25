@@ -51,6 +51,7 @@ const OfferManagement = () => {
         amount: offer.amount,
         description: offer.description,
         isActive: offer.isActive === 1,
+        is_highlighted: offer.is_highlighted === 1, // new field
         validity:
           offer.start_on && offer.expired_on
             ? [moment(offer.start_on), moment(offer.expired_on)]
@@ -73,6 +74,7 @@ const OfferManagement = () => {
       formData.append("amount", values.amount);
       formData.append("description", values.description || "");
       formData.append("isActive", values.isActive ? 1 : 0);
+      formData.append("is_highlighted", values.is_highlighted ? 1 : 0); // new field
       if (values.validity) {
         formData.append("start_on", values.validity[0].format("YYYY-MM-DD"));
         formData.append("expired_on", values.validity[1].format("YYYY-MM-DD"));
@@ -133,11 +135,16 @@ const OfferManagement = () => {
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
                     <span style={{ fontWeight: 600 }}>{offer.promo_code}</span>
-                    {offer.isActive ? (
-                      <Tag color="green">Active</Tag>
-                    ) : (
-                      <Tag color="red">Inactive</Tag>
-                    )}
+                    <div>
+                      {offer.isActive ? (
+                        <Tag color="green">Active</Tag>
+                      ) : (
+                        <Tag color="red">Inactive</Tag>
+                      )}
+                      {offer.is_highlighted ? (
+                        <Tag color="gold">Highlighted</Tag>
+                      ) : null}
+                    </div>
                   </div>
                 }
                 actions={[
@@ -222,6 +229,15 @@ const OfferManagement = () => {
           <Form.Item
             label="Active Status"
             name="isActive"
+            valuePropName="checked"
+          >
+            <Switch />
+          </Form.Item>
+
+          {/* New field */}
+          <Form.Item
+            label="Highlighted Offer"
+            name="is_highlighted"
             valuePropName="checked"
           >
             <Switch />
