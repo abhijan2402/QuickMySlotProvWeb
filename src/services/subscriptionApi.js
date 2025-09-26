@@ -7,8 +7,8 @@ export const subscriptionApi = createApi({
   endpoints: (builder) => ({
     // Get subscription (GET request)
     getsubscription: builder.query({
-      query: () => ({
-        url: "subscription-list",
+      query: ({ validity, type }) => ({
+        url: `subscriptions?validity=${validity}&type=${type}`,
         method: "GET",
       }),
       providesTags: ["subscription"],

@@ -50,7 +50,7 @@ const OfferManagement = () => {
         type: offer.type,
         amount: offer.amount,
         description: offer.description,
-        isActive: offer.isActive === 1,
+        isActive: offer.isActive === true,
         is_highlighted: offer.is_highlighted === 1, // new field
         validity:
           offer.start_on && offer.expired_on
@@ -171,7 +171,7 @@ const OfferManagement = () => {
                     ) : (
                       <>
                         {offer.amount}
-                         <PercentageOutlined />
+                        <PercentageOutlined />
                       </>
                     )}
                   </p>

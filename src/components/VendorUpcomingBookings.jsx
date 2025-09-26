@@ -1,32 +1,19 @@
 import React from "react";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
+import {
+  FaArrowAltCircleLeft,
+  FaArrowAltCircleRight,
+  FaTimesCircle,
+} from "react-icons/fa";
 import Slider from "react-slick";
-
-const upcomingBookings = [
-  {
-    id: 1,
-    customerName: "John Doe",
-    services: [
-      { name: "Haircut", subServices: ["Beard Trim", "Shampoo"] },
-      { name: "Facial", subServices: ["Gold Facial"] },
-    ],
-    price: 1200,
-    date: "2025-08-25",
-    address: "123 Main Street, New Delhi",
-    phone: "9876543210",
-  },
-  {
-    id: 2,
-    customerName: "Jane Smith",
-    services: [{ name: "Full Body Massage", subServices: ["Aroma Therapy"] }],
-    price: 2500,
-    date: "2025-09-01",
-    address: "456 Park Avenue, Mumbai",
-    phone: "9123456780",
-  },
-];
+import { useGetvendorBookingQuery } from "../services/vendorTransactionListApi";
+import SpinnerLodar from "../components/SpinnerLodar";
+import { useNavigate } from "react-router-dom";
 
 const VendorUpcomingBookings = () => {
+  const navigate = useNavigate();
+  const { data, isLoading } = useGetvendorBookingQuery({ status: "pending" });
+
+  // Slider arrows
   function NextArrow(props) {
     const { onClick } = props;
     return (
@@ -67,7 +54,7 @@ const VendorUpcomingBookings = () => {
 
   const settings = {
     dots: false,
-    infinite: upcomingBookings.length > 1,
+    infinite: (data?.data?.length || 0) > 1,
     speed: 500,
     slidesToShow: 2,
     slidesToScroll: 1,
@@ -96,9 +83,12 @@ const VendorUpcomingBookings = () => {
   };
 
   const handleViewDetails = (booking) => {
-    // Replace with your actual view logic (modal, page redirect, etc.)
     console.log("View details clicked for booking:", booking);
+    navigate("/appointments");
   };
+
+  // Take only first 6 bookings
+  const upcomingBookings = data?.data?.slice(0, 6) || [];
 
   return (
     <div className="w-full max-w-7xl mx-auto py-8">
@@ -113,45 +103,45 @@ const VendorUpcomingBookings = () => {
           <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
         </div>
       </div>
-      {upcomingBookings.length > 0 ? (
+
+      {isLoading ? (
+        <div className="flex justify-center">
+          <SpinnerLodar title="Loading upcoming bookings..." />
+        </div>
+      ) : upcomingBookings.length > 0 ? (
         <Slider {...settings}>
           {upcomingBookings.map((booking) => (
-            <div key={booking.id} className="px-3 ">
+            <div key={booking.id} className="px-3">
               <div className="bg-white rounded-2xl h-[300px] shadow-lg p-6 border border-gray-200 flex flex-col justify-between overflow-y-auto">
-                {/* Customer Name */}
                 <h3 className="text-xl font-semibold text-[#EE4E34] mb-2">
-                  {booking.customerName}
+                  {booking.customer?.name || "Customer"}
                 </h3>
 
                 {/* Services */}
                 <div className="mb-4 flex-1">
-                  <p className="text-gray-800 font-medium">Services:</p>
-                  <ul className="list-disc erflow-hidden list-inside text-gray-600 ml-2">
-                    {booking.services.map((service, i) => (
-                      <li key={i}>
-                        {service.name}{" "}
-                        {service.subServices?.length > 0 && (
-                          <span className="text-sm text-gray-500">
-                            ({service.subServices.join(", ")})
-                          </span>
-                        )}
-                      </li>
-                    ))}
+                  <p className="text-gray-800 font-medium">Service:</p>
+                  <ul className="list-disc list-inside text-gray-600 ml-2">
+                    <li>{booking.service?.name}</li>
                   </ul>
+
                   {/* Price & Date */}
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex justify-between items-center mt-2">
                     <p className="text-lg font-semibold text-green-600">
-                      Price: ₹{booking.price}
+                      Price: ₹{booking.amount}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Date: {new Date(booking.date).toLocaleDateString()}
+                      Date:{" "}
+                      {Object.entries(booking.schedule_time || {})
+                        .map(([time, date]) => `${date} - ${time}`)
+                        .join(", ")}
                     </p>
                   </div>
                 </div>
+
                 {/* View Details Button */}
                 <button
                   onClick={() => handleViewDetails(booking)}
-                  className="mt-auto bg-[#EE4E34] text-white px-4 py-2 rounded-lg shadow hover:bg-[#EE4E34] transition"
+                  className="mt-auto bg-[#EE4E34] text-white px-4 py-2 rounded-lg shadow hover:bg-[#d63c25] transition"
                 >
                   View Details
                 </button>
@@ -160,7 +150,10 @@ const VendorUpcomingBookings = () => {
           ))}
         </Slider>
       ) : (
-        <p className="text-gray-600">You have no upcoming bookings.</p>
+        <div className="flex flex-col items-center justify-center h-60 text-gray-500">
+          <FaTimesCircle className="text-6xl mb-4 animate-bounce" />
+          <p className="text-lg font-semibold">No upcoming bookings found</p>
+        </div>
       )}
     </div>
   );

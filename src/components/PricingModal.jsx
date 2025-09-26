@@ -1,100 +1,26 @@
 import React, { useState } from "react";
-import { Modal, Button, Card, Radio, Typography, Tag } from "antd";
 import { useGetsubscriptionQuery } from "../services/subscriptionApi";
+import SpinnerLodar from "./SpinnerLodar";
+import { div } from "framer-motion/m";
 
-const { Title, Paragraph, Text } = Typography;
-
-const plans = {
-  monthly: [
-    {
-      id: "basic",
-      name: "Basic",
-      price: 10,
-      tag: "Starter",
-      features: [
-        "2 Projects",
-        "5 GB Storage",
-        "Email Support",
-        "Basic Analytics",
-      ],
-    },
-    {
-      id: "pro",
-      name: "Pro",
-      price: 20,
-      tag: "Most Popular",
-      features: [
-        "10 Projects",
-        "50 GB Storage",
-        "Priority Email Support",
-        "Advanced Analytics",
-        "Custom Domain",
-      ],
-    },
-    {
-      id: "enterprise",
-      name: "Enterprise",
-      price: 50,
-      tag: "Best Value",
-      features: [
-        "Unlimited Projects",
-        "1 TB Storage",
-        "24/7 Phone & Email Support",
-        "Dedicated Account Manager",
-        "Advanced Security",
-        "Custom Integrations",
-      ],
-    },
-  ],
-  yearly: [
-    {
-      id: "basic",
-      name: "Basic",
-      price: 100,
-      tag: "Starter",
-      features: [
-        "2 Projects",
-        "5 GB Storage",
-        "Email Support",
-        "Basic Analytics",
-      ],
-    },
-    {
-      id: "pro",
-      name: "Pro",
-      price: 200,
-      tag: "Most Popular",
-      features: [
-        "10 Projects",
-        "50 GB Storage",
-        "Priority Email Support",
-        "Advanced Analytics",
-        "Custom Domain",
-      ],
-    },
-    {
-      id: "enterprise",
-      name: "Enterprise",
-      price: 500,
-      tag: "Best Value",
-      features: [
-        "Unlimited Projects",
-        "1 TB Storage",
-        "24/7 Phone & Email Support",
-        "Dedicated Account Manager",
-        "Advanced Security",
-        "Custom Integrations",
-      ],
-    },
-  ],
-};
+const tagColors = [
+  "bg-blue-500",
+  "bg-green-500",
+  "bg-purple-500",
+  "bg-pink-500",
+  "bg-yellow-500",
+];
 
 const PricingModal = () => {
-  const { data } = useGetsubscriptionQuery();
-  console.log(data)
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
+
+  // ✅ Fetch API
+  const { data, isLoading } = useGetsubscriptionQuery({
+    validity: billingCycle,
+    type: "vendor",
+  });
 
   const openModal = (plan) => {
     setSelectedPlan(plan);
@@ -110,99 +36,166 @@ const PricingModal = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 text-center">
-      <div className="mt-8 text-center max-w-lg mx-auto">
-        <Title level={2} >
+    <div className="max-w-6xl mx-auto p-4 text-center">
+      {/* Heading */}
+      <div className="mt-4 text-center max-w-lg mx-auto">
+        <h2 className="text-3xl mb-2 font-bold text-orange-600">
           Boost Your Profile Visibility
-        </Title>
-        <Title level={4} className="mb-2 text-gray-600 font-semibold">
+        </h2>
+        <h4 className="mb-2 text-xl text-gray-600 font-semibold">
           Choose the Right Plan for You
-        </Title>
-        <Paragraph type="secondary" className="text-gray-700">
+        </h4>
+        <p className="text-gray-700">
           Increase your customer impressions, likes, and engagement by selecting
           a plan that fits your needs.
-        </Paragraph>
+        </p>
       </div>
 
       {/* Billing Toggle */}
-      <div className="flex justify-center mb-8">
-        <Radio.Group
-          value={billingCycle}
-          onChange={(e) => setBillingCycle(e.target.value)}
+      <div className="flex justify-center mb-8 mt-4 bg-gray-100 rounded-lg p-1 w-max mx-auto shadow-sm">
+        <button
+          onClick={() => setBillingCycle("monthly")}
+          className={`px-6 py-2 rounded-sm transition-all font-medium ${
+            billingCycle === "monthly"
+              ? "bg-[#EE4E34] text-white shadow"
+              : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
+          }`}
         >
-          <Radio.Button value="monthly">Monthly</Radio.Button>
-          <Radio.Button value="yearly">Yearly (Save 20%)</Radio.Button>
-        </Radio.Group>
+          Monthly
+        </button>
+        <button
+          onClick={() => setBillingCycle("yearly")}
+          className={`px-8 py-2 rounded-sm transition-all font-medium ${
+            billingCycle === "yearly"
+              ? "bg-[#EE4E34] text-white shadow"
+              : "bg-gray-200 text-gray-700 border border-gray-300 hover:bg-gray-200"
+          }`}
+        >
+          Yearly
+        </button>
       </div>
 
       {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {plans[billingCycle].map((plan) => (
-          <Card
-            key={plan.id}
-            className="shadow-md rounded-xl hover:shadow-lg transition-all flex flex-col"
-            title={
-              <div className="flex items-center justify-between">
-                <span>{plan.name}</span>
-                <Tag color={plan.id === "pro" ? "green" : "blue"}>
-                  {plan.tag}
-                </Tag>
-              </div>
-            }
-            bordered
-            hoverable
-          >
-            <Title level={3} className="mb-4">
-              ${plan.price}
-              <span className="text-base font-normal">
-                /{billingCycle === "monthly" ? "mo" : "yr"}
-              </span>
-            </Title>
+      {/* Pricing Cards */}
+      {isLoading ? (
+        <div className="h-80vh">
+          <SpinnerLodar ht="80vh" title="Subscription Plan" />
+        </div>
+      ) : data?.data?.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {data?.data?.map((plan, idx) => (
+            <div
+              key={plan.id}
+              className="flex flex-col mb-8 justify-between h-full shadow-lg rounded-xl p-6 border hover:shadow-2xl transition-all"
+            >
+              {/* Header */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-lg text-gray-700 font-semibold">
+                    {plan.subscription_name}
+                  </span>
+                  <span
+                    className={`text-xs text-white px-3 py-1 rounded-full ${
+                      tagColors[idx % tagColors.length]
+                    }`}
+                  >
+                    {plan.extra?.key_word || "Plan"}
+                  </span>
+                </div>
 
-            <ul className="list-disc ml-5 space-y-2 text-left mb-6">
-              {plan.features.map((feature, i) => (
-                <li key={i}>{feature}</li>
-              ))}
+                {/* Price */}
+                <h3 className="text-2xl text-gray-700 font-bold mb-4">
+                  ₹{plan.price}
+                  <span className="text-base font-normal text-gray-500">
+                    /{plan.validity === "monthly" ? "mo" : "yr"}
+                  </span>
+                </h3>
+
+                {/* Features */}
+                <ul className="list-disc ml-5 space-y-2 text-left mb-6 text-gray-700">
+                  {Object.keys(plan.extra || {})
+                    .filter((k) => k !== "key_word")
+                    .map((key) => (
+                      <li key={key}>{plan.extra[key]}</li>
+                    ))}
+                </ul>
+              </div>
+
+              {/* Button always bottom */}
+              <button
+                onClick={() => openModal(plan)}
+                className="mt-auto bg-[#EE4E34] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#d63c25] transition"
+              >
+                Subscribe
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center border justify-center mt-1 h-[48vh] animate-fadeIn">
+          <div className="text-[#EE4E34] mb-4 animate-bounce">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 14l6-6m0 0l-6-6m6 6H3"
+              />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-700 mb-2">
+            No Plans Available
+          </h3>
+          <p className="text-gray-500 text-center max-w-sm">
+            Sorry, we couldn't find any subscription plans at the moment. Please
+            check back later or try changing your filters.
+          </p>
+        </div>
+      )}
+
+      {/* Custom Modal */}
+      {modalVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
+            <h2 className="text-xl font-bold mb-4">Confirm Subscription</h2>
+            <p>
+              You have selected the{" "}
+              <strong>{selectedPlan?.subscription_name}</strong> plan for{" "}
+              <strong>₹{selectedPlan?.price}</strong> ({billingCycle} billing).
+            </p>
+
+            <p className="mt-3 font-semibold">Features included:</p>
+            <ul className="list-disc ml-6 mt-2 text-gray-700">
+              {Object.keys(selectedPlan?.extra || {})
+                .filter((k) => k !== "key_word")
+                .map((key) => (
+                  <li key={key}>{selectedPlan.extra[key]}</li>
+                ))}
             </ul>
 
-            {/* Better styled button */}
-            <Button
-              type="primary"
-              block
-              shape="round"
-              size="large"
-              className="mt-auto"
-              onClick={() => openModal(plan)}
-            >
-              Subscribe
-            </Button>
-          </Card>
-        ))}
-      </div>
-
-      {/* Confirmation Modal */}
-      <Modal
-        title="Confirm Subscription"
-        open={modalVisible}
-        onOk={handlePayment}
-        onCancel={() => setModalVisible(false)}
-        okText="Pay Now"
-        cancelText="Cancel"
-      >
-        <p>
-          You have selected the <strong>{selectedPlan?.name}</strong> plan for{" "}
-          <strong>${selectedPlan?.price}</strong> ({billingCycle} billing).
-        </p>
-        <p>
-          Features included:
-          <ul className="list-disc ml-6 mt-2">
-            {selectedPlan?.features.map((f, i) => (
-              <li key={i}>{f}</li>
-            ))}
-          </ul>
-        </p>
-        <p className="mt-4 text-gray-500">Simulating payment gateway flow...</p>
-      </Modal>
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+                onClick={() => setModalVisible(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 rounded-lg bg-[#EE4E34] text-white hover:bg-[#d63c25]"
+                onClick={handlePayment}
+              >
+                Pay Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

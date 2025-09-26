@@ -7,9 +7,10 @@ import {
   CalendarOutlined,
   DollarOutlined,
 } from "@ant-design/icons";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaTimesCircle, FaChevronLeft } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetvendorBookingQuery } from "../services/vendorTransactionListApi";
+import SpinnerLodar from "../components/SpinnerLodar";
 
 export default function AppointmentDetails() {
   const { id } = useParams();
@@ -17,13 +18,30 @@ export default function AppointmentDetails() {
   const navigate = useNavigate();
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
 
-  if (isLoading) return <p className="text-center mt-10">Loading...</p>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <SpinnerLodar title="Loading Appointment..." />
+      </div>
+    );
+  }
 
   const appointment = data?.data?.find((appt) => String(appt.id) === id);
-  if (!appointment)
+
+  if (!appointment) {
     return (
-      <p className="text-center text-red-500 mt-10">Appointment not found</p>
+      <div className="flex flex-col items-center justify-center h-screen text-gray-500">
+        <FaTimesCircle className="text-6xl mb-4 animate-bounce" />
+        <p className="text-lg font-semibold">No appointment found</p>
+        <Button
+          className="mt-4 bg-[#EE4E34] text-white"
+          onClick={() => navigate(-1)}
+        >
+          Go Back
+        </Button>
+      </div>
     );
+  }
 
   const subtotal = Number(appointment.service?.price || 0);
   const taxes = Number(appointment.tax || 0);
@@ -81,7 +99,7 @@ export default function AppointmentDetails() {
           <EnvironmentOutlined />{" "}
           {appointment.customer?.address || "Not provided"}
         </p>
-        <p className="text-gray-700 flex items-center gap-2">
+        <p className="text-gray-700 flex items-center gap-2 flex-wrap">
           <CalendarOutlined />{" "}
           {Object.entries(appointment.schedule_time || {}).map(
             ([time, date]) => (
@@ -134,14 +152,14 @@ export default function AppointmentDetails() {
       </div>
 
       {/* Cancel Button */}
-      <Button
+      {/* <Button
         block
         size="large"
         className="bg-red-500 text-white"
         onClick={() => setCancelModalVisible(true)}
       >
         Cancel Appointment
-      </Button>
+      </Button> */}
 
       {/* Cancel Modal */}
       <Modal
@@ -158,4 +176,3 @@ export default function AppointmentDetails() {
     </div>
   );
 }
-

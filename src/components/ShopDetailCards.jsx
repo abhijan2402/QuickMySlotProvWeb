@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { BsClock } from "react-icons/bs";
 import { useSelector } from "react-redux";
+import { capitalizeFirstLetter } from "../utils/utils";
 
 export default function ShopDetailCards() {
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ export default function ShopDetailCards() {
           {/* Details */}
           <div className="lg:w-1/2 w-full p-6 sm:p-8 flex flex-col justify-center gap-6 bg-gray-50">
             <h1 className="text-2xl sm:text-3xl font-bold text-[#EE4E34]">
-              {user?.business_name}
+              {capitalizeFirstLetter(user?.business_name)}
             </h1>
 
             <p className="text-gray-700 italic text-sm sm:text-base">

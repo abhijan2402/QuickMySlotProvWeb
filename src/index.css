@@ -68,3 +68,16 @@
     height: 4px;
     border-radius: 2px;
 }
+
+/* Hide horizontal scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}

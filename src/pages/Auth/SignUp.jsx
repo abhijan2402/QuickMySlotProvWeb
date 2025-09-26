@@ -28,7 +28,7 @@ export default function Signup() {
   const [tempToken, setTempToken] = useState("");
   const [otp, setOtp] = useState(Array(6).fill(""));
   const inputRefs = useRef([]);
-  const [timer, setTimer] = useState(30);
+  const [timer, setTimer] = useState(120);
   const timerRef = useRef(null);
   const { data: profile } = useGetProfileQuery();
   const [signup, { isLoading: signingUp }] = useSignupMutation();

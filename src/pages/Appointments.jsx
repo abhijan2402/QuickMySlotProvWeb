@@ -30,79 +30,64 @@ const tabVariants = {
   exit: { opacity: 0, x: -20, transition: { duration: 0.2 } },
 };
 
+const statusMap = {
+  upcoming: "pending",
+  accepted: "accepted",
+  rejected: "rejected",
+  past: "completed",
+};
+
 export default function Appointments() {
-  const { data, isLoading } = useGetvendorBookingQuery();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("upcoming");
+  const apiStatus = statusMap[activeTab] || "";
+  const { data, isLoading } = useGetvendorBookingQuery({ status: apiStatus });
   const [acceptBooking] = useAcceptBookingMutation();
   const [rejectBooking] = useRejectBookingMutation();
   const [completedBooking] = useCompletedBookingMutation();
-  const [acceptingId, setAcceptingId] = useState(null);
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("upcoming");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(5); // appointments per page
+  const [acceptingId, setAcceptingId] = useState(null);
+  const [pageSize] = useState(6);
 
   // Feedback Modal State
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
   const [currentFeedbackId, setCurrentFeedbackId] = useState(null);
   const [feedbackForm] = Form.useForm();
 
-  // Filter appointments by status
-  const filteredAppointments = data?.data?.filter((appt) => {
-    switch (activeTab) {
-      case "upcoming":
-        return appt.status === "pending";
-      case "accepted":
-        return appt.status === "accepted";
-      case "rejected":
-        return appt.status === "rejected";
-      case "past":
-        return appt.status === "completed";
-      default:
-        return true;
-    }
-  });
-
-  console.log(filteredAppointments);
-
   // Pagination
-  const paginatedAppointments = filteredAppointments?.slice(
+  const paginatedAppointments = data?.data?.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
 
   const handleAccept = async (id) => {
-    setAcceptingId(id); // mark this appointment as being accepted
+    setAcceptingId(id);
     try {
       await acceptBooking(id).unwrap();
       toast.success("Appointment accepted successfully");
     } catch (error) {
       toast.error("Failed to accept the appointment");
     } finally {
-      setAcceptingId(null); // reset after done
+      setAcceptingId(null);
     }
   };
 
   const handleReject = async (id) => {
-    console.log("Reject appointment", id);
-    await rejectBooking(id)
-      .unwrap()
-      .then(() => {
-        toast.success("Appointment rejected successfully");
-      })
-      .catch(() => {
-        toast.error("Failed to reject the appointment");
-      });
+    try {
+      await rejectBooking(id).unwrap();
+      toast.success("Appointment rejected successfully");
+    } catch (error) {
+      toast.error("Failed to reject the appointment");
+    }
   };
 
   const handleComplete = async (id) => {
-    await completedBooking(id)
-      .unwrap()
-      .then(() => {
-        toast.success("Appointment completed successfully");
-      })
-      .catch(() => {
-        toast.error("Failed to complete the appointment");
-      });
+    try {
+      await completedBooking(id).unwrap();
+      toast.success("Appointment completed successfully");
+    } catch (error) {
+      toast.error("Failed to complete the appointment");
+    }
   };
 
   const handleGiveFeedbackClick = (id) => {
@@ -123,76 +108,62 @@ export default function Appointments() {
   };
 
   const renderAppointments = () => {
-    if (paginatedAppointments?.length === 0) {
+    if (isLoading) {
       return (
-        <motion.div
-          className="h-[50vh] flex flex-col items-center justify-center text-gray-500 select-none"
-          variants={noDataVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          key="no-data"
-        >
-          <FaTimesCircle className="text-6xl mb-4 animate-bounce text-gray-400" />
-          <p className="text-lg">No appointments found.</p>
-        </motion.div>
+        <div className="h-[50vh] flex items-center justify-center">
+          <SpinnerLoder title="Appointments" />
+        </div>
       );
     }
 
-    if (isLoading) {
+    if (paginatedAppointments?.length === 0) {
       return (
         <motion.div
-          className="h-[50vh] flex flex-col items-center justify-center text-gray-500 select-none"
+          className="h-[50vh] flex flex-col items-center justify-center text-gray-400 select-none"
           variants={noDataVariants}
           initial="initial"
           animate="animate"
           exit="exit"
-          key="no-data"
         >
-          {/* <FaTimesCircle className="text-6xl mb-4 animate-bounce text-gray-400" />
-              <p className="text-lg">No appointments found.</p> */}
-          <SpinnerLoder title="Appointments" />
+          <FaTimesCircle className="text-6xl mb-4 animate-bounce" />
+          <p className="text-lg font-medium">No appointments found.</p>
         </motion.div>
       );
     }
 
     return (
-      <div>
-        <motion.ul
-          className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full"
-          variants={tabVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          key="appointments-list"
-        >
-          {paginatedAppointments.map((appt) => (
-            <li
-              key={appt.id}
-              className="p-6 bg-white rounded-xl shadow-md border flex flex-col space-y-4 hover:shadow-lg transition"
-            >
+      <motion.ul
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        variants={tabVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+      >
+        {paginatedAppointments.map((appt) => (
+          <li
+            key={appt.id}
+            className="bg-white p-6 rounded-2xl shadow-md flex flex-col justify-between hover:shadow-xl transition"
+          >
+            <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <h4 className="font-semibold text-gray-800">
+                <h4 className="text-gray-800 font-semibold text-lg">
                   {appt.service?.name || "Service"}
                 </h4>
                 <span
                   onClick={() => handleViewDetails(appt.id)}
-                  className="text-orange-600 flex items-center gap-1 font-medium cursor-pointer"
+                  className="text-orange-500 flex items-center gap-1 cursor-pointer hover:underline font-medium"
                 >
-                  View details
-                  <FaCalendarAlt className="text-orange-600 text-lg" />
+                  View details <FaCalendarAlt />
                 </span>
               </div>
 
-              {/* Customer */}
-              <div className="text-gray-700 text-sm">
-                <p className="text-black font-medium">Customer:</p>
+              <div className="text-gray-600 text-sm">
+                <p className="font-medium text-gray-800">Customer:</p>
                 <p>{appt.customer?.name}</p>
               </div>
 
-              {/* Booking Time */}
-              <div className="text-gray-700 text-sm">
-                <p className="text-black font-medium">Booking Date:</p>
+              <div className="text-gray-600 text-sm">
+                <p className="font-medium text-gray-800">Booking Date:</p>
                 {appt.schedule_time &&
                   Object.entries(appt.schedule_time).map(([time, date]) => (
                     <p key={time}>
@@ -201,23 +172,24 @@ export default function Appointments() {
                   ))}
               </div>
 
-              {/* Amount */}
-              <p className="text-gray-900 text-sm flex justify-between mt-1">
-                <span className="text-black font-medium">Amount:</span>
-                <span className="border bg-green-200 px-4 py-1 rounded-md">
+              <p className="flex justify-between items-center mt-1 text-gray-800 font-medium">
+                Amount:
+                <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full font-semibold">
                   ₹{appt.amount}
                 </span>
               </p>
+            </div>
 
-              {/* Actions */}
+            {/* Actions */}
+            <div className="flex gap-3 mt-4 flex-wrap">
               {activeTab === "upcoming" && (
-                <div className="flex gap-4 mt-2">
+                <>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleAccept(appt.id);
                     }}
-                    className="bg-green-600 text-white px-4 py-2 text-sm font-medium rounded hover:bg-green-700 transition"
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition"
                   >
                     {acceptingId === appt.id ? "Accepting..." : "Accept"}
                   </button>
@@ -226,68 +198,59 @@ export default function Appointments() {
                       e.stopPropagation();
                       handleReject(appt.id);
                     }}
-                    className="bg-red-600 text-white px-4 py-2 text-sm font-medium rounded hover:bg-red-700 transition"
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition"
                   >
                     Reject
                   </button>
-                </div>
+                </>
               )}
-              {activeTab === "accepted" && (
-                <div className="flex gap-4 mt-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleComplete(appt.id);
-                    }}
-                    className="bg-green-600 text-white text-sm font-medium px-4 py-2 rounded hover:bg-green-700 transition"
-                  >
-                    Completed
-                  </button>
-                </div>
-              )}
-            </li>
-          ))}
-        </motion.ul>
 
-        {/* Pagination */}
-        <div className="flex justify-center mt-6">
-          <Pagination
-            current={currentPage}
-            pageSize={pageSize}
-            total={filteredAppointments?.length || 0}
-            onChange={(page) => setCurrentPage(page)}
-          />
-        </div>
-      </div>
+              {activeTab === "accepted" && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleComplete(appt.id);
+                  }}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+                >
+                  Completed
+                </button>
+              )}
+            </div>
+          </li>
+        ))}
+      </motion.ul>
     );
   };
 
   const tabs = [
     { id: "upcoming", icon: <FaChartPie />, label: "Upcoming" },
     { id: "accepted", icon: <FaCheckCircle />, label: "Accepted" },
-    { id: "rejected", icon: <FaCheckCircle />, label: "Rejected" },
-    { id: "past", icon: <FaCheckCircle />, label: "Past" },
+    { id: "rejected", icon: <FaTimesCircle />, label: "Rejected" },
+    { id: "past", icon: <FaCalendarAlt />, label: "Completed" },
   ];
 
   return (
     <>
-      <div className="max-w-6xl mx-auto p-6 space-y-8">
-        <Breadcrumb propertyTitle={"My Appointment"} />
+      <div className="max-w-6xl mx-auto p-4 sm:p-6">
+        <Breadcrumb propertyTitle={"My Appointments"} />
 
         <div className="bg-white p-6 rounded-2xl shadow-md">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Appointments</h3>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-pink-500 inline-block">
+            Appointments
+          </h3>
 
           {/* Tabs */}
-          <div className="flex gap-4 mb-6 overflow-x-auto no-scrollbar">
+          <div className="flex gap-3 mb-6 overflow-x-auto no-scrollbar">
             {tabs.map(({ id, icon, label }) => (
               <motion.button
                 key={id}
                 onClick={() => {
                   setActiveTab(id);
-                  setCurrentPage(1); // reset pagination when tab changes
+                  setCurrentPage(1);
                 }}
                 whileTap={{ scale: 0.95 }}
-                className={`px-5 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap text-sm font-semibold select-none transition ${
+                className={`flex items-center gap-2 whitespace-nowrap px-5 py-2 rounded-lg font-semibold text-sm transition ${
                   activeTab === id
                     ? "bg-[#EE4E34] text-white shadow-lg"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -298,7 +261,20 @@ export default function Appointments() {
             ))}
           </div>
 
-          <div>{renderAppointments()}</div>
+          {renderAppointments()}
+
+          {/* Pagination */}
+          {paginatedAppointments?.length > 0 && (
+            <div className="flex justify-center mt-6">
+              <Pagination
+                current={currentPage}
+                pageSize={pageSize}
+                total={data?.data?.length || 0}
+                onChange={(page) => setCurrentPage(page)}
+                showSizeChanger={false}
+              />
+            </div>
+          )}
         </div>
       </div>
 
