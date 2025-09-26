@@ -35,6 +35,7 @@ import { useGetsubscriptionQuery } from "../services/subscriptionApi";
 import { logout, setUser } from "../slices/authSlice";
 import { useGetcategoryQuery } from "../services/categoryApi";
 import EditProfileModal from "../components/Modals/EditProfileModal";
+import ShopDetailCards from "../components/ShopDetailCards";
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -281,7 +282,7 @@ export default function ProfilePage() {
           Boost Profile
         </button>
       </div>
-      <ShopDetails initialData={initialShopData} />;
+      <ShopDetailCards />;
       <DashboardTabs />
       {/* Boost Modal */}
       <Modal

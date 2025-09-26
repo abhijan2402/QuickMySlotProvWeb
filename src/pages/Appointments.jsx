@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { Form, Input, Modal, Rate, Pagination } from "antd";
 import {
   useAcceptBookingMutation,
+  useCompletedBookingMutation,
   useGetvendorBookingQuery,
   useRejectBookingMutation,
 } from "../services/vendorTransactionListApi";
@@ -33,6 +34,7 @@ export default function Appointments() {
   const { data, isLoading } = useGetvendorBookingQuery();
   const [acceptBooking] = useAcceptBookingMutation();
   const [rejectBooking] = useRejectBookingMutation();
+  const [completedBooking] = useCompletedBookingMutation();
   const [acceptingId, setAcceptingId] = useState(null);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("upcoming");
@@ -92,6 +94,17 @@ export default function Appointments() {
       });
   };
 
+  const handleComplete = async (id) => {
+    await completedBooking(id)
+      .unwrap()
+      .then(() => {
+        toast.success("Appointment completed successfully");
+      })
+      .catch(() => {
+        toast.error("Failed to complete the appointment");
+      });
+  };
+
   const handleGiveFeedbackClick = (id) => {
     setCurrentFeedbackId(id);
     feedbackForm.resetFields();
@@ -106,7 +119,7 @@ export default function Appointments() {
   };
 
   const handleViewDetails = (id) => {
-    navigate(`/appointment/${id}`); // navigate to details page
+    navigate(`/appointments_details/${id}`);
   };
 
   const renderAppointments = () => {
@@ -156,14 +169,19 @@ export default function Appointments() {
           {paginatedAppointments.map((appt) => (
             <li
               key={appt.id}
-              className="p-6 bg-white rounded-xl shadow-md border flex flex-col space-y-4 hover:shadow-lg transition cursor-pointer"
-              onClick={() => handleViewDetails(appt.id)}
+              className="p-6 bg-white rounded-xl shadow-md border flex flex-col space-y-4 hover:shadow-lg transition"
             >
               <div className="flex justify-between items-center">
                 <h4 className="font-semibold text-gray-800">
                   {appt.service?.name || "Service"}
                 </h4>
-                <FaCalendarAlt className="text-blue-500 text-lg" />
+                <span
+                  onClick={() => handleViewDetails(appt.id)}
+                  className="text-orange-600 flex items-center gap-1 font-medium cursor-pointer"
+                >
+                  View details
+                  <FaCalendarAlt className="text-orange-600 text-lg" />
+                </span>
               </div>
 
               {/* Customer */}
@@ -219,7 +237,7 @@ export default function Appointments() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleAccept(appt.id);
+                      handleComplete(appt.id);
                     }}
                     className="bg-green-600 text-white text-sm font-medium px-4 py-2 rounded hover:bg-green-700 transition"
                   >
@@ -246,9 +264,9 @@ export default function Appointments() {
 
   const tabs = [
     { id: "upcoming", icon: <FaChartPie />, label: "Upcoming" },
-    { id: "past", icon: <FaCheckCircle />, label: "Past" },
     { id: "accepted", icon: <FaCheckCircle />, label: "Accepted" },
     { id: "rejected", icon: <FaCheckCircle />, label: "Rejected" },
+    { id: "past", icon: <FaCheckCircle />, label: "Past" },
   ];
 
   return (

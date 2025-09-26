@@ -6,6 +6,7 @@ import {
   useAddbankMutation,
   useUpdatebankMutation,
   useDeletebankMutation,
+  useDefalutbankMutation,
 } from "../services/bankApi";
 import { toast } from "react-toastify";
 
@@ -16,6 +17,7 @@ const AccountManagement = () => {
   const [addbank] = useAddbankMutation();
   const [updatebank] = useUpdatebankMutation();
   const [deletebank] = useDeletebankMutation();
+  const [defalutbank] = useDefalutbankMutation();
 
   const [accounts, setAccounts] = useState([]);
   const [defaultAccountId, setDefaultAccountId] = useState(null);
@@ -102,9 +104,16 @@ const AccountManagement = () => {
   };
 
   // Set default account
-  const handleSetDefault = (id) => {
+  const handleSetDefault = async (id) => {
     setDefaultAccountId(id);
-    toast.info("Default bank account set");
+    await defalutbank(id)
+      .unwrap()
+      .then(() => {
+        toast.info("Default bank account set");
+      })
+      .catch(() => {
+        toast.error("Something went worng..!");
+      });
   };
 
   if (isLoading) {
@@ -134,7 +143,7 @@ const AccountManagement = () => {
           <div
             key={item.id}
             className={`border rounded-lg p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow ${
-              defaultAccountId === item.id ? "border-indigo-500" : ""
+              item?.is_set === "1" ? "border-indigo-500" : ""
             }`}
           >
             <div>
@@ -142,7 +151,7 @@ const AccountManagement = () => {
                 <h3 className="text-lg font-semibold text-gray-900">
                   {item.bank_name}
                 </h3>
-                {defaultAccountId === item.id && (
+                {item?.is_set === "1" && (
                   <span className="text-xs text-white bg-indigo-600 px-2 py-1 rounded flex items-center gap-1">
                     <FaCheckCircle /> Default
                   </span>
@@ -173,10 +182,10 @@ const AccountManagement = () => {
               </Button>
               <Button
                 size="small"
-                type={defaultAccountId === item.id ? "primary" : "default"}
+                type={item?.is_set === "1" ? "primary" : "default"}
                 onClick={() => handleSetDefault(item.id)}
               >
-                {defaultAccountId === item.id ? "Default" : "Set Default"}
+                {item?.is_set === "1" ? "Default" : "Set Default"}
               </Button>
             </div>
           </div>

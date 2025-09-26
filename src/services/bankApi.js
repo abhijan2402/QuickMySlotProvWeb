@@ -35,6 +35,15 @@ export const bankApi = createApi({
       invalidatesTags: ["bank"],
     }),
 
+    defalutbank: builder.mutation({
+      query: (id) => ({
+        url: `bank-accounts/set/${id}`,
+        method: "POST",
+        body: {},
+      }),
+      invalidatesTags: ["bank"],
+    }),
+
     deletebank: builder.mutation({
       query: (id) => ({
         url: `bank-accounts/delete/${id}`,
@@ -51,4 +60,5 @@ export const {
   useAddbankMutation,
   useUpdatebankMutation,
   useDeletebankMutation,
+  useDefalutbankMutation
 } = bankApi;

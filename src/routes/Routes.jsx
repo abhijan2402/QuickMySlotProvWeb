@@ -13,6 +13,7 @@ import ProfilePage from "../pages/ProfilePage";
 import PricingModal from "../components/PricingModal";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import TermsAndConditions from "../pages/TermsAndConditions";
+import AppointmentDetails from "../pages/AppointmentDetails";
 
 export default function AppRoutes() {
   return (
@@ -33,6 +34,10 @@ export default function AppRoutes() {
         <Route path="/manageshop" element={<ManageServicesPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/appointments" element={<Appointments />} />
+        <Route
+          path="/appointments_details/:id"
+          element={<AppointmentDetails />}
+        />
         <Route path="/support" element={<Support />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/pricing" element={<PricingModal />} />

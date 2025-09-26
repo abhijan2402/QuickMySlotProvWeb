@@ -46,8 +46,17 @@ export const vendorTransactionApi = createApi({
       }),
       invalidatesTags: ["vendorBooking"],
     }),
+    // Completed Booking
+    completedBooking: builder.mutation({
+      query: (id) => ({
+        url: `booking/completed/${id}`,
+        method: "POST",
+        body: {},
+      }),
+      invalidatesTags: ["vendorBooking"],
+    }),
   }),
 });
 
-export const { useGetvendorTransactionQuery, useGetvendorBookingQuery, useAcceptBookingMutation, useRejectBookingMutation } =
+export const { useGetvendorTransactionQuery, useGetvendorBookingQuery, useAcceptBookingMutation, useRejectBookingMutation, useCompletedBookingMutation } =
   vendorTransactionApi;
