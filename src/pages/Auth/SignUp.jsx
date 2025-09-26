@@ -274,7 +274,7 @@ export default function Signup() {
         <div className="hidden md:flex fixed top-0 right-0 h-screen w-1/2 bg-[#EE4E34] items-center justify-center text-center p-10">
           <div>
             <img
-              src="/Selection.png"
+              src="/logo1.png"
               alt="QuickMySlot"
               className="mx-auto mb-4 h-40 object-contain"
             />

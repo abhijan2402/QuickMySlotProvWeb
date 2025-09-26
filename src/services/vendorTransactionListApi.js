@@ -18,7 +18,36 @@ export const vendorTransactionApi = createApi({
       }),
       providesTags: ["vendorTransaction"],
     }),
+    // Get bookingList (GET request)
+    getvendorBooking: builder.query({
+      query: () => ({
+        url: `bookings/list`,
+        method: "GET",
+      }),
+      providesTags: ["vendorBooking"],
+    }),
+
+    // Accept Booking
+    acceptBooking: builder.mutation({
+      query: (id) => ({
+        url: `booking/accepted/${id}`,
+        method: "POST",
+        body: {},
+      }),
+      invalidatesTags: ["vendorBooking"],
+    }),
+
+    // Reject Booking
+    rejectBooking: builder.mutation({
+      query: (id) => ({
+        url: `booking/reject/${id}`,
+        method: "POST",
+        body: {},
+      }),
+      invalidatesTags: ["vendorBooking"],
+    }),
   }),
 });
 
-export const { useGetvendorTransactionQuery } = vendorTransactionApi;
+export const { useGetvendorTransactionQuery, useGetvendorBookingQuery, useAcceptBookingMutation, useRejectBookingMutation } =
+  vendorTransactionApi;

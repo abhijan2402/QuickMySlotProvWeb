@@ -3,7 +3,7 @@ import { BsBellFill } from "react-icons/bs";
 import { MdOutlineMyLocation } from "react-icons/md";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import logo from "../assets/clogo.png";
+import logo from "/logo.png";
 import { useSelector } from "react-redux";
 import { useGetProfileQuery } from "../services/profileApi";
 import { getCityAndAreaFromAddress } from "../utils/utils";

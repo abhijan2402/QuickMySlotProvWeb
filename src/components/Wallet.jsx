@@ -1,12 +1,19 @@
 import { Button, Form, Input, Modal, Table } from "antd";
 import { useState } from "react";
-import { useAddwalletMutation, useGetwalletQuery } from "../services/walletApi";
+import {
+  useAddwalletMutation,
+  useGetwalletQuery,
+  useVerifyPaymentMutation,
+} from "../services/walletApi";
 import { toast } from "react-toastify";
 import { convertToIST } from "../utils/utils";
+import { useSelector } from "react-redux";
 
 const Wallet = () => {
+  const user = useSelector((state) => state.auth.user);
   const { data } = useGetwalletQuery();
   const [addwallet] = useAddwalletMutation();
+  const [verifyPayment] = useVerifyPaymentMutation();
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [form] = Form.useForm();
 
@@ -14,19 +21,62 @@ const Wallet = () => {
     form.validateFields().then(async (values) => {
       const formData = new FormData();
       formData.append("amount", values.amount);
-      formData.append("type", "credit");
-      try {
-        await addwallet(formData)
-          .unwrap()
-          .then(() => {
-            toast.success("Amount added to wallet.");
-            setIsAddModalVisible(false);
-            form.resetFields();
-          });
-      } catch (error) {
-        console.error("Failed to add amount:", error);
-        toast.error("Failed to add amount.");
+      // formData.append("type", "credit");
+
+      // ✅ Create booking/order
+      const order = await addwallet(formData).unwrap();
+      console.log(order);
+
+      // 🔹 Razorpay payment flow
+      if (!order?.order_id) {
+        toast.error("Failed to create Razorpay order");
+        return;
       }
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order?.amount,
+        currency: "INR",
+        name: "Quickmyslot",
+        description: "Add Amount to Wallet",
+        image: "/logo1.png",
+        order_id: order?.order_id,
+        handler: async function (response) {
+          const verifyData = new FormData();
+          verifyData.append("amount", order?.amount);
+          verifyData.append(
+            "razorpay_payment_id",
+            response.razorpay_payment_id
+          );
+          verifyData.append("razorpay_order_id", response.razorpay_order_id);
+          verifyData.append("razorpay_signature", response.razorpay_signature);
+
+          try {
+            const verifyRes = await verifyPayment(verifyData).unwrap();
+            console.log(verifyRes);
+            if (verifyRes.status) {
+              toast.success("Payment verified & booking confirmed!");
+            } else {
+              toast.error("Payment verification failed");
+            }
+          } catch (err) {
+            toast.error("Error verifying payment");
+            console.error(err);
+            setIsAddModalVisible(false);
+          }
+        },
+        prefill: {
+          name: user?.name,
+          contact: user?.phone_number,
+          email: user?.email,
+        },
+        theme: { color: "#EE4E34" },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+      setIsAddModalVisible(false);
+      form.resetFields();
     });
   };
 
@@ -48,16 +98,16 @@ const Wallet = () => {
         <span className="font-semibold text-indigo-600">₹{amount}</span>
       ),
     },
-    {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      render: (type) => (
-        <span className="font-medium text-gray-700">
-          {type === "credit" && "credited"}
-        </span>
-      ),
-    },
+    // {
+    //   title: "Type",
+    //   dataIndex: "type",
+    //   key: "type",
+    //   render: (type) => (
+    //     <span className="font-medium text-gray-700">
+    //       {type === "credit" && "credited"}
+    //     </span>
+    //   ),
+    // },
     {
       title: "Date",
       dataIndex: "created_at",
@@ -102,7 +152,7 @@ const Wallet = () => {
       {/* Modal for adding amount */}
       <Modal
         title="Add Amount"
-        open={isAddModalVisible} // ✅ changed from "visible" (deprecated in v5)
+        open={isAddModalVisible}
         onOk={handleAddAmount}
         onCancel={() => setIsAddModalVisible(false)}
         okText="Add"

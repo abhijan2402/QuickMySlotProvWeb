@@ -1,111 +1,104 @@
-import { BellOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import {
+  BellOutlined,
+  ClockCircleOutlined,
+  HomeOutlined,
+} from "@ant-design/icons";
 import { useGetnotificationQuery } from "../services/notificationApi";
-
-// Dummy notifications data
-const notifications = [
-  {
-    id: 1,
-    type: "booking",
-    title: "Booking Confirmed",
-    status: "Read",
-    message:
-      "Your appointment with Dr. Emily Davis on Oct 26th at 2:00 PM is confirmed.",
-    time: "2 hours ago",
-    icon: <ClockCircleOutlined className="text-purple-500 text-2xl" />,
-    statusColor: "text-green-600",
-  },
-  {
-    id: 2,
-    type: "upcoming",
-    title: "Upcoming Appointment",
-    status: "Unread",
-    message:
-      "Reminder: Your appointment with John Doe is tomorrow at 10:00 AM.",
-    time: "Yesterday",
-    icon: <BellOutlined className="text-purple-500 text-2xl" />,
-    statusColor: "text-gray-500",
-  },
-  {
-    id: 3,
-    type: "message",
-    title: "New Message Received",
-    status: "New",
-    message: "You have a new message from Provider Jane Smith.",
-    time: "1 day ago",
-    icon: <BellOutlined className="text-purple-500 text-2xl" />,
-    statusColor: "text-blue-600 font-bold",
-  },
-  {
-    id: 4,
-    type: "pending",
-    title: "Booking Pending",
-    status: "Pending",
-    message:
-      'Your booking request for service "Haircut" with Stylist Mark is pending confirmation.',
-    time: "2 days ago",
-    icon: <ClockCircleOutlined className="text-purple-500 text-2xl" />,
-    statusColor: "text-yellow-600 font-bold",
-  },
-];
+import SpinnerLodar from "../components/SpinnerLodar";
 
 export default function NotificationsPage() {
   const { data, isLoading } = useGetnotificationQuery();
+  const notifications = data?.data || [];
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-8 py-6">
-        <div className="flex items-center gap-2">
-          <button
-            aria-label="Go Back"
-            className="mr-2 text-xl text-black/60"
-            onClick={() => window.history.back()}
-          >
-            &#8592;
-          </button>
-          <h1 className="text-2xl sm:text-3xl font-bold text-black">
-            Notifications
-          </h1>
-        </div>
+    <div className="min-h-screen bg-gray-50 mt-4">
+      {/* Header Section */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6">
+        <nav className="flex items-center text-gray-500 text-sm mb-4">
+          <HomeOutlined className="mr-1" />
+          <span className="mr-1">/</span>
+          <span className="font-medium text-gray-700">Notifications</span>
+        </nav>
+
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-6">
+          Notifications
+        </h1>
 
         {/* Notifications List */}
-        <div className="mt-6 flex flex-col gap-4">
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className="rounded-xl border border-gray-200 bg-white px-5 py-4 flex gap-4 items-start shadow-sm hover:shadow transition
-              flex-col sm:flex-row sm:items-center"
-            >
-              {/* Icon */}
-              <div className="flex-shrink-0">{notif.icon}</div>
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-semibold xl:text:md sm:text-sm md:text-lg text-black ">
-                    {notif.title}
-                  </span>
-                  <span
-                    className={`text-xs px-2 py-1 rounded ${
-                      notif.status === "Read"
-                        ? "bg-green-50 " + notif.statusColor
-                        : notif.status === "Unread"
-                        ? "bg-gray-100 " + notif.statusColor
-                        : notif.status === "New"
-                        ? "bg-blue-50 " + notif.statusColor
-                        : notif.status === "Pending"
-                        ? "bg-yellow-50 " + notif.statusColor
-                        : "bg-gray-100 text-gray-500"
-                    }`}
-                  >
-                    {notif.status}
-                  </span>
-                </div>
-                <div className="text-gray-700 mt-1 sm:text-[14px] md:text-[16px] xl:text:md">
-                  {notif.message}
-                </div>
-                <div className="text-xs text-gray-400 mt-2">{notif.time}</div>
-              </div>
+        {isLoading ? (
+          <div className="h-[350px] flex items-center justify-center">
+            <SpinnerLodar />
+          </div>
+        ) : !notifications.length ? (
+          <div className="h-[350px] flex flex-col items-center justify-center text-gray-500">
+            <div className="text-6xl mb-4 text-gray-300 animate-pulse">
+              <BellOutlined />
             </div>
-          ))}
-        </div>
+            <h2 className="text-2xl font-semibold mb-2">No Notifications</h2>
+            <p className="text-gray-400 text-center max-w-sm">
+              You have no notifications at the moment. Check back later for
+              updates and alerts.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+            {notifications.map((notif) => {
+              const icon =
+                notif.type === "booking" || notif.type === "pending" ? (
+                  <ClockCircleOutlined className="text-purple-500 text-3xl" />
+                ) : (
+                  <BellOutlined className="text-purple-500 text-3xl" />
+                );
+
+              const statusColor =
+                notif.status === "Read"
+                  ? "text-green-600"
+                  : notif.status === "Unread"
+                  ? "text-gray-500"
+                  : notif.status === "New"
+                  ? "text-blue-600 font-bold"
+                  : notif.status === "Pending"
+                  ? "text-yellow-600 font-bold"
+                  : "text-gray-500";
+
+              const bgColor =
+                notif.status === "Read"
+                  ? "bg-green-50"
+                  : notif.status === "Unread"
+                  ? "bg-gray-100"
+                  : notif.status === "New"
+                  ? "bg-blue-50"
+                  : notif.status === "Pending"
+                  ? "bg-yellow-50"
+                  : "bg-gray-100";
+
+              return (
+                <div
+                  key={notif.id}
+                  className="flex gap-4 items-start p-5 rounded-xl shadow hover:shadow-lg transition bg-white border border-gray-200"
+                >
+                  <div className="flex-shrink-0">{icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h2 className="font-semibold text-lg text-gray-800">
+                        {notif.title}
+                      </h2>
+                      <span
+                        className={`text-xs px-2 py-1 rounded ${bgColor} ${statusColor}`}
+                      >
+                        {notif.status}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 text-sm md:text-base mb-2">
+                      {notif.message}
+                    </p>
+                    <span className="text-xs text-gray-400">{notif.time}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

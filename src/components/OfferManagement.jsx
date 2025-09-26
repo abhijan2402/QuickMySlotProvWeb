@@ -26,7 +26,7 @@ import { CalendarOutlined, PercentageOutlined } from "@ant-design/icons";
 const { RangePicker } = DatePicker;
 
 const discountTypes = [
-  { label: "Fixed Amount", value: "fixed" },
+  { label: "Percentage", value: "percentage" },
   { label: "Flat", value: "flat" },
 ];
 
@@ -166,7 +166,14 @@ const OfferManagement = () => {
                     <Tag color="blue">{offer.type}</Tag>
                   </p>
                   <p style={{ fontSize: 16, fontWeight: 500 }}>
-                    <PercentageOutlined /> {offer.amount}
+                    {offer.type === "flat" ? (
+                      <>₹{offer.amount}</>
+                    ) : (
+                      <>
+                        {offer.amount}
+                         <PercentageOutlined />
+                      </>
+                    )}
                   </p>
                 </div>
                 <p style={{ color: "#555" }}>{offer.description}</p>

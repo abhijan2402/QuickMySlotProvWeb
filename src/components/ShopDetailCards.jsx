@@ -3,41 +3,24 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate } from "react-router-dom";
-import { FaUserAlt, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
-import { CgLock } from "react-icons/cg";
+import {
+  FaUserAlt,
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaGlobe,
+  FaCalendarAlt,
+} from "react-icons/fa";
 import { BsClock } from "react-icons/bs";
-import { useGetProfileQuery } from "../services/profileApi";
 import { useSelector } from "react-redux";
-
-const shopData = [
-  {
-    id: 1,
-    vendorName: "John Doe",
-    mobile: "+91 9876543210",
-    shopName: "Elite Salon",
-    description:
-      "Unleash your beauty with expert styling and personalized care.",
-    address: "123 Main Street, New Delhi",
-    opentime: "10:00AM",
-    closetime: "10:00PM",
-    images: [
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGF3MiZ7vAAl58bi9m6YHS4FYTevIZzpxX3A&s",
-      "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=700&q=80",
-      "https://images.unsplash.com/photo-1590080877777-3e919f9d17a0?auto=format&fit=crop&w=700&q=80",
-    ],
-  },
-];
 
 export default function ShopDetailCards() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
 
-  const { data: profile, error, isLoading } = useGetProfileQuery();
-  console.log(user);
   const sliderSettings = {
     dots: true,
-    infinite: true,
-    autoplay: true,
+    infinite: user?.portfolio_images?.length > 1,
+    autoplay: user?.portfolio_images?.length > 1,
     autoplaySpeed: 3000,
     speed: 600,
     slidesToShow: 1,
@@ -46,100 +29,127 @@ export default function ShopDetailCards() {
     pauseOnHover: true,
   };
 
-  const {
-    id,
-    vendorName,
-    mobile,
-    shopName,
-    description,
-    address,
-    images,
-    opentime,
-    closetime,
-  } = shopData[0];
-
   return (
     <section className="py-12 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
+        {/* Section Heading */}
         <div className="flex flex-col items-center mb-10 px-4 max-w-2xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center w-full gap-4">
-            <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
+            <div className="flex-grow border-t-2 border-[#EE4E34]"></div>
             <div className="text-center px-6">
-              <h2 className="text-4xl font-extrabold text-[#EE4E34]">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#EE4E34]">
                 My Shop
               </h2>
-              <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm sm:text-base max-w-md mx-auto">
+              <p className="mt-2 text-gray-600 text-sm sm:text-base">
                 Manage your shop and showcase your services professionally.
               </p>
             </div>
-            <div className="flex-grow border-t-2 w-10 border-[#EE4E34]"></div>
+            <div className="flex-grow border-t-2 border-[#EE4E34]"></div>
           </div>
         </div>
 
+        {/* Main Card */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, type: "spring", stiffness: 70 }}
-          className="cursor-pointer bg-white rounded-lg shadow-lg overflow-hidden flex flex-col lg:flex-row border border-gray-200"
+          className="cursor-pointer bg-white rounded-xl shadow-lg overflow-hidden flex flex-col lg:flex-row border border-gray-200"
         >
-          {/* Image Slider */}
-          <div className="lg:w-1/2 w-full h-96 lg:h-auto">
-            <Slider {...sliderSettings}>
-              {images.map((img, idx) => (
+          {/* Image / Slider */}
+          <div className="lg:w-1/2 w-full h-72 sm:h-96 lg:h-auto">
+            {user?.portfolio_images && user?.portfolio_images.length > 0 ? (
+              user?.portfolio_images.length === 1 ? (
                 <img
-                  key={idx}
-                  src={img}
-                  alt={`${shopName} image ${idx + 1}`}
-                  className="w-full h-96 lg:h-full object-cover"
+                  src={user.portfolio_images[0].image_url}
+                  alt={`${user?.business_name} portfolio`}
+                  className="w-full h-full object-cover"
                 />
-              ))}
-            </Slider>
+              ) : (
+                <Slider {...sliderSettings} className="h-full">
+                  {user.portfolio_images.map((img, idx) => (
+                    <div key={img.id || idx}>
+                      <img
+                        src={img.image_url}
+                        alt={`${user?.business_name} portfolio ${idx + 1}`}
+                        className="w-full h-72 sm:h-96 lg:h-[500px] object-cover"
+                      />
+                    </div>
+                  ))}
+                </Slider>
+              )
+            ) : (
+              <img
+                src="https://via.placeholder.com/600x400?text=No+Images+Available"
+                alt="No portfolio"
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
 
-          {/* Details Panel */}
-          <div className="lg:w-1/2 w-full p-8 flex flex-col justify-center gap-6 bg-purple-50">
-            <h1 className="text-4xl font-extrabold text-[#EE4E34]">
-              {user.business_name}
+          {/* Details */}
+          <div className="lg:w-1/2 w-full p-6 sm:p-8 flex flex-col justify-center gap-6 bg-gray-50">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#EE4E34]">
+              {user?.business_name}
             </h1>
 
-            <p className="text-lg text-gray-700 italic max-w-md">
-              {user.business_description}
+            <p className="text-gray-700 italic text-sm sm:text-base">
+              {user?.business_description || "No description available."}
             </p>
 
-            <div className="space-y-4 text-gray-700 max-w-md">
+            <div className="space-y-4 text-gray-700 text-sm sm:text-base">
               <div className="flex items-center gap-3">
                 <FaUserAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Vendor:</span>
-                <span>{user.name}</span>
+                <span>{user?.name}</span>
               </div>
 
               <div className="flex items-center gap-3">
                 <FaPhoneAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Mobile:</span>
-                <span>{user.phone_number}</span>
+                <span>{user?.phone_number}</span>
               </div>
 
               <div className="flex items-center gap-3">
                 <FaMapMarkerAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Address:</span>
-                <span>
-                  {user.location_area_served}, {user.exact_location}
+                <span className="line-clamp-2">
+                  {user?.location_area_served}, {user?.exact_location}
                 </span>
               </div>
 
               <div className="flex items-center gap-3">
                 <BsClock className="text-[#EE4E34]" />
-                <span className="font-semibold">Time:</span>
+                <span className="font-semibold">Timings:</span>
                 <span>
-                  {user.daily_start_time}-{user.daily_end_time}
+                  {user?.daily_start_time} - {user?.daily_end_time}
                 </span>
               </div>
+
+              <div className="flex items-center gap-3">
+                <FaCalendarAlt className="text-[#EE4E34]" />
+                <span className="font-semibold">Working Days:</span>
+                <span>{user?.working_days?.join(", ") || "Not specified"}</span>
+              </div>
+
+              {user?.business_website && (
+                <div className="flex items-center gap-3">
+                  <FaGlobe className="text-[#EE4E34]" />
+                  <span className="font-semibold">Website:</span>
+                  <a
+                    href={user.business_website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    {user.business_website}
+                  </a>
+                </div>
+              )}
             </div>
 
             <button
-              className="mt-6 py-3 w-40 rounded-lg text-white bg-[#EE4E34] hover:bg-purple-800 transition font-semibold"
+              className="mt-6 py-3 px-5 rounded-lg text-white bg-[#EE4E34] hover:bg-[#d13c25] transition font-semibold w-fit"
               onClick={() => navigate(`/manageshop`)}
-              // aria-label={`View details of ${shopName}`}
             >
               Manage Services
             </button>

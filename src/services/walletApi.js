@@ -26,7 +26,15 @@ export const walletApi = createApi({
       }),
       invalidatesTags: ["wallet"],
     }),
+    verifyPayment: builder.mutation({
+      query: (formData) => ({
+        url: `wallet/verify`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["wallet"],
+    }),
   }),
 });
 
-export const { useGetwalletQuery, useAddwalletMutation } = walletApi;
+export const { useGetwalletQuery, useAddwalletMutation, useVerifyPaymentMutation } = walletApi;
