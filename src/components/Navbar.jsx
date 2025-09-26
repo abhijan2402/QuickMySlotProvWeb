@@ -6,13 +6,35 @@ import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/clogo.png";
 import { useSelector } from "react-redux";
 import { useGetProfileQuery } from "../services/profileApi";
+import { getCityAndAreaFromAddress } from "../utils/utils";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((state) => state.auth.user);
   const { data: profile } = useGetProfileQuery();
+  const [city, setCity] = useState(null);
+  const [area, setArea] = useState(null);
 
+  useEffect(() => {
+    async function fetchCityAndArea() {
+      if (user?.exact_location) {
+        const result = await getCityAndAreaFromAddress(user.exact_location);
+        if (result) {
+          console.log(result.city, result.area);
+          setCity(result.city);
+          setArea(result.area);
+        } else {
+          setCity(null);
+          setArea(null);
+        }
+      } else {
+        setCity(null);
+        setArea(null);
+      }
+    }
+    fetchCityAndArea();
+  }, [user?.exact_location]);
   const navItems = [
     "Home",
     "Appointment",
@@ -119,10 +141,10 @@ export default function Navbar() {
                 />
                 <div className="flex flex-col leading-none">
                   <span className="font-bold text-[#EE4E34] text-[14px]">
-                    {profile?.data?.location_area_served || "NA"}
+                    {city || "NA"}
                   </span>
                   <p className="text-[10px] mt-1 text-gray-600">
-                    {profile?.data?.exact_location || "NA"}
+                    {area || "NA"}
                   </p>
                 </div>
               </div>

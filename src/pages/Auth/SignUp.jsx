@@ -14,6 +14,7 @@ import Password from "antd/es/input/Password";
 import AvailabilityModal from "./AvailabilityModal";
 import ProfileModal from "./ProfileModal";
 import { useGetProfileQuery } from "../../services/profileApi";
+
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const { Option } = Select;
@@ -85,7 +86,7 @@ export default function Signup() {
 
         // Save token only after profile success
         dispatch(setToken(res.token));
-        dispatch(setUser(profileData.data));
+        dispatch(setUser(profileData?.data));
 
         toast.success("Signup successful!");
         navigate("/");
@@ -158,21 +159,26 @@ export default function Signup() {
                     },
                   ]}
                 >
-                  <Input
-                    placeholder="1234567890"
-                    size="large"
-                    maxLength={10}
-                    minLength={10}
-                    type="tel"
-                    inputMode="numeric"
-                    pattern="\d*"
-                    onChange={(e) => {
-                      const val = e.target.value
-                        .replace(/[^\d]/g, "")
-                        .slice(0, 10);
-                      form.setFieldsValue({ phone_number: val });
-                    }}
-                  />
+                  <div className="flex items-center gap-2">
+                    <p className="p-2 px-3 border rounded-md text-black font-medium">
+                      +91
+                    </p>
+                    <Input
+                      placeholder="1234567890"
+                      size="large"
+                      maxLength={10}
+                      minLength={10}
+                      type="tel"
+                      inputMode="numeric"
+                      pattern="\d*"
+                      onChange={(e) => {
+                        const val = e.target.value
+                          .replace(/[^\d]/g, "")
+                          .slice(0, 10);
+                        form.setFieldsValue({ phone_number: val });
+                      }}
+                    />
+                  </div>
                 </Form.Item>
 
                 <Button
@@ -233,7 +239,7 @@ export default function Signup() {
         </div>
 
         {/* Right side - Branding */}
-        <div className="hidden md:flex fixed top-0 right-0 h-screen w-1/2 bg-[#3f2c7f] items-center justify-center text-center p-10">
+        <div className="hidden md:flex fixed top-0 right-0 h-screen w-1/2 bg-[#EE4E34] items-center justify-center text-center p-10">
           <div>
             <img
               src="/Selection.png"

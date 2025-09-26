@@ -39,8 +39,8 @@ export default function AvailabilityModal({ visible, onClose, userID }) {
       await setAvailability(fd).unwrap();
       toast.success("Availability Saved successfully.");
       form.resetFields();
-      onNext();
       onClose();
+      // onNext();
     } catch (err) {
       console.error(err);
       message.error("Failed to save availability.");

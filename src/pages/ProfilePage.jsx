@@ -34,6 +34,7 @@ import { toast } from "react-toastify";
 import { useGetsubscriptionQuery } from "../services/subscriptionApi";
 import { logout, setUser } from "../slices/authSlice";
 import { useGetcategoryQuery } from "../services/categoryApi";
+import EditProfileModal from "../components/Modals/EditProfileModal";
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -78,7 +79,7 @@ export default function ProfilePage() {
   const [boostModalOpen, setBoostModalOpen] = useState(false);
   const [forgotModalOpen, setForgotModalOpen] = useState(false);
 
-  console.log(category?.data);
+  // console.log(category?.data);
 
   const dispatch = useDispatch();
 
@@ -202,9 +203,13 @@ export default function ProfilePage() {
               <h2 className="text-xl font-bold text-gray-800 truncate">
                 {user?.name || "NA"}
               </h2>
-              <p className="text-gray-500 truncate">{user?.email || "NA"}</p>
-              <p className="text-sm text-gray-400 truncate">
-                {user?.phone_number || "NA"}
+              <p className="text-gray-600 truncate">
+                <span>Email : </span>
+                <span>{user?.email || "NA"}</span>
+              </p>
+              <p className="text-sm text-gray-600 truncate">
+                <span>Ph. No. : </span>
+                <span>+91 {user?.phone_number || "NA"}</span>
               </p>
             </div>
           </div>
@@ -237,7 +242,7 @@ export default function ProfilePage() {
           <h3 className="text-black text-xl font-medium flex mb-2 justify-between">
             Current Plan:{" "}
             <span className="text-[#EE4E34]">
-              ${currentPlan?.data?.[0]?.price}
+              ₹{currentPlan?.data?.[0]?.price}
             </span>
           </h3>
           <div className=" flex flex-col">
@@ -321,7 +326,7 @@ export default function ProfilePage() {
                   </span>
                 </div>
                 <div className="text-xl font-semibold text-[#EE4E34] ml-4 min-w-[70px] text-right">
-                  ${plan.price.toFixed(2)}
+                  ₹{plan.price.toFixed(2)}
                 </div>
               </div>
             ))}
@@ -359,114 +364,11 @@ export default function ProfilePage() {
         </Button>
       </Modal>
       {/* Edit Profile Modal */}
-      <Modal
-        title="Edit Profile"
-        open={isModalOpen}
-        onCancel={handleCancel}
-        footer={null}
-        destroyOnClose
-      >
-        <Form
-          layout="vertical"
-          initialValues={{
-            image: fileList,
-            name: user?.name,
-            email: user?.email,
-            phone: user?.phone_number,
-            business_name: user?.business_name,
-            service_category: user?.service_category,
-            website: user?.business_website,
-            location_area_served: user?.location_area_served,
-            exact_location: user?.exact_location,
-          }}
-          onFinish={onFinish}
-        >
-          <Form.Item
-            label="Profile Image"
-            name="image"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => (Array.isArray(e) ? e : e && e.fileList)}
-          >
-            <Upload
-              beforeUpload={() => false}
-              listType="picture"
-              maxCount={1}
-              accept="image/*"
-              fileList={fileList}
-              onChange={({ fileList }) => setFileList(fileList)}
-            >
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
-          </Form.Item>
-
-          <Form.Item
-            name="service_category"
-            label="Services Category"
-            rules={[{ required: true, message: "Please select a category!" }]}
-          >
-            <Select placeholder="Select category" size="medium">
-              {category?.data?.map((cat) => (
-                <Select.Option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ min: 3, message: "Name must be at least 3 characters" }]}
-          >
-            <Input placeholder="Enter your name" />
-          </Form.Item>
-
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[{ type: "email", message: "Please enter a valid email!" }]}
-          >
-            <Input placeholder="Enter your email" />
-          </Form.Item>
-
-          <Form.Item
-            label="Phone Number"
-            name="phone"
-            rules={[{ message: "Please input your phone number!" }]}
-          >
-            <Input placeholder="Enter your phone number" />
-          </Form.Item>
-
-          {/* <Form.Item label="City" name="location_area_served">
-            <Input placeholder="Enter your city" />
-          </Form.Item> */}
-
-          <Form.Item label="Address" name="exact_location">
-            <Input placeholder="Enter your complete address" />
-          </Form.Item>
-
-          <Form.Item label="Services Location Area" name="location_area_served">
-            <Input placeholder="Enter your service location area" />
-          </Form.Item>
-
-          <Form.Item label="Website" name="website">
-            <Input placeholder="Enter your website" />
-          </Form.Item>
-
-          <Form.Item label="Business Name" name="business_name">
-            <Input placeholder="Enter your Businees Name" />
-          </Form.Item>
-
-          <Form.Item className="text-right">
-            <Button onClick={handleCancel} className="mr-3">
-              Cancel
-            </Button>
-            <Button type="primary" htmlType="submit" className="bg-[#EE4E34]">
-              Save
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+      <EditProfileModal
+        visible={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        user={user}
+      />
       {/* Forgot Password Modal */}
       <Modal
         title="Forgot Password"
