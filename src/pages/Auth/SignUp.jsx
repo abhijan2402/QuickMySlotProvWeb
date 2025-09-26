@@ -276,7 +276,7 @@ export default function Signup() {
             <img
               src="/logo1.png"
               alt="QuickMySlot"
-              className="mx-auto mb-4 h-40 object-contain"
+              className="mx-auto mb-0 h-80 object-contain"
             />
             <h2 className="text-2xl font-semibold text-white mb-2">
               QuickmySlot
