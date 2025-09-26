@@ -138,7 +138,7 @@ export default function Navbar() {
                 title="Click to select a different location"
               >
                 <FaLocationDot
-                  className="w-8 h-8 text-[#EE4E34]"
+                  className="w-6 h-6 text-[#EE4E34]"
                   aria-hidden="true"
                 />
                 <div className="flex flex-col leading-none">
