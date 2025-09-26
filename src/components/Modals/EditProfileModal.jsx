@@ -145,14 +145,18 @@ export default function EditProfileModal({ visible, onClose, user }) {
         "adhaar_card_verification"
       );
       pushSingleFile(values.pan_card, "pan_card");
-      if (values.portfolio_images && values.portfolio_images.length > 0) {
-        values.portfolio_images.forEach((file, idx) => {
-          const originFile = file.originFileObj || file;
-          if (originFile) {
-            fd.append(`portfolio_images[${idx}]`, originFile);
-          }
-        });
+  if (values.portfolio_images && values.portfolio_images.length > 0) {
+    values.portfolio_images.forEach((file, idx) => {
+      const actualFile = file.originFileObj || file;
+
+      if (actualFile instanceof File) {
+        // Append with index in brackets
+        fd.append(`portfolio_images[${idx}]`, actualFile);
+      } else {
+        console.warn("Skipping invalid file at index", idx);
       }
+    });
+  }
       fd.append("user_id", user.id);
       fd.append("business_name", values.business_name || "");
       fd.append("name", values.name || "");
