@@ -52,3 +52,19 @@
 .slick-next {
     right: -35px;
 }
+
+
+.custom-toast {
+    /* override additional styling */
+    border: none;
+    padding: 12px 16px;
+}
+
+.custom-toast-body {
+    font-family: "YourBrandFont", sans-serif;
+}
+
+.custom-toast-progress {
+    height: 4px;
+    border-radius: 2px;
+}

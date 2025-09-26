@@ -293,9 +293,16 @@ export default function MySubServices() {
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         onOk={() => form.submit()}
-        okText={editingSubService ? "Update" : "Create"}
+        okText={editingSubService ? "Update" : "Add"}
         confirmLoading={adding || updating}
         width={600}
+        okButtonProps={{
+          style: {
+            backgroundColor: "#EE5C32",
+            borderColor: "#EE5C32",
+          },
+          className: "custom-ok-btn",
+        }}
         className="rounded-2xl"
       >
         <Form form={form} layout="vertical" onFinish={handleSave}>

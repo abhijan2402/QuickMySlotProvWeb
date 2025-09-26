@@ -19,7 +19,7 @@ import {
   Autocomplete,
   useJsApiLoader,
 } from "@react-google-maps/api";
-import { getLatLngFromAddress } from "../../utils/utils";
+import { capitalizeFirstLetter, getLatLngFromAddress } from "../../utils/utils";
 import { useUpdateProfileMutation } from "../../services/profileApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../slices/authSlice";
@@ -278,7 +278,12 @@ export default function EditProfileModal({ visible, onClose, user }) {
           <Input />
         </Form.Item>
         <Form.Item name="working_days" label="Working Days">
-          <Checkbox.Group options={WORKING_DAYS} />
+          <Checkbox.Group
+            options={WORKING_DAYS.map((day) => ({
+              label: capitalizeFirstLetter(day),
+              value: day,
+            }))}
+          />
         </Form.Item>
         <Form.Item name="daily_start_time" label="Daily Start Time">
           <TimePicker format="HH:mm" />
@@ -338,10 +343,10 @@ export default function EditProfileModal({ visible, onClose, user }) {
           <Upload.Dragger
             beforeUpload={() => false}
             maxCount={1}
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.pdf"
           >
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
-            <p>Upload Photo</p>
+            <p>Upload photo</p>
           </Upload.Dragger>
         </Form.Item>
         <Form.Item
@@ -353,7 +358,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
           <Upload.Dragger
             beforeUpload={() => false}
             maxCount={1}
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.pdf"
           >
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
             <p>Upload Business Proof</p>
@@ -368,7 +373,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
           <Upload.Dragger
             beforeUpload={() => false}
             maxCount={1}
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.pdf"
           >
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
             <p>Upload Aadhaar</p>
@@ -383,7 +388,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
           <Upload.Dragger
             beforeUpload={() => false}
             maxCount={1}
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.pdf"
           >
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
             <p>Upload PAN</p>
@@ -398,7 +403,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
           <Upload
             multiple
             maxCount={10}
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.pdf"
             listType="picture-card"
             beforeUpload={() => false}
           >

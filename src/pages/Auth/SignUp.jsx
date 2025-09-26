@@ -1,5 +1,5 @@
 // pages/Signup.jsx
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Form, Input, Button, Select, message } from "antd";
 import { useDispatch } from "react-redux";
 import {
@@ -28,13 +28,18 @@ export default function Signup() {
   const [tempToken, setTempToken] = useState("");
   const [otp, setOtp] = useState(Array(6).fill(""));
   const inputRefs = useRef([]);
-
+  const [timer, setTimer] = useState(30);
+  const timerRef = useRef(null);
   const { data: profile } = useGetProfileQuery();
   const [signup, { isLoading: signingUp }] = useSignupMutation();
   const [verifyOtp, { isLoading: verifying }] = useVerifyOtpMutation();
   const [resendOtp, { isLoading: resending }] = useResendOtpMutation();
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    return () => clearInterval(timerRef.current);
+  }, []);
 
   // Modal states
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -49,6 +54,18 @@ export default function Signup() {
         setUserID(response.user_id);
       }
       setStep("otp");
+      setTimer(30); // reset timer to 30s
+      if (timerRef.current) clearInterval(timerRef.current);
+
+      timerRef.current = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
       toast.success("OTP sent successfully!");
     } catch (err) {
       toast.error(err?.data?.message || "Signup failed!");
@@ -98,8 +115,20 @@ export default function Signup() {
 
   const handleResendOtp = async () => {
     try {
-      await resendOtp({ email_or_phone: emailOrPhone }).unwrap();
+      await resendOtp({ phone_number: emailOrPhone }).unwrap();
       toast.success("OTP resent!");
+      setTimer(30); // reset timer to 30s
+      if (timerRef.current) clearInterval(timerRef.current);
+
+      timerRef.current = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     } catch (err) {
       toast.error("Failed to resend OTP!");
     }
@@ -140,7 +169,7 @@ export default function Signup() {
                 Start your journey with just one step
               </h2>
             ) : (
-              <p className=" text-gray-500 mb-6">
+              <p className=" text-center text-gray-500 mb-2">
                 Start your journey with just one step –{" "}
                 <span className="text-[#EE4E34]">OTP!</span>
               </p>
@@ -198,7 +227,7 @@ export default function Signup() {
               <div>
                 <p className="text-center text-gray-600 mb-4">
                   Enter the 6-digit OTP sent to your{" "}
-                  <span className="font-medium">{emailOrPhone}</span>
+                  <span className="font-medium">+91 {emailOrPhone}</span>
                 </p>
 
                 <div className="flex justify-between mb-6">
@@ -209,7 +238,7 @@ export default function Signup() {
                       onChange={(e) => handleChange(e.target.value, index)}
                       onKeyDown={(e) => handleKeyDown(e, index)}
                       maxLength={1}
-                      className="w-12 h-12 text-center text-lg border rounded-md"
+                      className="w-12 h-12 text-center text-orange-600 text-lg border rounded-md"
                       ref={(el) => (inputRefs.current[index] = el)}
                     />
                   ))}
@@ -219,16 +248,19 @@ export default function Signup() {
                   <Button
                     onClick={handleResendOtp}
                     loading={resending}
-                    type="link"
+                    size="large"
+                    disabled={timer > 0}
+                    className="bg-[#EE4E34] text-white text-sm py-1 disabled:opacity-50 disabled:cursor-not-allowed "
                   >
-                    Resend OTP
+                    {timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
                   </Button>
+
                   <Button
-                    // type="primary"
                     onClick={handleVerifyOtp}
                     size="large"
                     loading={verifying}
-                    className="bg-[#EE4E34] text-white hover:bg-purple-800 text-sm py-1"
+                    disabled={timer === 0} // disable when timer finished
+                    className="bg-[#EE4E34] text-white text-sm py-1 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Verify OTP
                   </Button>

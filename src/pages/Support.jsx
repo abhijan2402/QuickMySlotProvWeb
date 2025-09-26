@@ -83,13 +83,14 @@ export default function Support() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <h2 className="text-3xl font-bold text-[#EE4E34]">Support</h2>
-        <Button
+        <button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => setIsModalOpen(true)}
+          className="text-white bg-orange-600 px-4 py-2 rounded-md cursor-pointer hover:bg-[#EE4E34]"
         >
           Raise a Ticket
-        </Button>
+        </button>
       </div>
 
       {/* Loading */}
@@ -138,6 +139,13 @@ export default function Support() {
         onCancel={() => setIsModalOpen(false)}
         confirmLoading={isAdding}
         okText="Submit"
+        okButtonProps={{
+          style: {
+            backgroundColor: "#EE5C32",
+            borderColor: "#EE5C32",
+          },
+          className: "custom-ok-btn",
+        }}
       >
         <Form form={form} layout="vertical">
           <Form.Item

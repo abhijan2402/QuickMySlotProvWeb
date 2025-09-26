@@ -201,8 +201,15 @@ export default function MyServices() {
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         onOk={() => form.submit()}
-        okText={editingService ? "Update" : "Create"}
+        okText={editingService ? "Update" : "Add"}
         confirmLoading={Adding || Updating}
+        okButtonProps={{
+          style: {
+            backgroundColor: "#EE5C32", 
+            borderColor: "#EE5C32",
+          },
+          className: "custom-ok-btn",
+        }}
         className="rounded-2xl"
       >
         <Form form={form} layout="vertical" onFinish={handleSave}>
@@ -224,6 +231,7 @@ export default function MyServices() {
               beforeUpload={() => false}
               maxCount={1}
               listType="picture-card"
+              accept=".jpg,.jpeg,.png"
             >
               <Button icon={<UploadOutlined />}>Upload</Button>
             </Upload>

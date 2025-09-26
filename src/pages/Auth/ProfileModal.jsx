@@ -334,7 +334,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
           <Upload
             multiple
             maxCount={10}
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.pdf"
             listType="picture-card"
             beforeUpload={() => false}
           >
@@ -351,9 +351,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
         <Form.Item
           name="name"
           label="Full Name"
-          rules={[
-            { required: true, message: "Please enter the full name." },
-          ]}
+          rules={[{ required: true, message: "Please enter the full name." }]}
         >
           <Input placeholder="Enter your full name" />
         </Form.Item>
@@ -361,9 +359,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
         <Form.Item
           name="email"
           label="Email"
-          rules={[
-            { required: true, message: "Please enter the email." },
-          ]}
+          rules={[{ required: true, message: "Please enter the email." }]}
         >
           <Input placeholder="Enter your email" />
         </Form.Item>
