@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { useGetsubscriptionQuery } from "../services/subscriptionApi";
+import {
+  useAddSubscriptionMutation,
+  useGetsubscriptionQuery,
+  useVerifySubscriptionMutation,
+} from "../services/subscriptionApi";
 import SpinnerLodar from "./SpinnerLodar";
 import { div } from "framer-motion/m";
+import { useSelector } from "react-redux";
+import { Form } from "antd";
+import { toast } from "react-toastify";
 
 const tagColors = [
   "bg-blue-500",
@@ -12,11 +19,14 @@ const tagColors = [
 ];
 
 const PricingModal = () => {
+  const user = useSelector((state) => state.auth.user);
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
-
+  const [form] = Form.useForm();
   // ✅ Fetch API
+  const [addSubscription] = useAddSubscriptionMutation();
+  const [verifySubscription] = useVerifySubscriptionMutation();
   const { data, isLoading } = useGetsubscriptionQuery({
     validity: billingCycle,
     type: "vendor",
@@ -27,12 +37,64 @@ const PricingModal = () => {
     setModalVisible(true);
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     console.log("Payment started for plan:", selectedPlan);
-    setTimeout(() => {
-      console.log("Payment successful for plan:", selectedPlan);
-      setModalVisible(false);
-    }, 2000);
+    const formData = new FormData();
+    formData.append("subscription_id", selectedPlan.id);
+    formData.append("role", "vendor");
+
+    // ✅ Create booking/order
+    const order = await addSubscription(formData).unwrap();
+    console.log(order);
+
+    // 🔹 Razorpay payment flow
+    if (!order?.order_id) {
+      toast.error("Failed to create Razorpay order");
+      return;
+    }
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order?.amount,
+      currency: "INR",
+      name: "Quickmyslot",
+      description: "Add Subscription",
+      image: "/logo1.png",
+      order_id: order?.order_id,
+      handler: async function (response) {
+        const verifyData = new FormData();
+        verifyData.append("subscription_user_id", order?.subscription_user_id);
+        verifyData.append("razorpay_payment_id", response.razorpay_payment_id);
+        verifyData.append("razorpay_order_id", response.razorpay_order_id);
+        verifyData.append("razorpay_signature", response.razorpay_signature);
+
+        try {
+          const verifyRes = await verifySubscription(verifyData).unwrap();
+          console.log(verifyRes);
+          if (verifyRes.status) {
+            toast.success("Payment verified & booking confirmed!");
+          } else {
+            toast.error("Payment verification failed");
+          }
+        } catch (err) {
+          toast.error("Error verifying payment");
+          console.error(err);
+          setModalVisible(false);
+        }
+      },
+      prefill: {
+        name: user?.name,
+        contact: user?.phone_number,
+        email: user?.email,
+      },
+      theme: { color: "#EE4E34" },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+    setModalVisible(false);
+    setSelectedPlan(null);
+    form.resetFields();
   };
 
   return (
@@ -75,7 +137,6 @@ const PricingModal = () => {
         </button>
       </div>
 
-      {/* Pricing Cards */}
       {/* Pricing Cards */}
       {isLoading ? (
         <div className="h-80vh">
@@ -163,14 +224,18 @@ const PricingModal = () => {
       {modalVisible && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
-            <h2 className="text-xl font-bold mb-4">Confirm Subscription</h2>
-            <p>
+            <h2 className="text-xl font-bold mb-4 text-orange-600">
+              Confirm Subscription
+            </h2>
+            <p className="text-gray-700">
               You have selected the{" "}
               <strong>{selectedPlan?.subscription_name}</strong> plan for{" "}
               <strong>₹{selectedPlan?.price}</strong> ({billingCycle} billing).
             </p>
 
-            <p className="mt-3 font-semibold">Features included:</p>
+            <p className="mt-3 font-semibold text-gray-900">
+              Features included:
+            </p>
             <ul className="list-disc ml-6 mt-2 text-gray-700">
               {Object.keys(selectedPlan?.extra || {})
                 .filter((k) => k !== "key_word")

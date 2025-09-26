@@ -31,7 +31,7 @@ import {
   useUpdateProfileMutation,
 } from "../services/profileApi";
 import { toast } from "react-toastify";
-import { useGetsubscriptionQuery } from "../services/subscriptionApi";
+import { useGetSubscriptionCurrentQuery } from "../services/subscriptionApi";
 import { logout, setUser } from "../slices/authSlice";
 import { useGetcategoryQuery } from "../services/categoryApi";
 import EditProfileModal from "../components/Modals/EditProfileModal";
@@ -71,7 +71,7 @@ const promotionPlans = [
 export default function ProfilePage() {
   const user = useSelector((state) => state.auth.user);
   const { data: category } = useGetcategoryQuery();
-  const { data: currentPlan } = useGetsubscriptionQuery();
+  const { data: currentPlan } = useGetSubscriptionCurrentQuery();
   const { data: profile, error, isLoading } = useGetProfileQuery();
   const navigate = useNavigate();
   const [updateProfile, { isLoading: isUpdating, error: updateError }] =
@@ -243,15 +243,16 @@ export default function ProfilePage() {
           <h3 className="text-black text-xl font-medium flex mb-2 justify-between">
             Current Plan:{" "}
             <span className="text-[#EE4E34]">
-              ₹{currentPlan?.data?.[0]?.price}
+              {currentPlan?.subscription?.subscription?.subscription_name}
             </span>
           </h3>
           <div className=" flex flex-col">
-            <h2 className="text-black font-medium">
-              {currentPlan?.data?.[0]?.subscription_name}
+            <h2 className="text-black flex justify-between items-center font-medium">
+              ₹{currentPlan?.subscription?.subscription?.price}{" "}
+              <span>{currentPlan?.subscription?.subscription?.validity}</span>
             </h2>
             <p className="text-gray-500 text-sm">
-              {currentPlan?.data?.[0]?.description}
+              {currentPlan?.subscription?.subscription?.description}
             </p>
           </div>
           <div className="flex  mt-4 ">
