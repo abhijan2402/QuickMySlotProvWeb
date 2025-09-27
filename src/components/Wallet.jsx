@@ -98,16 +98,22 @@ const Wallet = () => {
         <span className="font-semibold text-indigo-600">₹{amount}</span>
       ),
     },
-    // {
-    //   title: "Type",
-    //   dataIndex: "type",
-    //   key: "type",
-    //   render: (type) => (
-    //     <span className="font-medium text-gray-700">
-    //       {type === "credit" && "credited"}
-    //     </span>
-    //   ),
-    // },
+    {
+      title: "Type",
+      dataIndex: "status",
+      key: "status",
+      render: (type) => (
+        <span
+          className={`text-[10px] p-2 py-1 rounded-md font-medium border ${
+            type === 0
+              ? "bg-orange-100 border-orange-400 text-orange-700"
+              : "bg-green-100 border-green-400 text-green-700"
+          }`}
+        >
+          {type === 0 ? "Pending" : "Success"}
+        </span>
+      ),
+    },
     {
       title: "Date",
       dataIndex: "created_at",
@@ -122,9 +128,7 @@ const Wallet = () => {
     <div className="max-w-7xl mx-auto p-4 sm:p-6 bg-white rounded-lg">
       <h3 className="mb-6 font-semibold text-lg text-gray-800">
         Wallet Total Amount:{" "}
-        <span className="text-indigo-600">
-          ₹ {user?.wallet}
-        </span>
+        <span className="text-indigo-600">₹ {user?.wallet}</span>
       </h3>
 
       <Button

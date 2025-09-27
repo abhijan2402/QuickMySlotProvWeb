@@ -1,10 +1,12 @@
 import { Button, Table, Typography } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import jsPDF from "jspdf";
+import { useGetvendorTransactionQuery } from "../services/vendorTransactionListApi";
 
 const { Title } = Typography;
 
 const TransactionHistory = ({ transactions }) => {
+  const { data } = useGetvendorTransactionQuery();
   const generatePDF = (transaction) => {
     const doc = new jsPDF();
     doc.text(`Invoice for transaction ID: ${transaction.id}`, 10, 10);

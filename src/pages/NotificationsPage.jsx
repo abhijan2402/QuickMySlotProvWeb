@@ -11,85 +11,97 @@ export default function NotificationsPage() {
   const notifications = data?.data || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 mt-4">
-      {/* Header Section */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6">
-        <nav className="flex items-center text-gray-500 text-sm mb-4">
-          <HomeOutlined className="mr-1" />
-          <span className="mr-1">/</span>
-          <span className="font-medium text-gray-700">Notifications</span>
+    <div className="min-h-screen bg-gray-50 mt-6 px-4 sm:px-8 md:px-14 lg:px-20 xl:px-32">
+      <div className="max-w-5xl mx-auto py-10">
+        {/* Breadcrumb */}
+        <nav className="flex items-center text-gray-500 text-sm mb-6 font-medium select-none">
+          <HomeOutlined className="mr-2 text-lg" />
+          <span className="mr-2">/</span>
+          <span className="text-gray-800">Notifications</span>
         </nav>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-6">
+        {/* Title */}
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-10">
           Notifications
         </h1>
 
-        {/* Notifications List */}
+        {/* Loading */}
         {isLoading ? (
           <div className="h-[350px] flex items-center justify-center">
             <SpinnerLodar />
           </div>
         ) : !notifications.length ? (
-          <div className="h-[350px] flex flex-col items-center justify-center text-gray-500">
-            <div className="text-6xl mb-4 text-gray-300 animate-pulse">
-              <BellOutlined />
-            </div>
+          <div className="h-[350px] flex flex-col items-center justify-center text-gray-400">
+            <BellOutlined className="text-7xl mb-4 animate-pulse text-gray-300" />
             <h2 className="text-2xl font-semibold mb-2">No Notifications</h2>
-            <p className="text-gray-400 text-center max-w-sm">
-              You have no notifications at the moment. Check back later for
-              updates and alerts.
+            <p className="text-center max-w-md text-base leading-relaxed text-gray-500">
+              You don’t have any notifications right now. We’ll let you know
+              when something comes up.
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
             {notifications.map((notif) => {
               const icon =
                 notif.type === "booking" || notif.type === "pending" ? (
-                  <ClockCircleOutlined className="text-purple-500 text-3xl" />
+                  <ClockCircleOutlined className="text-purple-600 text-2xl" />
                 ) : (
-                  <BellOutlined className="text-purple-500 text-3xl" />
+                  <BellOutlined className="text-purple-600 text-2xl" />
                 );
 
-              const statusColor =
-                notif.status === "Read"
-                  ? "text-green-600"
-                  : notif.status === "Unread"
-                  ? "text-gray-500"
-                  : notif.status === "New"
-                  ? "text-blue-600 font-bold"
-                  : notif.status === "Pending"
-                  ? "text-yellow-600 font-bold"
-                  : "text-gray-500";
+              const statusStyles = {
+                Read: {
+                  text: "text-green-700",
+                  bg: "bg-green-100",
+                  border: "border-l-green-600",
+                },
+                unread: {
+                  text: "text-orange-600",
+                  bg: "bg-orange-100",
+                  border: "border-l-orange-600",
+                },
+                New: {
+                  text: "text-blue-700",
+                  bg: "bg-blue-100",
+                  border: "border-l-blue-600",
+                },
+                Pending: {
+                  text: "text-yellow-700",
+                  bg: "bg-yellow-100",
+                  border: "border-l-yellow-600",
+                },
+                default: {
+                  text: "text-gray-600",
+                  bg: "bg-gray-100",
+                  border: "border-l-gray-400",
+                },
+              };
 
-              const bgColor =
-                notif.status === "Read"
-                  ? "bg-green-50"
-                  : notif.status === "Unread"
-                  ? "bg-gray-100"
-                  : notif.status === "New"
-                  ? "bg-blue-50"
-                  : notif.status === "Pending"
-                  ? "bg-yellow-50"
-                  : "bg-gray-100";
+              const styles = statusStyles[notif.status] || statusStyles.default;
 
               return (
                 <div
                   key={notif.id}
-                  className="flex gap-4 items-start p-5 rounded-xl shadow hover:shadow-lg transition bg-white border border-gray-200"
+                  className={`flex items-start gap-4 p-6 rounded-xl shadow-sm border border-gray-200 bg-white hover:shadow-md transition-all duration-300 border-l-4 ${styles.border}`}
                 >
-                  <div className="flex-shrink-0">{icon}</div>
+                  {/* Icon */}
+                  <div className="flex-shrink-0 p-3 rounded-lg bg-gray-50">
+                    {icon}
+                  </div>
+
+                  {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h2 className="font-semibold text-lg text-gray-800">
+                    <div className="flex items-center justify-between mb-2">
+                      <h2 className="font-semibold text-lg text-gray-900 truncate">
                         {notif.title}
                       </h2>
                       <span
-                        className={`text-xs px-2 py-1 rounded ${bgColor} ${statusColor}`}
+                        className={`text-xs px-3 py-1 rounded-full ${styles.bg} ${styles.text}`}
                       >
                         {notif.status}
                       </span>
                     </div>
-                    <p className="text-gray-700 text-sm md:text-base mb-2">
+                    <p className="text-gray-700 text-sm leading-relaxed mb-2">
                       {notif.message}
                     </p>
                     <span className="text-xs text-gray-400">{notif.time}</span>
