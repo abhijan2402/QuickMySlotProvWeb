@@ -173,10 +173,10 @@ export default function Signup() {
               className="mx-auto mb-2 h-24 object-contain"
             />
             <h2 className="text-xl font-semibold text-[#EE4E34] mb-1">
-              QuickmySlot
+              QuickMySlot
             </h2>
             <p className="text-gray-400 text-sm">
-              The Ultimate Controller for Your QuickmySlot Application.
+              The Ultimate Controller for Your QuickMySlot Application.
             </p>
           </div>
 
@@ -294,10 +294,10 @@ export default function Signup() {
               className="mx-auto mb-0 h-80 object-contain"
             />
             <h2 className="text-2xl font-semibold text-white mb-2">
-              QuickmySlot
+              QuickMySlot
             </h2>
             <p className="text-gray-200 max-w-md">
-              The Ultimate Controller for Your QuickmySlot Application.
+              The Ultimate Controller for Your QuickMySlot Application.
             </p>
           </div>
         </div>
