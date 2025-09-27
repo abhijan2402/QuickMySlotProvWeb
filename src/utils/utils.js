@@ -30,19 +30,21 @@ export async function getLatLngFromAddress(address) {
   try {
     const response = await fetch(url);
     const data = await response.json();
+    console.log("Geocode API Response:", data); // 👈 log full response
 
     if (data.status === "OK" && data.results.length > 0) {
       const location = data.results[0].geometry.location;
       return { lat: location.lat, lng: location.lng };
     } else {
-      console.error("Geocoding failed:", data.status, data.error_message);
+      console.error("No results found or error status:", data.status);
       return null;
     }
   } catch (error) {
-    console.error("Error fetching geocode:", error);
+    console.error("Geocoding error:", error);
     return null;
   }
 }
+
 
 export async function getCityAndAreaFromAddress(address) {
   const apiKey = import.meta.env.VITE_MAP_KEY;
@@ -89,6 +91,3 @@ export async function getCityAndAreaFromAddress(address) {
     return null;
   }
 }
-
-
-

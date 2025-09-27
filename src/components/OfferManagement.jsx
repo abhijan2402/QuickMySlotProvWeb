@@ -109,7 +109,7 @@ const OfferManagement = () => {
     <div className="p-4">
       <Row justify="space-between" align="middle" className="mb-6">
         <Col>
-          <h2 style={{ fontSize: 22, fontWeight: 600 }}>🎁 Offer Management</h2>
+          <h2  className="text-md sm:text-xl font-semibold">Offer Management</h2>
         </Col>
         <Col>
           <Button type="primary" onClick={() => openOfferModal(null)}>
@@ -121,8 +121,8 @@ const OfferManagement = () => {
       <Row gutter={[20, 20]}>
         {isLoading ? (
           <p>Loading offers...</p>
-        ) : (
-          offers?.data?.map((offer) => (
+        ) : offers?.data && offers.data.length > 0 ? (
+          offers.data.map((offer) => (
             <Col xs={24} sm={12} md={8} lg={8} key={offer.id}>
               <Card
                 hoverable
@@ -188,6 +188,13 @@ const OfferManagement = () => {
               </Card>
             </Col>
           ))
+        ) : (
+          <Col span={24} className="text-center py-10 text-gray-500">
+            <p className="text-lg font-medium">
+              No offers available currently.
+            </p>
+            <p className="mt-2">Please check back later or add new offers.</p>
+          </Col>
         )}
       </Row>
 

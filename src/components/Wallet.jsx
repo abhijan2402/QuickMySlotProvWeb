@@ -135,19 +135,21 @@ const Wallet = () => {
         Add Amount
       </Button>
 
-      {/* ✅ Ant Design Table with pagination */}
-      <Table
-        columns={columns}
-        dataSource={data?.data?.transactions || []}
-        rowKey="transaction_id"
-        bordered
-        pagination={{
-          pageSize: 5, // ✅ number of items visible per page
-          showSizeChanger: true,
-          pageSizeOptions: ["5", "10", "20", "50"],
-        }}
-        locale={{ emptyText: "No data found" }}
-      />
+      <div className="overflow-x-auto">
+        <Table
+          columns={columns}
+          dataSource={data?.data?.transactions || []}
+          rowKey="transaction_id"
+          bordered
+          pagination={{
+            pageSize: 5,
+            showSizeChanger: true,
+            pageSizeOptions: ["5", "10", "20", "50"],
+          }}
+          locale={{ emptyText: "No data found" }}
+          scroll={{ x: "max-content" }} // allows horizontal scroll if columns overflow container width
+        />
+      </div>
 
       {/* Modal for adding amount */}
       <Modal

@@ -98,7 +98,6 @@ export default function ProfilePage() {
   const showForgotModal = () => setForgotModalOpen(true);
   const closeForgotModal = () => setForgotModalOpen(false);
 
-
   // Find the selected plan object
   const planObj = promotionPlans.find((p) => p.key === selectedPlan);
 
@@ -183,30 +182,57 @@ export default function ProfilePage() {
         </div>
 
         {/* Right Section: Upgrade your Business Plan */}
+        {/* Right Section: Upgrade your Business Plan */}
         <div className="bg-purple-50 p-6 rounded-2xl shadow-md mt-8 md:mt-0 md:w-1/3 flex flex-col justify-center">
-          <h3 className="text-black text-xl font-medium flex mb-2 justify-between">
-            Current Plan:{" "}
-            <span className="text-[#EE4E34]">
-              {currentPlan?.subscription?.subscription?.subscription_name}
-            </span>
-          </h3>
-          <div className=" flex flex-col">
-            <h2 className="text-black flex justify-between items-center font-medium">
-              ₹{currentPlan?.subscription?.subscription?.price}{" "}
-              <span>{currentPlan?.subscription?.subscription?.validity}</span>
-            </h2>
-            <p className="text-gray-500 text-sm">
-              {currentPlan?.subscription?.subscription?.description}
-            </p>
-          </div>
-          <div className="flex  mt-4 ">
-            <Button
-              onClick={() => navigate("/pricing")}
-              style={{ backgroundColor: "#EE4E34", color: "#fff" }}
-            >
-              Upgrade Plan
-            </Button>
-          </div>
+          {currentPlan?.subscription ? (
+            <>
+              <h3 className="text-black text-xl font-medium flex mb-2 justify-between">
+                Current Plan:{" "}
+                <span className="text-[#EE4E34]">
+                  {currentPlan?.subscription?.subscription?.subscription_name}
+                </span>
+              </h3>
+
+              <div className="flex flex-col">
+                <h2 className="text-black flex justify-between items-center font-medium">
+                  ₹{currentPlan?.subscription?.subscription?.price}{" "}
+                  <span>
+                    {currentPlan?.subscription?.subscription?.validity}
+                  </span>
+                </h2>
+                <p className="text-gray-500 text-sm">
+                  {currentPlan?.subscription?.subscription?.description}
+                </p>
+              </div>
+
+              <div className="flex mt-4">
+                <Button
+                  onClick={() => navigate("/pricing")}
+                  style={{ backgroundColor: "#EE4E34", color: "#fff" }}
+                >
+                  Upgrade Plan
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h3 className="text-black text-xl font-medium mb-2 text-center">
+                No Plan Activated Yet 🚀
+              </h3>
+              <p className="text-gray-500 text-sm text-center">
+                Purchase a plan to unlock premium features and grow your
+                business.
+              </p>
+              <div className="flex mt-4 justify-center">
+                <Button
+                  onClick={() => navigate("/pricing")}
+                  style={{ backgroundColor: "#EE4E34", color: "#fff" }}
+                >
+                  Purchase Plan
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
       {/*  Boost your Business  */}

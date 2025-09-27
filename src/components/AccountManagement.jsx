@@ -127,7 +127,9 @@ const AccountManagement = () => {
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between px-1">
-        <h2 className="text-black text-sm sm:text-xl mb-2 sm:mb-1 font-medium">Manage Accounts</h2>
+        <h2 className="text-black text-sm sm:text-xl mb-2 sm:mb-1 font-medium">
+          Manage Accounts
+        </h2>
         <Button
           onClick={() => showModal(null)}
           type="primary"
@@ -139,57 +141,66 @@ const AccountManagement = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-        {accounts.map((item) => (
-          <div
-            key={item.id}
-            className={`border rounded-lg p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow ${
-              item?.is_set === "1" ? "border-indigo-500" : ""
-            }`}
-          >
-            <div>
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {item.bank_name}
-                </h3>
-                {item?.is_set === "1" && (
-                  <span className="text-xs text-white bg-indigo-600 px-2 py-1 rounded flex items-center gap-1">
-                    <FaCheckCircle /> Default
-                  </span>
-                )}
-              </div>
-              <p className="text-gray-600 mt-3 text-sm">
-                <span className="block">Acc No: {item.account_number}</span>
-                <span className="block">IFSC: {item.ifsc_code}</span>
-                <span className="block capitalize">Type: {item.bank_type}</span>
-              </p>
-            </div>
-
-            <div className="flex gap-2 mt-4">
-              <Button
-                size="small"
-                onClick={() => showModal(item)}
-                icon={<FaEdit />}
-              >
-                Edit
-              </Button>
-              <Button
-                size="small"
-                danger
-                onClick={() => handleDelete(item.id)}
-                icon={<FaTrash />}
-              >
-                Delete
-              </Button>
-              <Button
-                size="small"
-                type={item?.is_set === "1" ? "primary" : "default"}
-                onClick={() => handleSetDefault(item.id)}
-              >
-                {item?.is_set === "1" ? "Default" : "Set Default"}
-              </Button>
-            </div>
+        {accounts.length === 0 ? (
+          <div className="col-span-full text-center py-10 text-gray-500">
+            <p className="text-lg font-medium">No accounts found.</p>
+            <p className="mt-2">You can add a new account to get started.</p>
           </div>
-        ))}
+        ) : (
+          accounts.map((item) => (
+            <div
+              key={item.id}
+              className={`border rounded-lg p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow ${
+                item?.is_set === "1" ? "border-indigo-500" : ""
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {item.bank_name}
+                  </h3>
+                  {item?.is_set === "1" && (
+                    <span className="text-xs text-white bg-indigo-600 px-2 py-1 rounded flex items-center gap-1">
+                      <FaCheckCircle /> Default
+                    </span>
+                  )}
+                </div>
+                <p className="text-gray-600 mt-3 text-sm">
+                  <span className="block">Acc No: {item.account_number}</span>
+                  <span className="block">IFSC: {item.ifsc_code}</span>
+                  <span className="block capitalize">
+                    Type: {item.bank_type}
+                  </span>
+                </p>
+              </div>
+
+              <div className="flex gap-2 mt-4">
+                <Button
+                  size="small"
+                  onClick={() => showModal(item)}
+                  icon={<FaEdit />}
+                >
+                  Edit
+                </Button>
+                <Button
+                  size="small"
+                  danger
+                  onClick={() => handleDelete(item.id)}
+                  icon={<FaTrash />}
+                >
+                  Delete
+                </Button>
+                <Button
+                  size="small"
+                  type={item?.is_set === "1" ? "primary" : "default"}
+                  onClick={() => handleSetDefault(item.id)}
+                >
+                  {item?.is_set === "1" ? "Default" : "Set Default"}
+                </Button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <Modal

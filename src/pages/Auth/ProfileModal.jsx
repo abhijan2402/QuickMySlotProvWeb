@@ -192,7 +192,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
   const singleFileUploadProps = {
     beforeUpload: () => false,
     maxCount: 1,
-     accept:".jpg,.jpeg,.png,.pdf"
+    accept: ".jpg,.jpeg,.png,.pdf",
   };
 
   return (
@@ -467,6 +467,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
             {
               type: "url",
               message: "Enter a valid URL (https://...)",
+              required: true,
             },
           ]}
         >

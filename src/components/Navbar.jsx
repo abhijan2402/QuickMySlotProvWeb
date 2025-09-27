@@ -6,21 +6,27 @@ import { useNavigate, useLocation } from "react-router-dom";
 import logo from "/logo.png";
 import { useSelector } from "react-redux";
 import { useGetProfileQuery } from "../services/profileApi";
-import { getCityAndAreaFromAddress } from "../utils/utils";
+import {
+  getCityAndAreaFromAddress,
+  getLatLngFromAddress,
+} from "../utils/utils";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
+import LocationModal from "./Modals/LocationModal";
 
 export default function Navbar() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((state) => state.auth.user);
   const { data: profile } = useGetProfileQuery();
   const [city, setCity] = useState(null);
   const [area, setArea] = useState(null);
-
+  const [initialLocation, setInitialLocation] = useState(null);
   useEffect(() => {
     async function fetchCityAndArea() {
-      if (user?.exact_location) {
+      if (user?.exact_location || userLocation) {
         const result = await getCityAndAreaFromAddress(user.exact_location);
         if (result) {
           console.log(result.city, result.area);
@@ -36,7 +42,24 @@ export default function Navbar() {
       }
     }
     fetchCityAndArea();
-  }, [user?.exact_location]);
+  }, [user?.exact_location, userLocation]);
+
+  // Convert user's address to lat/lng on change
+  const addressString = user?.exact_location;
+  useEffect(() => {
+    async function fetchLatLng() {
+      const coord = await getLatLngFromAddress(addressString);
+      if (coord) {
+        setInitialLocation(coord);
+      } else {
+        console.error("Could not geocode address");
+      }
+    }
+    fetchLatLng();
+  }, [addressString]);
+
+  console.log(initialLocation);
+
   const navItems = [
     "Home",
     "Appointment",
@@ -136,6 +159,7 @@ export default function Navbar() {
                 role="button"
                 className="flex items-center gap-1  rounded-l  cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#7C0902]"
                 title="Click to select a different location"
+                onClick={() => setModalOpen(true)}
               >
                 <FaLocationDot
                   className="w-6 h-6 text-[#EE4E34]"
@@ -162,17 +186,21 @@ export default function Navbar() {
                 <div
                   className="flex items-center bg-white rounded-lg px-3 py-1 border border-gray-300"
                   title="Click to select a different location"
+                  onClick={() => setModalOpen(true)}
                 >
-                  <MdOutlineMyLocation
-                    className="w-5 h-5 text-[#EE4E34]"
+                  <FaLocationDot
+                    className="w-6 h-6 text-[#EE4E34]"
                     aria-hidden="true"
                   />
-                  <div className="flex flex-col leading-none ml-2">
-                    <span className="font-bold text-[#EE4E34] text-[14px]">
-                      {profile?.data?.location_area_served || "NA"}
-                    </span>
-                    <p className="text-[10px] mt-1 text-gray-600">
-                      {profile?.data?.exact_location || "NA"}
+                  <div className="flex flex-col leading-none">
+                    {/* <span className="font-bold text-[#EE4E34] text-[14px]">
+                    {city || "NA"}
+                  </span> */}
+                    <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium">
+                      {city || "NA"},{area || "NA"}{" "}
+                      <span>
+                        <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
+                      </span>
                     </p>
                   </div>
                 </div>
@@ -246,6 +274,16 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LocationModal
+        open={modalOpen}
+        initialLocation={initialLocation}
+        onOk={(loc) => {
+          setUserLocation({ lat: loc.lat, lng: loc.lng });
+          setModalOpen(false);
+        }}
+        onCancel={() => setModalOpen(false)}
+      />
     </>
   );
 }
