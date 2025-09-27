@@ -157,21 +157,38 @@ export default function Signup() {
 
   return (
     <>
-      <div className="flex min-h-screen h-screen">
-        {/* Left side - Signup form */}
+      <div className="flex flex-col md:flex-row min-h-screen h-full bg-white">
+        {/* Left Side - Signup Form */}
         <div
-          className={`w-full md:w-1/2 overflow-y-auto h-screen flex flex-col items-center 
-       justify-center bg-white px-10 py-8`}
+          className={`
+      flex-1 w-full flex flex-col items-center justify-center 
+      px-4 py-6 md:px-10 md:py-8 bg-white relative
+    `}
         >
-          <div className="min-w-full max-w-screen-md  border rounded-md p-8 bg-gray-50">
+          {/* Logo for mobile */}
+          <div className="block md:hidden mb-6 w-full text-center">
+            <img
+              src="/logo1.png"
+              alt="QuickMySlot"
+              className="mx-auto mb-2 h-24 object-contain"
+            />
+            <h2 className="text-xl font-semibold text-[#EE4E34] mb-1">
+              QuickmySlot
+            </h2>
+            <p className="text-gray-400 text-sm">
+              The Ultimate Controller for Your QuickmySlot Application.
+            </p>
+          </div>
+
+          <div className="w-full md:max-w-2xl rounded-md p-6 md:p-8 bg-gray-50 shadow">
             {step === "form" ? (
-              <h2 className="text-2xl font-bold  text-gray-800 mb-2">
+              <h2 className="text-md sm:text-xl md:text-2xl font-bold text-gray-800 mb-4 text-center">
                 Start your journey with just one step
               </h2>
             ) : (
-              <p className=" text-center text-gray-500 mb-2">
+              <p className="text-center text-gray-500 mb-2">
                 Start your journey with just one step –{" "}
-                <span className="text-[#EE4E34]">OTP!</span>
+                <span className="text-[#EE4E34] font-semibold">OTP!</span>
               </p>
             )}
 
@@ -189,7 +206,7 @@ export default function Signup() {
                   ]}
                 >
                   <div className="flex items-center gap-2">
-                    <p className="p-2 px-3 border rounded-md text-black font-medium">
+                    <p className="p-2 px-3 border rounded-md text-black font-medium bg-gray-200">
                       +91
                     </p>
                     <Input
@@ -200,6 +217,7 @@ export default function Signup() {
                       type="tel"
                       inputMode="numeric"
                       pattern="\d*"
+                      className="w-full"
                       onChange={(e) => {
                         const val = e.target.value
                           .replace(/[^\d]/g, "")
@@ -209,14 +227,13 @@ export default function Signup() {
                     />
                   </div>
                 </Form.Item>
-
                 <Button
                   type="primary"
                   htmlType="submit"
                   block
                   size="large"
                   loading={signingUp}
-                  className="bg-[#EE4E34] hover:bg-purple-800"
+                  className="bg-[#EE4E34] hover:bg-purple-800 mt-4"
                 >
                   Continue
                 </Button>
@@ -229,8 +246,7 @@ export default function Signup() {
                   Enter the 6-digit OTP sent to your{" "}
                   <span className="font-medium">+91 {emailOrPhone}</span>
                 </p>
-
-                <div className="flex justify-between mb-6">
+                <div className="flex justify-center gap-2 mb-6">
                   {otp.map((digit, index) => (
                     <Input
                       key={index}
@@ -240,27 +256,26 @@ export default function Signup() {
                       maxLength={1}
                       className="w-12 h-12 text-center text-orange-600 text-lg border rounded-md"
                       ref={(el) => (inputRefs.current[index] = el)}
+                      style={{ fontSize: "1.5rem" }}
                     />
                   ))}
                 </div>
-
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-2">
                   <Button
                     onClick={handleResendOtp}
                     loading={resending}
                     size="large"
                     disabled={timer > 0}
-                    className="bg-[#EE4E34] text-white text-sm py-1 disabled:opacity-50 disabled:cursor-not-allowed "
+                    className="bg-[#EE4E34] text-white text-sm py-1 disabled:opacity-50 disabled:cursor-not-allowed flex-1"
                   >
                     {timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
                   </Button>
-
                   <Button
                     onClick={handleVerifyOtp}
                     size="large"
                     loading={verifying}
-                    disabled={timer === 0} // disable when timer finished
-                    className="bg-[#EE4E34] text-white text-sm py-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={timer === 0}
+                    className="bg-[#EE4E34] text-white text-sm py-1 disabled:opacity-50 disabled:cursor-not-allowed flex-1"
                   >
                     Verify OTP
                   </Button>
@@ -270,8 +285,8 @@ export default function Signup() {
           </div>
         </div>
 
-        {/* Right side - Branding */}
-        <div className="hidden md:flex fixed top-0 right-0 h-screen w-1/2 bg-[#EE4E34] items-center justify-center text-center p-10">
+        {/* Right Side - Branding (Desktop/Tablet only) */}
+        <div className="hidden md:flex flex-1 h-screen bg-[#EE4E34] items-center justify-center text-center p-10">
           <div>
             <img
               src="/logo1.png"
@@ -287,6 +302,7 @@ export default function Signup() {
           </div>
         </div>
       </div>
+
       {/* ✅ Profile Modal */}
       <ProfileModal
         visible={showProfileModal}

@@ -126,8 +126,8 @@ const AccountManagement = () => {
 
   return (
     <div>
-      <div className="flex justify-between px-1">
-        <h2 className="text-black text-xl font-medium">Manage Accounts</h2>
+      <div className="flex flex-col sm:flex-row justify-between px-1">
+        <h2 className="text-black text-sm sm:text-xl mb-2 sm:mb-1 font-medium">Manage Accounts</h2>
         <Button
           onClick={() => showModal(null)}
           type="primary"

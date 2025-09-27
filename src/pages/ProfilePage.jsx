@@ -98,46 +98,6 @@ export default function ProfilePage() {
   const showForgotModal = () => setForgotModalOpen(true);
   const closeForgotModal = () => setForgotModalOpen(false);
 
-  const onFinish = async (values) => {
-    try {
-      console.log("Form Values:", values);
-
-      const formData = new FormData();
-
-      Object.entries(values).forEach(([key, value]) => {
-        if (key === "image" && Array.isArray(value)) {
-          // AntD Upload file list
-          if (value[0]?.originFileObj) {
-            formData.append("profile_picture", value[0].originFileObj);
-          }
-        } else {
-          formData.append(key, value);
-        }
-      });
-
-      const res = await updateProfile(formData).unwrap();
-      console.log(error);
-
-      dispatch(setUser(res.data));
-      setIsModalOpen(false);
-      toast.success("Profile updated successfully!");
-    } catch (error) {
-      console.log(error);
-      const errorMessage =
-        error?.data?.message || error.message || "Failed to update profile";
-      toast.error(errorMessage);
-    }
-  };
-
-  const handleUploadChange = (info) => {
-    if (info.file.status === "done" || info.file.status === "uploading") {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreviewImage(e.target.result);
-      };
-      reader.readAsDataURL(info.file.originFileObj);
-    }
-  };
 
   // Find the selected plan object
   const planObj = promotionPlans.find((p) => p.key === selectedPlan);
@@ -160,24 +120,8 @@ export default function ProfilePage() {
       ]
     : [];
 
-  const [fileList, setFileList] = React.useState(defaultFileList);
-  React.useEffect(() => {
-    if (user?.image) {
-      setFileList([
-        {
-          uid: "-1",
-          name: "profile.jpg",
-          status: "done",
-          url: profile?.data?.image,
-        },
-      ]);
-    } else {
-      setFileList([]);
-    }
-  }, [user?.image]);
-
   return (
-    <div className="max-w-full sm:max-w-md md:max-w-3xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 space-y-8">
+    <div className="max-w-full md:max-w-md lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 space-y-8">
       <div className="flex flex-col md:flex-row md:gap-4 max-w-7xl mx-auto py-6">
         {/* Left Section: Profile Card */}
         <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col gap-6 flex-grow md:w-2/3 relative">
