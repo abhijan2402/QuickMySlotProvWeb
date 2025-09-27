@@ -54,7 +54,7 @@ export default function Signup() {
         setUserID(response.user_id);
       }
       setStep("otp");
-      setTimer(30); // reset timer to 30s
+      setTimer(120); // reset timer to 30s
       if (timerRef.current) clearInterval(timerRef.current);
 
       timerRef.current = setInterval(() => {

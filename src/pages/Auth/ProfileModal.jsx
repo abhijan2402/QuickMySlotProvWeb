@@ -192,7 +192,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
   const singleFileUploadProps = {
     beforeUpload: () => false,
     maxCount: 1,
-    accept: "image/*",
+     accept:".jpg,.jpeg,.png,.pdf"
   };
 
   return (
@@ -334,7 +334,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
           <Upload
             multiple
             maxCount={10}
-            accept=".jpg,.jpeg,.png,.pdf"
+            accept=".jpg,.jpeg,.png"
             listType="picture-card"
             beforeUpload={() => false}
           >
