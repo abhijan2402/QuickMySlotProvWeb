@@ -10,7 +10,7 @@ import {
   TimePicker,
   message,
 } from "antd";
-import { InboxOutlined } from "@ant-design/icons";
+import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useGetcategoryQuery } from "../../services/categoryApi";
 import {
@@ -24,6 +24,7 @@ import { useUpdateProfileMutation } from "../../services/profileApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../slices/authSlice";
 import { toast } from "react-toastify";
+import ImgCrop from "antd-img-crop";
 
 const { Option } = Select;
 const WORKING_DAYS = [
@@ -51,7 +52,23 @@ function urlToFileList(url, name) {
 
 export default function EditProfileModal({ visible, onClose, user }) {
   const dispatch = useDispatch();
+  // file list for image cropper
+  const [fileList, setFileList] = useState([]);
+  const [previewImage, setPreviewImage] = useState(user?.image || null);
 
+  // handle crop & preview updates
+  const handleUploadChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+
+    if (newFileList.length > 0) {
+      const file = newFileList[0].originFileObj;
+      const reader = new FileReader();
+      reader.onload = (e) => setPreviewImage(e.target.result);
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewImage(user?.image || null);
+    }
+  };
   const [form] = Form.useForm();
   const { data: category } = useGetcategoryQuery();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
@@ -128,6 +145,12 @@ export default function EditProfileModal({ visible, onClose, user }) {
   const handleFinish = async (values) => {
     try {
       const fd = new FormData();
+
+      // ✅ append cropped image (if selected)
+      if (fileList.length > 0 && fileList[0].originFileObj) {
+        fd.append("profile_picture", fileList[0].originFileObj);
+      }
+
       const pushSingleFile = (v, key) => {
         if (v && v.length) {
           const file = v[0].originFileObj || v[0];
@@ -145,18 +168,18 @@ export default function EditProfileModal({ visible, onClose, user }) {
         "adhaar_card_verification"
       );
       pushSingleFile(values.pan_card, "pan_card");
-  if (values.portfolio_images && values.portfolio_images.length > 0) {
-    values.portfolio_images.forEach((file, idx) => {
-      const actualFile = file.originFileObj || file;
+      if (values.portfolio_images && values.portfolio_images.length > 0) {
+        values.portfolio_images.forEach((file, idx) => {
+          const actualFile = file.originFileObj || file;
 
-      if (actualFile instanceof File) {
-        // Append with index in brackets
-        fd.append(`portfolio_images[${idx}]`, actualFile);
-      } else {
-        console.warn("Skipping invalid file at index", idx);
+          if (actualFile instanceof File) {
+            // Append with index in brackets
+            fd.append(`portfolio_images[${idx}]`, actualFile);
+          } else {
+            console.warn("Skipping invalid file at index", idx);
+          }
+        });
       }
-    });
-  }
       fd.append("user_id", user.id);
       fd.append("business_name", values.business_name || "");
       fd.append("name", values.name || "");
@@ -202,6 +225,24 @@ export default function EditProfileModal({ visible, onClose, user }) {
     }
   };
 
+  const [modalWidth, setModalWidth] = useState("90%");
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setModalWidth("95%"); // mobile
+      } else if (window.innerWidth < 1024) {
+        setModalWidth("70%"); // tablet
+      } else {
+        setModalWidth("50%"); // desktop
+      }
+    };
+
+    handleResize(); // run once
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <Modal
       open={visible}
@@ -209,7 +250,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
       footer={null}
       title="Edit Profile"
       destroyOnClose
-      width="50%"
+      width={modalWidth}
     >
       <Form
         form={form}
@@ -244,6 +285,30 @@ export default function EditProfileModal({ visible, onClose, user }) {
         }}
         onFinish={handleFinish}
       >
+        <Form.Item
+          label="Profile Image"
+          name="image"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+        >
+          <ImgCrop rotationSlider>
+            <Upload
+              listType="picture-card"
+              beforeUpload={() => false}
+              fileList={fileList}
+              onChange={handleUploadChange}
+              accept=".jpg,.jpeg,.png"
+              maxCount={1}
+            >
+              {fileList.length < 1 && (
+                <div>
+                  <UploadOutlined />
+                  <div style={{ marginTop: 8 }}>Upload & Crop</div>
+                </div>
+              )}
+            </Upload>
+          </ImgCrop>
+        </Form.Item>
         {/* Repeat all fields from your profile modal here */}
         <Form.Item name="business_name" label="Business Name">
           <Input />

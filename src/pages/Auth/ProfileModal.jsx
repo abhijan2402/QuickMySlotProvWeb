@@ -195,6 +195,25 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
     accept: ".jpg,.jpeg,.png,.pdf",
   };
 
+    const [modalWidth, setModalWidth] = useState("90%");
+  
+    useEffect(() => {
+      const handleResize = () => {
+        if (window.innerWidth < 640) {
+          setModalWidth("95%"); // mobile
+        } else if (window.innerWidth < 1024) {
+          setModalWidth("70%"); // tablet
+        } else {
+          setModalWidth("50%"); // desktop
+        }
+      };
+  
+      handleResize(); // run once
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+  
+
   return (
     <Modal
       open={visible}
@@ -202,7 +221,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
       footer={null}
       title="Complete Your Profile"
       destroyOnClose
-      width="50%"
+      width={modalWidth}
     >
       <p style={{ color: "#555", marginBottom: 16, fontSize: 13 }}>
         <strong>Note:</strong> Please provide accurate details, including valid

@@ -13,6 +13,7 @@
     "@react-google-maps/api": "^2.20.7",
     "@reduxjs/toolkit": "^2.9.0",
     "antd": "^5.27.1",
+    "antd-img-crop": "^4.25.0",
     "framer-motion": "^12.19.2",
     "jspdf": "^3.0.2",
     "lottie-react": "^2.4.1",
