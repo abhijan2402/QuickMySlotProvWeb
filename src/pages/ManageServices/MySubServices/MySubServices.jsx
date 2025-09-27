@@ -236,7 +236,7 @@ export default function MySubServices() {
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(sub.addons).map(([key, value], i) => (
                       <Tag key={i} color="green">
-                        {key} (${value})
+                        {key} (₹{value})
                       </Tag>
                     ))}
                   </div>
@@ -252,7 +252,7 @@ export default function MySubServices() {
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(sub.peak_hours).map(([key, value], i) => (
                       <Tag key={i} color="orange">
-                        {key} (${value})
+                        {key} (₹{value})
                       </Tag>
                     ))}
                   </div>
