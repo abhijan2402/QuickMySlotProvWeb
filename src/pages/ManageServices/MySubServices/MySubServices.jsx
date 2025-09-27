@@ -110,15 +110,17 @@ export default function MySubServices() {
 
     // Peak Hours in HH:MM 12-hour format
     values.peak_hours?.forEach((p) => {
-      const timeStr = p.key.format("hh:mm A"); // 12-hour format
+      const timeStr = p.key.format("HH:mm"); // 24-hour format without AM/PM
       formdata.append(`peak_hours[${timeStr}]`, p.value);
     });
 
     // Availability (Dates with multiple time slots)
     values.availability?.forEach((item) => {
       const dateStr = item.date.format("DD/MM/YYYY");
-      const slots = item.slots?.map((t) => t.format("hh:mm A")) || [];
-      formdata.append(`available_schedule[${dateStr}]`, JSON.stringify(slots));
+      const slots = item.slots?.map((t) => t.format("HH:mm")) || []; // 24-hour format
+      slots.forEach((time) => {
+        formdata.append(`available_schedule[${time}]`, dateStr);
+      });
     });
 
     // Images

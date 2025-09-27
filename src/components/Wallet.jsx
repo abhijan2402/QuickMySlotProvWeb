@@ -37,7 +37,7 @@ const Wallet = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: order?.amount,
         currency: "INR",
-        name: "Quickmyslot",
+        name: "QuickMySlot",
         description: "Add Amount to Wallet",
         image: "/logo1.png",
         order_id: order?.order_id,
