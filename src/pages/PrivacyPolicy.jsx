@@ -164,15 +164,15 @@ export default function PrivacyPolicy() {
               <br />
               Email:{" "}
               <a
-                href="mailto:support@QuickmySlottech.com"
+                href="mailto:Info@quickmyslot.com"
                 className="text-blue-600 underline"
               >
-                support@QuickmySlottech.com
+                Info@quickmyslot.com
               </a>
               <br />
-              Phone: +91-9782488408, +91-7976114618
+              Phone: +91 9810741808
               <br />
-              Address: 109-A Bajrangdeep colony, Jagatpura, Jaipur, 302022
+              Address: H.no 152/16 Prem nagar old Jail Road Gurgaon
             </p>
           </section>
         </div>

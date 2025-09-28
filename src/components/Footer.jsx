@@ -4,6 +4,7 @@ import {
   FaGithub,
   FaTwitter,
   FaInstagram,
+  FaYoutube,
 } from "react-icons/fa";
 import { FaSquareXTwitter } from "react-icons/fa6";
 
@@ -30,11 +31,11 @@ export default function Footer() {
             across multiple industries to empower businesses worldwide.
           </p>
           <div className="text-sm text-gray-400">
-            📍 1234 Innovation Drive, Tech Park, Springfield, IL 62704, USA
+            📍 H.no 152/16 Prem nagar old Jail Road Gurgaon
             <br />
-            📞 +91-xxxxxx98, +91-xxxxxxxxx78
+            📞 +91 9810741808
             <br />
-            📧 contact@QuickmySlot.com
+            📧 Info@quickmyslot.com
           </div>
         </div>
 
@@ -54,12 +55,12 @@ export default function Footer() {
             >
               Terms & Conditions
             </li>
-            <li
+            {/* <li
               onClick={() => navigate("/about")}
               className="hover:text-[#007FFF] transition cursor-pointer"
             >
               About
-            </li>
+            </li> */}
             <li
               onClick={() => navigate("/support")}
               className="hover:text-[#007FFF] transition cursor-pointer"
@@ -80,39 +81,37 @@ export default function Footer() {
           <h3 className="text-lg font-semibold mb-3">Connect With Us</h3>
           <div className="flex gap-4 text-2xl text-gray-300 mt-2">
             <a
-              href="#"
+              href="https://www.youtube.com/channel/UCVxlXRdkkk0ZSUn1-7vd_6A"
+              className="hover:text-[#FF0800] transition"
+              aria-label="Instagram"
+              target="_blank"
+            >
+              <FaYoutube />
+            </a>
+            <a
+              href="https://www.facebook.com/share/1BAA8a2AjV/?mibextid=wwXIfr"
               className="hover:text-[#3b5998] transition"
               aria-label="Facebook"
+              target="_blank"
             >
               <FaFacebook />
             </a>
             <a
-              href="#"
+              href="https://www.instagram.com/quickmyslot?igsh=cmd0cWxkOTl2eDRr&utm_source=qr"
               className="hover:text-[#FF0800] transition"
               aria-label="Instagram"
+              target="_blank"
             >
               <FaInstagram />
             </a>
+
             <a
-              href="#"
-              className="hover:text-[#536878] transition"
-              aria-label="X Twitter"
-            >
-              <FaSquareXTwitter />
-            </a>
-            <a
-              href="#"
+              href="https://www.linkedin.com/company/quickmyslot/"
               className="hover:text-[#007FFF] transition"
+              target="_blank"
               aria-label="LinkedIn"
             >
               <FaLinkedin />
-            </a>
-            <a
-              href="#"
-              className="hover:text-[#6e5494] transition"
-              aria-label="GitHub"
-            >
-              <FaGithub />
             </a>
           </div>
         </div>
@@ -120,7 +119,7 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="mt-12 border-t border-gray-700 pt-6 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} QuickmySlot. All rights reserved.
+        © {new Date().getFullYear()} QuickMySlot. All rights reserved.
       </div>
     </footer>
   );
