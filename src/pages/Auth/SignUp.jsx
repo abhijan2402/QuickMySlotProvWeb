@@ -34,9 +34,8 @@ export default function Signup() {
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [userID, setUserID] = useState("");
 
-
-    const [gName, setGName] = useState(null);
-    const [gEmail, setGEmail] = useState(null);
+  const [gName, setGName] = useState(null);
+  const [gEmail, setGEmail] = useState(null);
 
   const [tempToken, setTempToken] = useState("");
   const [otp, setOtp] = useState(Array(6).fill(""));
@@ -171,56 +170,60 @@ export default function Signup() {
   // Google Signup
   const handleGoogleSignIn = async () => {
     try {
-      const formData = new FormData();
-      // 1) Sign in with Google (popup)
+      // 1) Sign in with Google
       const result = await signInWithGooglePopup();
       const firebaseUser = result.user;
 
+      const formData = new FormData();
       formData.append("provider", "google");
       formData.append("data[id]", firebaseUser.uid);
       formData.append("data[email]", firebaseUser.email);
       formData.append("data[name]", firebaseUser.displayName);
       formData.append("data[image]", firebaseUser.photoURL);
+      formData.append("role", "1");
 
-      // 2) Get Firebase ID token
-      const idToken = await firebaseUser.getIdToken();
-      // formData.append("idToken", idToken);
-
-      // 3) Send to backend
+      // 2) Send to backend
       const resp = await fetch(`${baseUrl}google`, {
         method: "POST",
         body: formData,
       });
 
       const data = await resp.json();
+      if (!resp.ok) throw new Error(data.message || "Google signup failed");
 
-      if (!resp.ok) throw new Error(data.message || "Server error");
+      // 3) Handle steps (similar to OTP flow)
+      dispatch(setToken(data?.token));
+      setUserID(data?.data?.id);
+      setGName(data?.data?.name);
+      setGEmail(data?.data?.email);
 
-      // Open profile modal if steps blank or undefined
-      if (!data.data.steps || data.data.steps === "") {
+      if (!data?.data?.steps || data?.data?.steps === "1") {
+        // Step 1 → Show profile modal
         setShowProfileModal(true);
-        setTempToken(data.token);
-        setUserID(data?.data?.id);
-        setGName(data?.data?.name);
-        setGEmail(data?.data?.email);
-      } else if (data.data.steps === "2") {
-        // Fetch profile if steps = 2 and proceed
+        toast.success("Google account linked! Please complete your profile.");
+      } else if (data?.data?.steps === "2") {
+        // Step 2 → Show availability modal
+        setShowAvailabilityModal(true);
+        toast.success("Continue with availability setup.");
+      } else if (data?.data?.steps === "3") {
+        // Step 3 → Fetch profile and log in
         const profileResponse = await fetch(`${baseUrl}profile`, {
           headers: { Authorization: `Bearer ${data.token}` },
         });
+
         if (!profileResponse.ok) {
           throw new Error("Failed to fetch profile");
         }
+
         const profileData = await profileResponse.json();
 
-        dispatch(setToken(data.token));
-        dispatch(setUser(profileData.data));
+        dispatch(setUser(profileData?.data));
         toast.success("Logged in with Google!");
         navigate("/");
       }
     } catch (err) {
       console.error("Google sign-in error:", err);
-      toast.error(err?.message || "Google sign-in failed");
+      toast.error(err?.message || "Google sign-in failed!");
     }
   };
 

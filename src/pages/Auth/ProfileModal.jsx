@@ -33,12 +33,14 @@ export default function ProfileModal({
   gName,
 }) {
   const [form] = Form.useForm();
-  const [setProfile, { isLoading }] = useSetProfileMutation();
+  const [setProfile, { isLoading, isError }] = useSetProfileMutation();
   const { data: category } = useGetcategoryQuery();
   const [markerPos, setMarkerPos] = useState(null);
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [searchText, setSearchText] = useState("");
   const autocompleteRef = useRef(null);
+
+  console.log(isError)
 
   useEffect(() => {
     if (gName || gEmail) {
@@ -210,9 +212,11 @@ export default function ProfileModal({
           form.resetFields();
           onNext();
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error("Profile submission error:", err);
           toast.error("Failed to submit profile. Try again.");
         });
+
     } catch (err) {
       console.error(err);
       toast.error("Failed to submit profile. Try again.");
