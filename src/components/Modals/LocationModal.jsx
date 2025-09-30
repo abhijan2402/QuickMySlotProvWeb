@@ -47,18 +47,18 @@ const LocationModal = ({ open, initialLocation, onOk, onCancel }) => {
       title="Your Location"
       open={open}
       onCancel={onCancel}
-      footer={[
-        <Button key="cancel" onClick={onCancel}>
-          Cancel
-        </Button>,
-        <Button
-          key="ok"
-          type="primary"
-          onClick={() => onOk(markerPos)} 
-        >
-          Save Location
-        </Button>,
-      ]}
+      // footer={[
+      //   <Button key="cancel" onClick={onCancel}>
+      //     Cancel
+      //   </Button>,
+      //   <Button
+      //     key="ok"
+      //     type="primary"
+      //     onClick={() => onOk(markerPos)} 
+      //   >
+      //     Save Location
+      //   </Button>,
+      // ]}
       width={600}
       centered
       destroyOnClose

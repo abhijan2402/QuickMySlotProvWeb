@@ -12,6 +12,7 @@ import {
 } from "@react-google-maps/api";
 import { MdOutlineMyLocation } from "react-icons/md";
 import { getLatLngFromAddress } from "../../utils/utils";
+import { BiMapPin } from "react-icons/bi";
 
 const { Option } = Select;
 
@@ -21,12 +22,14 @@ const containerStyle = {
   borderRadius: "12px",
 };
 
+const DEFAULT_CENTER = { lat: 20.5937, lng: 78.9629 };
+
 export default function ProfileModal({ visible, onClose, onNext, userID }) {
   const [form] = Form.useForm();
   const [setProfile, { isLoading }] = useSetProfileMutation();
   const { data: category } = useGetcategoryQuery();
   const [markerPos, setMarkerPos] = useState(null);
-  const [mapCenter, setMapCenter] = useState(null);
+  const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [searchText, setSearchText] = useState("");
   const autocompleteRef = useRef(null);
 
@@ -36,11 +39,51 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
     libraries: ["places"],
   });
 
+  // Get current location on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const userLoc = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          };
+          setMapCenter(userLoc);
+          setMarkerPos(userLoc);
+          // Optionally fill form fields with geocoded address
+          geocodeAndSet(userLoc);
+        },
+        () => setMapCenter(DEFAULT_CENTER)
+      );
+    }
+  }, []);
+
+  // Sync search field with form
   useEffect(() => {
     setSearchText(form.getFieldValue("location") || "");
   }, [form]);
 
-  // ✅ Autocomplete select
+  // Helper: geocode and update fields
+  const geocodeAndSet = (pos) => {
+    const mapsUrl = `https://www.google.com/maps?q=${pos.lat},${pos.lng}`;
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ location: pos }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        const address = results[0].formatted_address;
+        form.setFieldsValue({
+          location: address,
+          map_link: mapsUrl,
+        });
+        setSearchText(address);
+      } else {
+        form.setFieldsValue({
+          map_link: mapsUrl,
+        });
+      }
+    });
+  };
+
+  // Autocomplete select
   const handlePlaceChanged = () => {
     const place = autocompleteRef.current?.getPlace();
     if (place?.geometry?.location) {
@@ -55,65 +98,37 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
       form.setFieldsValue({
         location: address,
         map_link: mapsUrl,
-        // lat: pos.lat,
-        // long: pos.lng,
       });
       setSearchText(address);
     }
   };
 
-  // ✅ Map click
+  // Map click
   const handleMapClick = (e) => {
     const pos = { lat: e.latLng.lat(), lng: e.latLng.lng() };
     setMarkerPos(pos);
     setMapCenter(pos);
-
-    const mapsUrl = `https://www.google.com/maps?q=${pos.lat},${pos.lng}`;
-
-    console.log(mapsUrl);
-
-    const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ location: pos }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        const address = results[0].formatted_address;
-        form.setFieldsValue({
-          location: address,
-          map_link: mapsUrl,
-          // lat: pos.lat,
-          // long: pos.lng,
-        });
-        setSearchText(address);
-      } else {
-        form.setFieldsValue({
-          map_link: mapsUrl,
-        });
-      }
-    });
+    geocodeAndSet(pos);
   };
 
-  // ✅ Marker drag
+  // Marker drag
   const handleMarkerDragEnd = (e) => {
     const pos = { lat: e.latLng.lat(), lng: e.latLng.lng() };
     setMarkerPos(pos);
     setMapCenter(pos);
-    const mapsUrl = `https://www.google.com/maps?q=${pos.lat},${pos.lng}`;
-    const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ location: pos }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        const address = results[0].formatted_address;
-        form.setFieldsValue({
-          location: address,
-          map_link: mapsUrl,
-          // lat: pos.lat,
-          // long: pos.lng,
-        });
-        setSearchText(address);
-      } else {
-        form.setFieldsValue({
-          map_link: mapsUrl,
-        });
-      }
-    });
+    geocodeAndSet(pos);
+  };
+
+  // Recenter button logic
+  const handleRecenter = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setMapCenter(userLoc);
+        setMarkerPos(userLoc);
+        geocodeAndSet(userLoc);
+      });
+    }
   };
 
   // Normalize event to retrieve fileList from Upload component events
@@ -195,24 +210,23 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
     accept: ".jpg,.jpeg,.png,.pdf",
   };
 
-    const [modalWidth, setModalWidth] = useState("90%");
-  
-    useEffect(() => {
-      const handleResize = () => {
-        if (window.innerWidth < 640) {
-          setModalWidth("95%"); // mobile
-        } else if (window.innerWidth < 1024) {
-          setModalWidth("70%"); // tablet
-        } else {
-          setModalWidth("50%"); // desktop
-        }
-      };
-  
-      handleResize(); // run once
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
-  
+  const [modalWidth, setModalWidth] = useState("90%");
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setModalWidth("95%"); // mobile
+      } else if (window.innerWidth < 1024) {
+        setModalWidth("70%"); // tablet
+      } else {
+        setModalWidth("50%"); // desktop
+      }
+    };
+
+    handleResize(); // run once
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <Modal
@@ -276,7 +290,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
             <p className="text-[20px]">
               <InboxOutlined style={{ color: "#EE4E34" }} />
             </p>
-            <p>Click or drag photo to upload</p>
+            <p>Click or drag shop image to upload</p>
           </Upload.Dragger>
         </Form.Item>
 
@@ -297,7 +311,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
             <p className="text-[20px]">
               <InboxOutlined style={{ color: "#EE4E34" }} />
             </p>
-            <p>Click or drag file to upload</p>
+            <p>Click or drag (Image/Pdf) to upload</p>
           </Upload.Dragger>
         </Form.Item>
 
@@ -313,7 +327,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
             <p className="text-[20px]">
               <InboxOutlined style={{ color: "#EE4E34" }} />
             </p>
-            <p>Upload Aadhaar</p>
+            <p>Upload Aadhaar(Image/Pdf)</p>
           </Upload.Dragger>
         </Form.Item>
 
@@ -329,7 +343,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
             <p className="text-[20px]">
               <InboxOutlined style={{ color: "#EE4E34" }} />
             </p>
-            <p className="">Upload PAN card</p>
+            <p className="">Upload PAN card(Image/Pdf)</p>
           </Upload.Dragger>
         </Form.Item>
 
@@ -360,7 +374,7 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
             <div>
               <InboxOutlined style={{ color: "#EE4E34", fontSize: 28 }} />
               <div style={{ marginTop: 8, fontSize: 10 }}>
-                Click or drag photos to upload
+                Click or drag portfolio images to upload
               </div>
             </div>
           </Upload>
@@ -457,24 +471,52 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
             <Input placeholder="Loading Google Maps..." disabled />
           )}
         </Form.Item>
-
-        {/* Map + Recenter Button */}
-        <div className="relative mb-4">
+        <div className="relative mb-4" style={{ position: "relative" }}>
           {isLoaded && (
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={mapCenter}
-              zoom={15}
-              onClick={handleMapClick}
-            >
-              {markerPos && (
-                <MarkerF
-                  position={markerPos}
-                  draggable
-                  onDragEnd={handleMarkerDragEnd}
+            <>
+              <Button
+                onClick={handleRecenter}
+                style={{
+                  position: "absolute",
+                  zIndex: 2,
+                  right: 10,
+                  top: 60,
+                  background: "#fff",
+                  padding: 4,
+                  border: "1px solid #ccc",
+                  borderRadius: "50%",
+                  width: 40,
+                  height: 40,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src="https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2.png"
+                  alt="Recenter"
+                  style={{
+                    width: 24,
+                    height: 36,
+                  }}
                 />
-              )}
-            </GoogleMap>
+              </Button>
+
+              <GoogleMap
+                mapContainerStyle={containerStyle}
+                center={mapCenter}
+                zoom={15}
+                onClick={handleMapClick}
+              >
+                {markerPos && (
+                  <MarkerF
+                    position={markerPos}
+                    draggable
+                    onDragEnd={handleMarkerDragEnd}
+                  />
+                )}
+              </GoogleMap>
+            </>
           )}
         </div>
 
@@ -486,7 +528,6 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
             {
               type: "url",
               message: "Enter a valid URL (https://...)",
-              required: true,
             },
           ]}
         >

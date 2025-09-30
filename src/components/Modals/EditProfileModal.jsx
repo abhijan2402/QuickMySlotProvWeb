@@ -303,7 +303,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
               {fileList.length < 1 && (
                 <div>
                   <UploadOutlined />
-                  <div style={{ marginTop: 8 }}>Upload & Crop</div>
+                  <div style={{ marginTop: 8 }}>Upload Imge & Crop</div>
                 </div>
               )}
             </Upload>
@@ -415,7 +415,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
             accept=".jpg,.jpeg,.png,.pdf"
           >
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
-            <p>Upload photo</p>
+            <p>Upload photo(Image/Pdf)</p>
           </Upload.Dragger>
         </Form.Item>
         <Form.Item
@@ -430,7 +430,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
             accept=".jpg,.jpeg,.png,.pdf"
           >
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
-            <p>Upload Business Proof</p>
+            <p>Upload Business Proof(Image/Pdf)</p>
           </Upload.Dragger>
         </Form.Item>
         <Form.Item
@@ -445,7 +445,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
             accept=".jpg,.jpeg,.png,.pdf"
           >
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
-            <p>Upload Aadhaar</p>
+            <p>Upload Aadhaar(Image/Pdf)</p>
           </Upload.Dragger>
         </Form.Item>
         <Form.Item
@@ -460,7 +460,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
             accept=".jpg,.jpeg,.png,.pdf"
           >
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
-            <p>Upload PAN</p>
+            <p>Upload PAN(Image/Pdf)</p>
           </Upload.Dragger>
         </Form.Item>
         <Form.Item
@@ -478,7 +478,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
           >
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 28 }} />
             <div style={{ marginTop: 8, fontSize: 10 }}>
-              Click or drag photos to upload
+              Click or drag Portfolio images to upload
             </div>
           </Upload>
         </Form.Item>
