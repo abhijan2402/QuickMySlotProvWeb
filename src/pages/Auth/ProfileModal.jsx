@@ -24,7 +24,14 @@ const containerStyle = {
 
 const DEFAULT_CENTER = { lat: 20.5937, lng: 78.9629 };
 
-export default function ProfileModal({ visible, onClose, onNext, userID }) {
+export default function ProfileModal({
+  visible,
+  onClose,
+  onNext,
+  userID,
+  gEmail,
+  gName,
+}) {
   const [form] = Form.useForm();
   const [setProfile, { isLoading }] = useSetProfileMutation();
   const { data: category } = useGetcategoryQuery();
@@ -32,6 +39,15 @@ export default function ProfileModal({ visible, onClose, onNext, userID }) {
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [searchText, setSearchText] = useState("");
   const autocompleteRef = useRef(null);
+
+  useEffect(() => {
+    if (gName || gEmail) {
+      form.setFieldsValue({
+        ...(gName ? { name: gName } : {}),
+        ...(gEmail ? { email: gEmail } : {}),
+      });
+    }
+  }, [gName, gEmail, form]);
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",

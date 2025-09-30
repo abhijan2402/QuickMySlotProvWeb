@@ -14,6 +14,14 @@ import Password from "antd/es/input/Password";
 import AvailabilityModal from "./AvailabilityModal";
 import ProfileModal from "./ProfileModal";
 import { useGetProfileQuery } from "../../services/profileApi";
+import { FcGoogle } from "react-icons/fc";
+
+import { GoogleOutlined } from "@ant-design/icons";
+import {
+  auth,
+  googleProvider,
+  signInWithGooglePopup,
+} from "../../firebase/firebase";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -25,6 +33,11 @@ export default function Signup() {
   const [step, setStep] = useState("form");
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [userID, setUserID] = useState("");
+
+
+    const [gName, setGName] = useState(null);
+    const [gEmail, setGEmail] = useState(null);
+
   const [tempToken, setTempToken] = useState("");
   const [otp, setOtp] = useState(Array(6).fill(""));
   const inputRefs = useRef([]);
@@ -155,6 +168,62 @@ export default function Signup() {
     }
   };
 
+  // Google Signup
+  const handleGoogleSignIn = async () => {
+    try {
+      const formData = new FormData();
+      // 1) Sign in with Google (popup)
+      const result = await signInWithGooglePopup();
+      const firebaseUser = result.user;
+
+      formData.append("provider", "google");
+      formData.append("data[id]", firebaseUser.uid);
+      formData.append("data[email]", firebaseUser.email);
+      formData.append("data[name]", firebaseUser.displayName);
+      formData.append("data[image]", firebaseUser.photoURL);
+
+      // 2) Get Firebase ID token
+      const idToken = await firebaseUser.getIdToken();
+      // formData.append("idToken", idToken);
+
+      // 3) Send to backend
+      const resp = await fetch(`${baseUrl}google`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok) throw new Error(data.message || "Server error");
+
+      // Open profile modal if steps blank or undefined
+      if (!data.data.steps || data.data.steps === "") {
+        setShowProfileModal(true);
+        setTempToken(data.token);
+        setUserID(data?.data?.id);
+        setGName(data?.data?.name);
+        setGEmail(data?.data?.email);
+      } else if (data.data.steps === "2") {
+        // Fetch profile if steps = 2 and proceed
+        const profileResponse = await fetch(`${baseUrl}profile`, {
+          headers: { Authorization: `Bearer ${data.token}` },
+        });
+        if (!profileResponse.ok) {
+          throw new Error("Failed to fetch profile");
+        }
+        const profileData = await profileResponse.json();
+
+        dispatch(setToken(data.token));
+        dispatch(setUser(profileData.data));
+        toast.success("Logged in with Google!");
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Google sign-in error:", err);
+      toast.error(err?.message || "Google sign-in failed");
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col md:flex-row min-h-screen h-full bg-white">
@@ -166,17 +235,15 @@ export default function Signup() {
     `}
         >
           {/* Logo for mobile */}
-          <div className="block md:hidden mb-6 w-full text-center">
+          <div className="block md:hidden mb-1 w-full text-center">
             <img
-              src="/logo1.png"
+              src="/provider/logo.png"
               alt="QuickMySlot"
-              className="mx-auto mb-2 h-24 object-contain"
+              className="mx-auto mb-1 h-24 object-contain"
             />
-            <h2 className="text-xl font-semibold text-[#EE4E34] mb-1">
-              QuickMySlot
-            </h2>
+
             <p className="text-gray-400 text-sm">
-              The Ultimate Controller for Your QuickMySlot Application.
+              Seamless Service Bookings, Anytime.
             </p>
           </div>
 
@@ -237,6 +304,26 @@ export default function Signup() {
                 >
                   Continue
                 </Button>
+                <p className="text-center py-2 text-gray-500 font-medium">Or</p>
+                <Button
+                  type="primary"
+                  htmlType="button"
+                  block
+                  size="large"
+                  inputMode="numeric"
+                  pattern="\d*"
+                  onClick={handleGoogleSignIn}
+                  className="mt-2]1 flex items-center justify-center gap-2"
+                  style={{
+                    background: "#fff",
+                    color: "#222",
+                    border: "1px solid #ccc",
+                    fontWeight: 500,
+                  }}
+                >
+                  <FcGoogle size={24} />
+                  Continue with Google
+                </Button>
               </Form>
             )}
 
@@ -293,11 +380,11 @@ export default function Signup() {
               alt="QuickMySlot"
               className="mx-auto mb-0 h-80 object-contain"
             />
-            <h2 className="text-2xl font-semibold text-white mb-2">
+            {/* <h2 className="text-2xl font-semibold text-white mb-2">
               QuickMySlot
-            </h2>
-            <p className="text-gray-200 max-w-md">
-              The Ultimate Controller for Your QuickMySlot Application.
+            </h2> */}
+            <p className="text-gray-200 mt-4 max-w-md">
+              Seamless Service Bookings, Anytime.
             </p>
           </div>
         </div>
@@ -318,6 +405,8 @@ export default function Signup() {
           setShowAvailabilityModal(true);
         }}
         userID={userID}
+        gEmail={gEmail}
+        gName={gName}
       />
 
       {/* ✅ Availability Modal */}
