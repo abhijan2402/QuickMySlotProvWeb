@@ -341,6 +341,8 @@ export default function Signup() {
                     <Input
                       key={index}
                       value={digit}
+                      inputMode="numeric"
+                      pattern="\d*"
                       onChange={(e) => handleChange(e.target.value, index)}
                       onKeyDown={(e) => handleKeyDown(e, index)}
                       maxLength={1}

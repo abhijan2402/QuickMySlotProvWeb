@@ -3,38 +3,36 @@ import Slider from "react-slick";
 import { motion } from "framer-motion";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
-const serviceImages = [
-  {
-    src: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1920&q=80",
-    alt: "Salon Services",
-  },
-  {
-    src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNM-EBaeIFmRXeyCa_td5D083wA3nE3gYsxg&s",
-    alt: "Healthcare Excellence",
-  },
-  {
-    src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5lK5IT4Y_9T1hepyuIPLIFcrE0rCMUzN3qw&s",
-    alt: "Relaxing Spa Treatments",
-  },
-  {
-    src: "https://thumbs.dreamstime.com/b/vet-dog-cat-puppy-kitten-doctor-examining-veterinarian-animal-clinic-pet-check-up-vaccination-health-care-dogs-156067334.jpg",
-    alt: "Pet Clinic Care",
-  },
-];
+import { useGetbannerQuery } from "../services/bannerApi";
 
 const HeroIntro = () => {
+  const { data, isLoading, isError } = useGetbannerQuery();
+
+  // Filter banners: exclude top position and null images
+  const filteredBanners =
+    data?.data?.banners?.filter(
+      (banner) => banner.position !== "top" && banner.image
+    ) || [];
+
   const settings = {
     dots: true,
-    infinite: true,
+    infinite: filteredBanners.length > 1,
     speed: 700,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: true,
+    autoplay: filteredBanners.length > 1,
     autoplaySpeed: 4000,
     arrows: false,
     pauseOnHover: true,
   };
+
+  if (isLoading) return <p className="text-center py-12">Loading banners...</p>;
+  if (isError)
+    return (
+      <p className="text-center py-12 text-red-500">Failed to load banners.</p>
+    );
+  if (filteredBanners.length === 0)
+    return <p className="text-center py-12">No banners available</p>;
 
   return (
     <section
@@ -42,18 +40,19 @@ const HeroIntro = () => {
       style={{ height: "50vh", minHeight: 300 }}
     >
       <Slider {...settings}>
-        {serviceImages.map(({ src, alt }) => (
+        {filteredBanners.map(({ id, image, position }) => (
           <motion.div
-            key={alt}
+            key={id}
             initial={{ opacity: 0.8 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5 }}
             className="w-full h-[50vh] min-h-[300px]"
           >
             <img
-              src={src}
-              alt={alt}
-              className="w-full h-full object-cover object-center rounded-none"
+              src={image}
+              alt={`Banner ${id} - ${position}`}
+              className="w-full h-full object-cover object-center"
+              loading="lazy"
             />
           </motion.div>
         ))}

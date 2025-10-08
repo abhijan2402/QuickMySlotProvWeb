@@ -166,10 +166,7 @@ export default function Navbar() {
                   aria-hidden="true"
                 />
                 <div className="flex flex-col leading-none">
-                  {/* <span className="font-bold text-[#EE4E34] text-[14px]">
-                    {city || "NA"}
-                  </span> */}
-                  <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium">
+                  <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium overflow-hidden whitespace-nowrap truncate max-w-[120px]">
                     {city || "NA"},{area || "NA"}{" "}
                     <span>
                       <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
@@ -193,10 +190,7 @@ export default function Navbar() {
                     aria-hidden="true"
                   />
                   <div className="flex flex-col leading-none">
-                    {/* <span className="font-bold text-[#EE4E34] text-[14px]">
-                    {city || "NA"}
-                  </span> */}
-                    <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium">
+                    <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium overflow-hidden whitespace-nowrap truncate max-w-[120px]">
                       {city || "NA"},{area || "NA"}{" "}
                       <span>
                         <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />

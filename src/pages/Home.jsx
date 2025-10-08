@@ -3,14 +3,16 @@ import Hero from "../components/Hero";
 import HeroIntro from "../components/HeroIntro";
 import ShopDetailCards from "../components/ShopDetailCards";
 import VendorUpcomingBookings from "../components/VendorUpcomingBookings";
+import BidSection from "./Bid/BidSection";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <ShopDetailCards/>
-      <VendorUpcomingBookings/>
-      <HeroIntro/>
+      <BidSection />
+      <ShopDetailCards />
+      <VendorUpcomingBookings />
+      <HeroIntro />
     </>
   );
 }

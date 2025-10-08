@@ -35,6 +35,7 @@ import {
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import noimg from "/noimg.png";
+import { FaIndianRupeeSign } from "react-icons/fa6";
 
 const { Meta } = Card;
 const { Option } = Select;
@@ -171,7 +172,7 @@ export default function MySubServices() {
           style={{ background: "#EE4E34", borderColor: "#EE4E34" }}
           loading={adding || updating}
         >
-          Add Sub Service
+          Add Service
         </Button>
       </div>
 
@@ -180,9 +181,9 @@ export default function MySubServices() {
           <Spin size="large" />
         </div>
       ) : subServices.length === 0 ? (
-        <Empty description="No Sub Services Found" />
+        <Empty description="No Services Found" />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {subServices.map((sub) => (
             <Card
               key={sub.id}
@@ -190,17 +191,19 @@ export default function MySubServices() {
               className="rounded-2xl shadow-lg transition-transform  hover:shadow-xl overflow-hidden"
               cover={
                 sub.image ? (
-                  <img
-                    alt={sub.name}
-                    src={sub.image}
-                    className="h-40 w-full object-cover"
-                  />
+                  <div className="relative w-full pt-[75%] overflow-hidden rounded-t-2xl bg-gray-100">
+                    <img
+                      alt="No Image"
+                      src={sub?.image}
+                      className="absolute top-0 left-0 w-full h-full object-cover"
+                    />
+                  </div>
                 ) : (
                   <div className="h-40 flex items-center justify-center bg-gray-100 text-gray-400">
                     <img
                       alt="No Image"
                       src={noimg}
-                      className="h-40 w-full object-cover"
+                      className="h-full w-full object-fit"
                     />
                   </div>
                 )
@@ -222,7 +225,7 @@ export default function MySubServices() {
               {/* Price & Duration */}
               <div className="flex items-center justify-between text-gray-700 mb-3">
                 <span className="flex items-center gap-1 font-medium">
-                  <DollarOutlined /> {sub.price}
+                  <FaIndianRupeeSign /> {sub.price}
                 </span>
                 <span className="flex items-center gap-1 text-xs">
                   <ClockCircleOutlined /> {sub.duration} mins

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaWallet,
   FaSignOutAlt,
@@ -74,7 +74,13 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   useUpdateProfileMutation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState(
+    user?.url_image || user?.image || null
+  );
 
+  useEffect(() => {
+    setPreviewImage(user?.url_image || user?.image || defaultImage);
+  }, [user]);
   // console.log(category?.data);
 
   const dispatch = useDispatch();
@@ -92,9 +98,9 @@ export default function ProfilePage() {
         <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col gap-6 flex-grow md:w-2/3 relative">
           {/* Profile Info */}
           <div className="flex items-center gap-4 min-w-0">
-            {user?.image ? (
+            {previewImage ? (
               <img
-                src={user?.image}
+                src={previewImage}
                 alt="Profile"
                 className="w-20 h-20 rounded-full object-cover flex-shrink-0"
               />

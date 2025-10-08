@@ -127,7 +127,7 @@ export default function MyServices() {
           onClick={() => openModal()}
           style={{ background: "#EE4E34", borderColor: "#EE4E34" }}
         >
-          Add Service
+          Add Sub Service
         </Button>
       </div>
 
@@ -138,7 +138,7 @@ export default function MyServices() {
         </div>
       ) : services.length === 0 ? (
         <Empty
-          description="No services found"
+          description="No sub-services found"
           image={Empty.PRESENTED_IMAGE_SIMPLE}
           style={{ marginTop: 40 }}
         />
@@ -151,13 +151,15 @@ export default function MyServices() {
               hoverable
               cover={
                 service.image_url ? (
-                  <img
-                    alt={service?.name}
-                    src={service?.image_url}
-                    className="h-40 w-full object-full rounded-t-2xl"
-                  />
+                  <div className="relative w-full pt-[75%] overflow-hidden rounded-t-2xl bg-gray-100">
+                    <img
+                      alt={service.name || "Service Image"}
+                      src={service.image_url}
+                      className="absolute top-0 left-0 w-full h-full object-cover"
+                    />
+                  </div>
                 ) : (
-                  <div className="h-40 flex items-center justify-center bg-gray-100 text-gray-400 rounded-t-2xl">
+                  <div className="w-full h-60 flex items-center justify-center bg-gray-100 text-gray-400 rounded-t-2xl">
                     No Image
                   </div>
                 )
@@ -187,7 +189,7 @@ export default function MyServices() {
                   </Button>
                 </Popconfirm>,
               ]}
-              className="rounded-xl shadow-md"
+              className="rounded-2xl shadow-lg transition-transform hover:shadow-xl overflow-hidden"
             >
               <Meta title={service.name} />
             </Card>
@@ -205,7 +207,7 @@ export default function MyServices() {
         confirmLoading={Adding || Updating}
         okButtonProps={{
           style: {
-            backgroundColor: "#EE5C32", 
+            backgroundColor: "#EE5C32",
             borderColor: "#EE5C32",
           },
           className: "custom-ok-btn",

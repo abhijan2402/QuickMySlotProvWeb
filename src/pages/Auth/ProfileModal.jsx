@@ -40,7 +40,7 @@ export default function ProfileModal({
   const [searchText, setSearchText] = useState("");
   const autocompleteRef = useRef(null);
 
-  console.log(isError)
+  console.log(isError);
 
   useEffect(() => {
     if (gName || gEmail) {
@@ -158,6 +158,54 @@ export default function ProfileModal({
   // Handle form submission
   const handleFinish = async (values) => {
     try {
+      // ✅ Validation Config
+      const requiredFields = [
+        { key: "service_category", msg: "Please select a business category." },
+        { key: "photo", msg: "Please upload a photo verification image." },
+        {
+          key: "business_proof",
+          msg: "Please upload your business proof document.",
+        },
+        { key: "aadhaar", msg: "Please upload your Aadhaar card." },
+        { key: "pan", msg: "Please upload your PAN card." },
+        { key: "portfolio", msg: "Please upload at least 1 portfolio image." },
+        { key: "name", msg: "Please enter your full name." },
+        { key: "email", msg: "Please enter your email." },
+        { key: "business_name", msg: "Please enter your business/shop name." },
+        { key: "about", msg: "Please describe your business." },
+        { key: "experience", msg: "Please enter years of experience." },
+        { key: "location", msg: "Please select a location." },
+      ];
+
+      // ✅ Check required fields
+      for (const field of requiredFields) {
+        const value = values[field.key];
+        if (
+          !value ||
+          (Array.isArray(value) && value.length === 0) ||
+          (typeof value === "string" && value.trim() === "")
+        ) {
+          toast.error(field.msg);
+          return;
+        }
+      }
+
+      // ✅ Special Validations
+      if (!/^[0-9]+$/.test(values.experience)) {
+        toast.error("Years of experience must be a valid number.");
+        return;
+      }
+
+      if (values.website && !/^https?:\/\/.+/.test(values.website)) {
+        toast.error("Please enter a valid website URL (https://...).");
+        return;
+      }
+
+      if (values.gstin && !/^[0-9A-Z]{15}$/.test(values.gstin)) {
+        toast.error("GSTIN must be 15 characters (A-Z, 0-9).");
+        return;
+      }
+
       const fd = new FormData();
 
       let coords = null;
@@ -216,7 +264,6 @@ export default function ProfileModal({
           console.error("Profile submission error:", err);
           toast.error("Failed to submit profile. Try again.");
         });
-
     } catch (err) {
       console.error(err);
       toast.error("Failed to submit profile. Try again.");

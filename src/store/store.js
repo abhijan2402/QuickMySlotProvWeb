@@ -14,6 +14,8 @@ import { vendorTransactionApi } from "../services/vendorTransactionListApi";
 import { notificationApi } from "../services/notificationApi";
 import { faqApi } from "../services/faqApi";
 import { supportApi } from "../services/supportApi";
+import { bannerApi } from "../services/bannerApi";
+import { bidApi } from "../services/bidApi";
 
 const store = configureStore({
   reducer: {
@@ -31,6 +33,8 @@ const store = configureStore({
     [walletApi.reducerPath]: walletApi.reducer,
     [vendorTransactionApi.reducerPath]: vendorTransactionApi.reducer,
     [supportApi.reducerPath]: supportApi.reducer,
+    [bannerApi.reducerPath]: bannerApi.reducer,
+    [bidApi.reducerPath]: bidApi.reducer,
     auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -48,6 +52,8 @@ const store = configureStore({
       walletApi.middleware,
       vendorTransactionApi.middleware,
       supportApi.middleware,
+      bannerApi.middleware,
+      bidApi.middleware,
       subscriptionApi.middleware
     ),
 });
