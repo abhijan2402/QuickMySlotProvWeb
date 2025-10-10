@@ -26,7 +26,24 @@ export const bidApi = createApi({
       }),
       invalidatesTags: ["bid"],
     }),
+    addbid: builder.mutation({
+      query: (formData) => ({
+        url: `bid-entries`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["bid"],
+    }),
+    updateBid: builder.mutation({
+      query: ({ formData, id }) => ({
+        url: `bid-entries/${id}`,
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: ["bid"],
+    }),
   }),
 });
 
-export const { useGetbidQuery, useAddbidMutation } = bidApi;
+export const { useGetbidQuery, useAddbidMutation, useUpdateBidMutation } =
+  bidApi;

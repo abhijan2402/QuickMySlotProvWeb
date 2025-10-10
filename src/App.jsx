@@ -6,7 +6,8 @@ import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 export default function App() {
   return (
     <div className="bg-white text-gray-900 dark:bg-background dark:text-white font-sans">
-      <BrowserRouter basename="/provider">
+      {/* <BrowserRouter basename="/provider"> */}
+      <BrowserRouter basename="/">
         <ScrollToTop />
         <AppRoutes />
       </BrowserRouter>
