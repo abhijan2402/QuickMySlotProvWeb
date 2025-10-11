@@ -118,7 +118,6 @@ const BidSection = () => {
 
       {/* 🏗️ Bid Cards Section */}
       <div className="py-4 sm:py-4 max-w-7xl mx-auto w-full">
-
         {filteredBids.length > 0 ? (
           <div className="space-y-4">
             {filteredBids.map((bid, index) => {
@@ -196,27 +195,28 @@ const BidSection = () => {
                     <p className="text-orange-700 text-sm font-medium">
                       Min. Bid Amount: 200
                     </p>
-                    {isBidActive && (
-                      <>
-                        <Button
-                          icon={<FaGavel />}
-                          type="primary"
-                          className="bg-[#EE4E34] hover:bg-[#134a4b] rounded-lg text-sm px-4 font-semibold"
-                          onClick={() => handleOpen(bid, "add")}
-                        >
-                          Place Bid
-                        </Button>
-                        <Button
-                          icon={<FaGavel />}
-                          type="default"
-                          className="border border-[#EE4E34] text-[#EE4E34] hover:bg-[#134a4b] hover:text-white rounded-lg text-sm px-4 font-semibold"
-                          onClick={() => handleOpen(bid, "edit")}
-                          // disabled={!bid.user_bid_amount}
-                        >
-                          Edit Bid
-                        </Button>
-                      </>
-                    )}
+                    <>
+                      <Button
+                        icon={<FaGavel />}
+                        type="primary"
+                        className="bg-[#EE4E34] hover:bg-[#134a4b] rounded-lg text-sm px-4 font-semibold"
+                        onClick={() => handleOpen(bid, "add")}
+                      >
+                        Place Bid
+                      </Button>
+                      <Button
+                        icon={<FaGavel />}
+                        type="default"
+                        className="border border-[#EE4E34] text-[#EE4E34] hover:bg-[#134a4b] hover:text-white rounded-lg text-sm px-4 font-semibold"
+                        onClick={() => handleOpen(bid, "edit")}
+                        // disabled={!bid.user_bid_amount}
+                      >
+                        Edit Bid
+                      </Button>
+                    </>
+                    {/* {isBidActive && (
+                    
+                    )} */}
                   </div>
                 </motion.div>
               );
