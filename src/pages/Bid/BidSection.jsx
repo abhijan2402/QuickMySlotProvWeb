@@ -178,7 +178,7 @@ const BidSection = () => {
                             </Tag>
                           </span>
                         </p>
-                        {bidShow.data?.amount && (
+                        {/* {bidShow.data?.amount && (
                           <p className="text-base text-black">
                             💸{" "}
                             <span className="font-semibold text-gray-800">
@@ -186,7 +186,7 @@ const BidSection = () => {
                             </span>{" "}
                             <Tag color="green">₹{bidShow.data?.amount}</Tag>
                           </p>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   </div>
