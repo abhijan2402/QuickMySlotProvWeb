@@ -18,6 +18,13 @@ export const bidApi = createApi({
       }),
       providesTags: ["bid"],
     }),
+    getbidShow: builder.query({
+      query: ({id}) => ({
+        url: `bids-show/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["bid"],
+    }),
     addbid: builder.mutation({
       query: (formData) => ({
         url: `bid-entries`,
@@ -45,5 +52,5 @@ export const bidApi = createApi({
   }),
 });
 
-export const { useGetbidQuery, useAddbidMutation, useUpdateBidMutation } =
+export const { useGetbidQuery, useAddbidMutation, useUpdateBidMutation, useGetbidShowQuery } =
   bidApi;

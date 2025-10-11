@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import {
   useAddbidMutation,
   useGetbidQuery,
+  useGetbidShowQuery,
   useUpdateBidMutation,
 } from "../../services/bidApi";
 import { useSelector } from "react-redux";
 import { Button, Modal, Input, Tag } from "antd";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { FaGavel } from "react-icons/fa";
+import { FaGavel, FaRupeeSign } from "react-icons/fa";
+import { useGetwalletQuery } from "../../services/walletApi";
 
 const BidSection = () => {
   const user = useSelector((state) => state.auth.user);
@@ -20,10 +22,13 @@ const BidSection = () => {
   const [addbid, { isLoading: placingBid }] = useAddbidMutation();
   const [updateBid, { isLoading: updatingBid }] = useUpdateBidMutation();
 
+  const { data: wallet } = useGetwalletQuery();
+
   console.log(data);
 
   // 🟩 Open Modal
   const handleOpen = (bid, type = "add") => {
+    console.log(type);
     setSelectedBid(bid);
     setMode(type);
     setAmount(bid.user_bid_amount || ""); // prefill if available
@@ -33,7 +38,7 @@ const BidSection = () => {
   // 🟩 Submit or Update
   const handleSubmit = async () => {
     const enteredAmount = parseFloat(amount || 0);
-    const walletAmount = parseFloat(user?.wallet || 0);
+    const walletAmount = parseFloat(wallet?.data?.total_amount || 0);
 
     if (!enteredAmount || enteredAmount <= 0) {
       toast.error("Please enter a valid bid amount");
@@ -51,7 +56,7 @@ const BidSection = () => {
 
     try {
       if (mode === "add") {
-        await addbid({ formData, id: selectedBid?.id }).unwrap();
+        await addbid(formData).unwrap();
         toast.success(`Bid placed successfully for ₹${enteredAmount}!`);
       } else {
         await updateBid({ formData, id: selectedBid?.id }).unwrap();
@@ -82,7 +87,12 @@ const BidSection = () => {
     userCategory && !isNaN(userCategory)
       ? bids.filter((b) => Number(b.category_id) === userCategory)
       : [];
-      console.log(filteredBids)
+  console.log(filteredBids);
+
+  const bidToShowId = filteredBids[0]?.id; // or use selectedBid?.id
+
+  const { data: bidShow } = useGetbidShowQuery({ id: bidToShowId });
+  console.log(bidShow);
 
   return (
     <div className="bg-gray-50 flex flex-col">
@@ -108,92 +118,109 @@ const BidSection = () => {
 
       {/* 🏗️ Bid Cards Section */}
       <div className="py-4 sm:py-4 max-w-7xl mx-auto w-full">
+
         {filteredBids.length > 0 ? (
           <div className="space-y-4">
-            {filteredBids.map((bid, index) => (
-              <motion.div
-                key={bid.id}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                viewport={{ once: true }}
-                className="bg-white border border-gray-200 hover:border-[#EE4E34] transition-all duration-200 
+            {filteredBids.map((bid, index) => {
+              const now = new Date();
+              const bidStart = new Date(`${bid.bid_date}T${bid.start_time}`);
+              const bidEnd = new Date(`${bid.bid_end_date}T${bid.end_time}`);
+              const isBidActive = now >= bidStart && now <= bidEnd;
+
+              return (
+                <motion.div
+                  key={bid.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  className="bg-white border border-gray-200 hover:border-[#EE4E34] transition-all duration-200 
                  flex flex-col sm:flex-row items-center justify-between rounded-xl px-4 py-3 shadow-sm hover:shadow-md"
-              >
-                {/* Left Section */}
-                <div className="flex items-center gap-4 flex-1 w-full">
-                  <img
-                    src={bid.category?.image || "/default-bid.jpg"}
-                    alt={bid.title}
-                    className="w-28 h-28 object-cover rounded-lg border border-gray-200"
-                  />
+                >
+                  {/* Left Section */}
+                  <div className="flex items-center gap-4 flex-1 w-full">
+                    <img
+                      src={bid.category?.image || "/default-bid.jpg"}
+                      alt={bid.title}
+                      className="w-28 h-28 object-cover rounded-lg border border-gray-200"
+                    />
 
-                  <div className="flex flex-col">
-                    <h3 className="text-xl font-semibold text-[#EE4E34]">
-                      {bid.title}
-                    </h3>
-                    <p className="text-gray-700">
-                      Category:{" "}
-                      <span className="font-medium">
-                        {bid.category?.name || "General"}
-                      </span>
-                    </p>
-                    <p className="text-[15px] text-gray-600 mt-1">
-                      <span className="font-semibold">Starts:</span>{" "}
-                      {new Date(bid.bid_date).toLocaleDateString()} at{" "}
-                      {bid.start_time}{" "}
-                      <span className="mx-2 text-gray-400">|</span>
-                      <span className="font-semibold">Ends:</span>{" "}
-                      {new Date(bid.bid_end_date).toLocaleDateString()} at{" "}
-                      {bid.end_time}
-                    </p>
-
-                    {/* Highlighted Bidding Info */}
-                    <div className="mt-2 space-y-1">
-                      <p className="text-base">
-                        🏆{" "}
-                        <span className="font-semibold text-gray-600">
-                          Top Bidder:
-                        </span>{" "}
-                        <Tag color="gold">
-                          {bid.top_bidder?.name || "No bids yet"}
-                        </Tag>
+                    <div className="flex flex-col">
+                      <h3 className="text-xl font-semibold text-[#EE4E34]">
+                        {bid.title}
+                      </h3>
+                      <p className="text-gray-700">
+                        Category:{" "}
+                        <span className="font-medium">
+                          {bid.category?.name || "General"}
+                        </span>
                       </p>
-                      {bid.user_bid_amount && (
+                      <p className="text-[15px] text-gray-600 mt-1">
+                        <span className="font-semibold">Starts:</span>{" "}
+                        {new Date(bid.bid_date).toLocaleDateString()} at{" "}
+                        {bid.start_time}{" "}
+                        <span className="mx-2 text-gray-400">|</span>
+                        <span className="font-semibold">Ends:</span>{" "}
+                        {new Date(bid.bid_end_date).toLocaleDateString()} at{" "}
+                        {bid.end_time}
+                      </p>
+
+                      {/* Highlighted Bidding Info */}
+                      <div className="mt-2 space-y-1 flex justify-between">
                         <p className="text-base">
-                          💸 <span className="font-semibold">Your Bid:</span>{" "}
-                          <Tag color="green">₹{bid.user_bid_amount}</Tag>
+                          🏆{" "}
+                          <span className="font-semibold text-gray-600">
+                            Top Bidder:
+                          </span>{" "}
+                          <span>
+                            <Tag color="gold">
+                              {bid.current_bid_amount || "No bids yet"}
+                            </Tag>
+                          </span>
                         </p>
-                      )}
+                        {bidShow.data?.amount && (
+                          <p className="text-base text-black">
+                            💸{" "}
+                            <span className="font-semibold text-gray-800">
+                              Your Bid:
+                            </span>{" "}
+                            <Tag color="green">₹{bidShow.data?.amount}</Tag>
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Right Section */}
-                <div className="flex flex-row sm:flex-col gap-2 mt-3 sm:mt-0 sm:ml-4">
-                  <p className="text-orange-700 text-sm font-medium">
-                    Min. Bid Amount: 200
-                  </p>
-                  <Button
-                    icon={<FaGavel />}
-                    type="primary"
-                    className="bg-[#EE4E34] hover:bg-[#134a4b] rounded-lg text-sm px-4 font-semibold"
-                    onClick={() => handleOpen(bid, "add")}
-                  >
-                    Place Bid
-                  </Button>
-                  <Button
-                    icon={<FaGavel />}
-                    type="default"
-                    className="border border-[#EE4E34] text-[#EE4E34] hover:bg-[#134a4b] hover:text-white rounded-lg text-sm px-4 font-semibold"
-                    onClick={() => handleOpen(bid, "edit")}
-                    disabled={!bid.user_bid_amount}
-                  >
-                    Edit Bid
-                  </Button>
-                </div>
-              </motion.div>
-            ))}
+                  {/* Right Section */}
+                  <div className="flex flex-row sm:flex-col gap-2 mt-3 sm:mt-0 sm:ml-4">
+                    <p className="text-orange-700 text-sm font-medium">
+                      Min. Bid Amount: 200
+                    </p>
+                    {isBidActive && (
+                      <>
+                        <Button
+                          icon={<FaGavel />}
+                          type="primary"
+                          className="bg-[#EE4E34] hover:bg-[#134a4b] rounded-lg text-sm px-4 font-semibold"
+                          onClick={() => handleOpen(bid, "add")}
+                        >
+                          Place Bid
+                        </Button>
+                        <Button
+                          icon={<FaGavel />}
+                          type="default"
+                          className="border border-[#EE4E34] text-[#EE4E34] hover:bg-[#134a4b] hover:text-white rounded-lg text-sm px-4 font-semibold"
+                          onClick={() => handleOpen(bid, "edit")}
+                          // disabled={!bid.user_bid_amount}
+                        >
+                          Edit Bid
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         ) : (
           <motion.div
@@ -245,7 +272,7 @@ const BidSection = () => {
           <p className="text-gray-600 text-sm">
             Wallet Balance:{" "}
             <span className="font-semibold text-[#EE4E34]">
-              ₹{user?.wallet || 0}
+              ₹{wallet?.data?.total_amount || 0}
             </span>
           </p>
           {selectedBid?.user_bid_amount && (
