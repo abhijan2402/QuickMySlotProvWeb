@@ -89,10 +89,10 @@ const BidSection = () => {
       : [];
   console.log(filteredBids);
 
-  const bidToShowId = filteredBids[0]?.id; // or use selectedBid?.id
+  // const bidToShowId = filteredBids[0]?.id;
 
-  const { data: bidShow } = useGetbidShowQuery({ id: bidToShowId });
-  console.log(bidShow);
+  // const { data: bidShow } = useGetbidShowQuery({ id: bidToShowId });
+  // console.log(bidShow);
 
   return (
     <div className="bg-gray-50 flex flex-col">
