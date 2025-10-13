@@ -5,12 +5,13 @@ import {
   useGetbidShowQuery,
   useUpdateBidMutation,
 } from "../../services/bidApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Input, Tag } from "antd";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { FaGavel, FaRupeeSign } from "react-icons/fa";
 import { useGetwalletQuery } from "../../services/walletApi";
+import { useGetProfileQuery } from "../../services/profileApi";
 
 const BidSection = () => {
   const user = useSelector((state) => state.auth.user);
@@ -23,8 +24,11 @@ const BidSection = () => {
   const [updateBid, { isLoading: updatingBid }] = useUpdateBidMutation();
 
   const { data: wallet } = useGetwalletQuery();
+  const { data: profile } = useGetProfileQuery();
 
-  console.log(data);
+  const dispatch = useDispatch();
+
+  console.log(profile);
 
   // 🟩 Open Modal
   const handleOpen = (bid, type = "add") => {
@@ -171,52 +175,47 @@ const BidSection = () => {
                           <span className="font-semibold text-gray-600">
                             Top Bidder:
                           </span>{" "}
-                          <span>
-                            <Tag color="gold">
-                              {bid.current_bid_amount || "No bids yet"}
-                            </Tag>
-                          </span>
+                          <Tag color="gold">
+                            ₹{bid.current_bid_amount || "No bids yet"}
+                          </Tag>
                         </p>
-                        {/* {bidShow.data?.amount && (
+                        {bid?.won_entry?.amount && (
                           <p className="text-base text-black">
                             💸{" "}
                             <span className="font-semibold text-gray-800">
                               Your Bid:
                             </span>{" "}
-                            <Tag color="green">₹{bidShow.data?.amount}</Tag>
+                            <Tag color="green">₹{bid?.won_entry?.amount}</Tag>
                           </p>
-                        )} */}
+                        )}
                       </div>
                     </div>
                   </div>
 
                   {/* Right Section */}
+                  {/* Right Section */}
                   <div className="flex flex-row sm:flex-col gap-2 mt-3 sm:mt-0 sm:ml-4">
                     <p className="text-orange-700 text-sm font-medium">
-                      Min. Bid Amount: 200
+                      Min. Bid Amount: ₹200
                     </p>
-                    <>
+
+                    {/* Conditional Buttons / Winner Message */}
+                    {bid?.is_won ? (
+                      <div className="flex items-center justify-center bg-green-50 border border-green-400 rounded-lg px-4 py-2">
+                        <span className="text-green-700 font-semibold text-sm flex items-center gap-2">
+                          🏆 Winner of the Bid
+                        </span>
+                      </div>
+                    ) : (
                       <Button
                         icon={<FaGavel />}
                         type="primary"
                         className="bg-[#EE4E34] hover:bg-[#134a4b] rounded-lg text-sm px-4 font-semibold"
                         onClick={() => handleOpen(bid, "add")}
                       >
-                        Place Bid
+                        {bid?.won_entry?.amount ? "Update Bid" : "Place Bid"}
                       </Button>
-                      <Button
-                        icon={<FaGavel />}
-                        type="default"
-                        className="border border-[#EE4E34] text-[#EE4E34] hover:bg-[#134a4b] hover:text-white rounded-lg text-sm px-4 font-semibold"
-                        onClick={() => handleOpen(bid, "edit")}
-                        // disabled={!bid.user_bid_amount}
-                      >
-                        Edit Bid
-                      </Button>
-                    </>
-                    {/* {isBidActive && (
-                    
-                    )} */}
+                    )}
                   </div>
                 </motion.div>
               );
@@ -272,7 +271,7 @@ const BidSection = () => {
           <p className="text-gray-600 text-sm">
             Wallet Balance:{" "}
             <span className="font-semibold text-[#EE4E34]">
-              ₹{wallet?.data?.total_amount || 0}
+              ₹{profile?.data?.wallet || 0}
             </span>
           </p>
           {selectedBid?.user_bid_amount && (

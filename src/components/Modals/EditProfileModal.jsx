@@ -355,10 +355,10 @@ export default function EditProfileModal({ visible, onClose, user }) {
           />
         </Form.Item>
         <Form.Item name="daily_start_time" label="Daily Start Time">
-          <TimePicker format="HH:mm" />
+          <TimePicker format="HH:mm" minuteStep={30} />
         </Form.Item>
         <Form.Item name="daily_end_time" label="Daily End Time">
-          <TimePicker format="HH:mm" />
+          <TimePicker format="HH:mm" minuteStep={30} />
         </Form.Item>
         {/* Location picker (with Google Maps) */}
         <Form.Item name="exact_location" label="Exact Location">

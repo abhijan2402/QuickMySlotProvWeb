@@ -63,6 +63,7 @@ export default function AvailabilityModal({ visible, onClose, userID }) {
         >
           <TimePicker
             format="HH:mm"
+            minuteStep={30} // ⏱ restrict to 00 or 30 minutes
             defaultOpenValue={dayjs("09:00", "HH:mm")}
           />
         </Form.Item>
@@ -74,6 +75,7 @@ export default function AvailabilityModal({ visible, onClose, userID }) {
         >
           <TimePicker
             format="HH:mm"
+            minuteStep={30} // ⏱ same restriction here
             defaultOpenValue={dayjs("18:00", "HH:mm")}
           />
         </Form.Item>

@@ -13,10 +13,14 @@ import {
 import { BsClock } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { capitalizeFirstLetter } from "../utils/utils";
+import { useGetCategoryQuery } from "../services/bannerApi";
 
 export default function ShopDetailCards() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
+  const { data } = useGetCategoryQuery();
+
+  console.log(data?.data);
 
   const sliderSettings = {
     dots: true,
@@ -102,6 +106,15 @@ export default function ShopDetailCards() {
                 <FaUserAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Vendor:</span>
                 <span>{user?.name}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <FaUserAlt className="text-[#EE4E34]" />
+                <span className="font-semibold">Business Category:</span>
+                <span>
+                  {data?.data.find(
+                    (cat) => cat.id === Number(user?.service_category)
+                  )?.name || "N/A"}
+                </span>
               </div>
 
               <div className="flex items-center gap-3">

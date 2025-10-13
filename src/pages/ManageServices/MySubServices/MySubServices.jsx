@@ -189,25 +189,6 @@ export default function MySubServices() {
               key={sub.id}
               hoverable
               className="rounded-2xl shadow-lg transition-transform  hover:shadow-xl overflow-hidden"
-              cover={
-                sub.image ? (
-                  <div className="relative w-full pt-[75%] overflow-hidden rounded-t-2xl bg-gray-100">
-                    <img
-                      alt="No Image"
-                      src={sub?.image}
-                      className="absolute top-0 left-0 w-full h-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="h-40 flex items-center justify-center bg-gray-100 text-gray-400">
-                    <img
-                      alt="No Image"
-                      src={noimg}
-                      className="h-full w-full object-fit"
-                    />
-                  </div>
-                )
-              }
             >
               {/* Header (Name + Gender) */}
               <div className="flex items-center justify-between mb-2">
@@ -370,13 +351,15 @@ export default function MySubServices() {
           </Form.Item>
 
           {/* Availability (Dates + Time Slots) */}
+
+          {/* 
+          
           <Form.List name="availability">
             {(fields, { add, remove }) => (
               <div className="space-y-2">
                 <label className="font-medium">Availability</label>
                 {fields.map(({ key, name, ...restField }) => (
                   <div key={key} className="border p-3 rounded-lg space-y-2">
-                    {/* Date Picker */}
                     <Form.Item
                       {...restField}
                       name={[name, "date"]}
@@ -386,7 +369,6 @@ export default function MySubServices() {
                       <DatePicker format="DD/MM/YYYY" />
                     </Form.Item>
 
-                    {/* Time Slots for this Date */}
                     <Form.List name={[name, "slots"]}>
                       {(slotFields, { add: addSlot, remove: removeSlot }) => (
                         <>
@@ -433,6 +415,7 @@ export default function MySubServices() {
               </div>
             )}
           </Form.List>
+          */}
 
           {/* Addons */}
           <Form.List name="addons">
@@ -503,6 +486,9 @@ export default function MySubServices() {
           </Form.List>
 
           {/* Images */}
+          {/*
+          
+          
           <Form.Item
             label="Images"
             name="images"
@@ -522,6 +508,7 @@ export default function MySubServices() {
               </div>
             </Upload>
           </Form.Item>
+          */}
         </Form>
       </Modal>
     </div>

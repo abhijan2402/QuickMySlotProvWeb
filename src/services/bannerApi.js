@@ -19,7 +19,14 @@ export const bannerApi = createApi({
       }),
       providesTags: ["banner"],
     }),
+    getCategory: builder.query({
+      query: () => ({
+        url: `category`,
+        method: "GET",
+      }),
+      providesTags: ["banner"],
+    }),
   }),
 });
 
-export const { useGetbannerQuery } = bannerApi;
+export const { useGetbannerQuery, useGetCategoryQuery } = bannerApi;
