@@ -24,7 +24,7 @@ const BidSection = () => {
   const [updateBid, { isLoading: updatingBid }] = useUpdateBidMutation();
 
   const { data: wallet } = useGetwalletQuery();
-  const { data: profile } = useGetProfileQuery();
+  const { data: profile, refetch } = useGetProfileQuery();
 
   const dispatch = useDispatch();
 
@@ -42,7 +42,7 @@ const BidSection = () => {
   // 🟩 Submit or Update
   const handleSubmit = async () => {
     const enteredAmount = parseFloat(amount || 0);
-    const walletAmount = parseFloat(wallet?.data?.total_amount || 0);
+    const walletAmount = parseFloat(profile?.data?.wallet || 0);
 
     if (!enteredAmount || enteredAmount <= 0) {
       toast.error("Please enter a valid bid amount");
@@ -62,6 +62,7 @@ const BidSection = () => {
       if (mode === "add") {
         await addbid(formData).unwrap();
         toast.success(`Bid placed successfully for ₹${enteredAmount}!`);
+        refetch();
       } else {
         await updateBid({ formData, id: selectedBid?.id }).unwrap();
         toast.success(`Bid updated successfully to ₹${enteredAmount}!`);
@@ -192,7 +193,6 @@ const BidSection = () => {
                     </div>
                   </div>
 
-                  {/* Right Section */}
                   {/* Right Section */}
                   <div className="flex flex-row sm:flex-col gap-2 mt-3 sm:mt-0 sm:ml-4">
                     <p className="text-orange-700 text-sm font-medium">

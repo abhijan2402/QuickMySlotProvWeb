@@ -274,14 +274,14 @@ export default function EditProfileModal({ visible, onClose, user }) {
           daily_end_time: user?.daily_end_time
             ? dayjs(user.daily_end_time, "HH:mm")
             : null,
-          photo_verification: urlToFileList(user.photo_verification, "photo"),
-          business_proof: urlToFileList(user.business_proof, "business_proof"),
+          photo_verification: urlToFileList(user?.photo_verification, "photo") || null,
+          business_proof: urlToFileList(user?.business_proof, "business_proof") || null,
           adhaar_card_verification: urlToFileList(
-            user.adhaar_card_verification,
+            user?.adhaar_card_verification,
             "aadhaar"
-          ),
-          pan_card: urlToFileList(user.pan_card, "pan"),
-          portfolio_images: portfolioFileList,
+          ) || null,
+          pan_card: urlToFileList(user?.pan_card, "pan") || null,
+          portfolio_images: portfolioFileList || [],
         }}
         onFinish={handleFinish}
       >

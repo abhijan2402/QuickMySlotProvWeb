@@ -155,7 +155,7 @@ export default function MyServices() {
                     <img
                       alt={service.name || "Service Image"}
                       src={service.image_url}
-                      className="absolute top-0 left-0 w-full h-full object-cover"
+                      className="absolute top-0 left-0 w-full h-full object-contain"
                     />
                   </div>
                 ) : (

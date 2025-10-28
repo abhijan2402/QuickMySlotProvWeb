@@ -8,67 +8,55 @@ import { useGetbannerQuery } from "../services/bannerApi";
 const HeroIntro = () => {
   const { data, isLoading, isError } = useGetbannerQuery();
 
+  // console.log(data?.data?.banners);
+
   // Filter banners: exclude top position and null images
-  const filteredBanners =
+  const filteredTopBanners =
     data?.data?.banners?.filter(
-      (banner) => banner.position !== "top" && banner.image
+      (banner) =>
+        banner.position == "top" && banner.image && banner.type === "vendor"
     ) || [];
+
+  // console.log(filteredTopBanners);
 
   const settings = {
     dots: true,
-    infinite: filteredBanners.length > 1,
+    infinite: filteredTopBanners.length > 1,
     speed: 700,
     slidesToShow: 1,
     slidesToScroll: 1,
-    autoplay: filteredBanners.length > 1,
+    autoplay: filteredTopBanners.length > 1,
     autoplaySpeed: 4000,
     arrows: false,
     pauseOnHover: true,
   };
 
-  if (isLoading) return <p className="text-center py-12">Loading banners...</p>;
-  if (isError)
-    return (
-      <p className="text-center py-12 text-red-500">Failed to load banners.</p>
-    );
-  if (filteredBanners.length === 0)
-    return <p className="text-center py-12">No banners available</p>;
+
+  if (filteredTopBanners.length === 0) return null;
 
   return (
     <section
-      className="relative w-full mb-8"
-      style={{ height: "50vh", minHeight: 300 }}
+      className="relative w-full mb-16"
+      style={{ height: "50vh", minHeight: 400 }}
     >
       <Slider {...settings}>
-        {filteredBanners.map(({ id, image, position }) => (
+        {filteredTopBanners.map(({ id, image, position }) => (
           <motion.div
             key={id}
             initial={{ opacity: 0.8 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5 }}
-            className="w-full h-[50vh] min-h-[300px]"
+            className=" h-[50vh] min-h-[400px]"
           >
             <img
               src={image}
               alt={`Banner ${id} - ${position}`}
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-fill"
               loading="lazy"
             />
           </motion.div>
         ))}
       </Slider>
-
-      {/* Overlay text content */}
-      <motion.div
-        className="absolute inset-0 flex flex-col justify-center items-start p-8 md:p-20 bg-black bg-opacity-40 text-white pointer-events-none"
-        initial={{ opacity: 0, x: -40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1 }}
-      >
-        <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight max-w-2xl">
-          Empowering Your Lifestyle
-        </h1>
-      </motion.div>
     </section>
   );
 };

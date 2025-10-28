@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const subscriptionApi = createApi({
   reducerPath: "subscriptionApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://lemonchiffon-walrus-503913.hostingersite.com/public/api/",
+    baseUrl: import.meta.env.VITE_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
       if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -45,4 +45,9 @@ export const subscriptionApi = createApi({
   }),
 });
 
-export const { useGetsubscriptionQuery, useAddSubscriptionMutation, useVerifySubscriptionMutation, useGetSubscriptionCurrentQuery } = subscriptionApi;
+export const {
+  useGetsubscriptionQuery,
+  useAddSubscriptionMutation,
+  useVerifySubscriptionMutation,
+  useGetSubscriptionCurrentQuery,
+} = subscriptionApi;

@@ -325,7 +325,7 @@ export default function MySubServices() {
           <Form.Item
             label="Description"
             name="description"
-            rules={[{ required: true, message: "Enter description" }]}
+            // rules={[{ required: true, message: "Enter description" }]}
           >
             <Input.TextArea rows={2} />
           </Form.Item>

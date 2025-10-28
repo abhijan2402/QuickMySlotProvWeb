@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const bidApi = createApi({
   reducerPath: "bidApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://lemonchiffon-walrus-503913.hostingersite.com/public/api/",
+    baseUrl: import.meta.env.VITE_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
       if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -19,7 +19,7 @@ export const bidApi = createApi({
       providesTags: ["bid"],
     }),
     getbidShow: builder.query({
-      query: ({id}) => ({
+      query: ({ id }) => ({
         url: `bids-show/${id}`,
         method: "GET",
       }),
@@ -52,5 +52,9 @@ export const bidApi = createApi({
   }),
 });
 
-export const { useGetbidQuery, useAddbidMutation, useUpdateBidMutation, useGetbidShowQuery } =
-  bidApi;
+export const {
+  useGetbidQuery,
+  useAddbidMutation,
+  useUpdateBidMutation,
+  useGetbidShowQuery,
+} = bidApi;

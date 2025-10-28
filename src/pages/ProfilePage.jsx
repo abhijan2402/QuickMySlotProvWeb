@@ -79,7 +79,7 @@ export default function ProfilePage() {
   );
 
   useEffect(() => {
-    setPreviewImage(user?.url_image || user?.image || defaultImage);
+    setPreviewImage(user?.url_image || user?.image || "");
   }, [user]);
   // console.log(category?.data);
 
@@ -112,12 +112,16 @@ export default function ProfilePage() {
                 {user?.name || "NA"}
               </h2>
               <p className="text-gray-600 truncate">
-                <span>Email : </span>
+                <span className="text-gray-900">Email : </span>
                 <span>{user?.email || "NA"}</span>
               </p>
               <p className="text-sm text-gray-600 truncate">
-                <span>Ph. No. : </span>
+                <span className="text-gray-900">Ph. No. : </span>
                 <span>+91 {user?.phone_number || "NA"}</span>
+              </p>
+              <p className="text-sm text-gray-600 whitespace-normal break-words">
+                <span className="text-gray-900">Address : </span>
+                <span>{user?.exact_location || "NA"}</span>
               </p>
             </div>
           </div>

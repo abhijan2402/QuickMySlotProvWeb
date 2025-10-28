@@ -6,7 +6,8 @@ import { useGetvendorTransactionQuery } from "../services/vendorTransactionListA
 const { Title } = Typography;
 
 const TransactionHistory = ({ transactions }) => {
-  const { data } = useGetvendorTransactionQuery();
+  const { data, isFetching } = useGetvendorTransactionQuery();
+  console.log(data?.data)
   const generatePDF = (transaction) => {
     const doc = new jsPDF();
     doc.text(`Invoice for transaction ID: ${transaction.id}`, 10, 10);
@@ -113,11 +114,12 @@ const TransactionHistory = ({ transactions }) => {
 
       <Table
         columns={columns}
-        dataSource={transactions}
+        dataSource={data?.data}
         rowKey="id"
         pagination={{ pageSize: 5 }}
         scroll={{ x: "max-content" }}
         className="min-w-full"
+        loading={isFetching}
       />
     </div>
   );

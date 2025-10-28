@@ -14,18 +14,22 @@ import { BsClock } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { capitalizeFirstLetter } from "../utils/utils";
 import { useGetCategoryQuery } from "../services/bannerApi";
+import { useGetProfileQuery } from "../services/profileApi";
 
 export default function ShopDetailCards() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const { data } = useGetCategoryQuery();
+  const { data: profile } = useGetProfileQuery();
 
-  console.log(data?.data);
+  const profileData = profile?.data;
+
+  console.log(profileData);
 
   const sliderSettings = {
     dots: true,
-    infinite: user?.portfolio_images?.length > 1,
-    autoplay: user?.portfolio_images?.length > 1,
+    infinite: profileData?.portfolio_images?.length > 1,
+    autoplay: profileData?.portfolio_images?.length > 1,
     autoplaySpeed: 3000,
     speed: 600,
     slidesToShow: 1,
@@ -58,25 +62,28 @@ export default function ShopDetailCards() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, type: "spring", stiffness: 70 }}
-          className="cursor-pointer bg-white rounded-xl shadow-lg overflow-hidden flex flex-col lg:flex-row border border-gray-200"
+          className="cursor-pointer px-2 bg-white rounded-xl shadow-lg overflow-hidden flex flex-col lg:flex-row border border-gray-200"
         >
           {/* Image / Slider */}
           <div className="lg:w-1/2 w-full h-72 sm:h-96 lg:h-auto">
-            {user?.portfolio_images && user?.portfolio_images.length > 0 ? (
-              user?.portfolio_images.length === 1 ? (
+            {profileData?.portfolio_images &&
+            profileData.portfolio_images.length > 0 ? (
+              profileData.portfolio_images.length === 1 ? (
                 <img
-                  src={user.portfolio_images[0].image_url}
-                  alt={`${user?.business_name} portfolio`}
-                  className="w-full h-full object-cover"
+                  src={profileData.portfolio_images[0].image_url}
+                  alt={`${profileData?.business_name} portfolio`}
+                  className="w-full h-full object-contain" // changed to object-contain to preserve aspect ratio without cropping
                 />
               ) : (
                 <Slider {...sliderSettings} className="h-full">
-                  {user.portfolio_images.map((img, idx) => (
+                  {profileData.portfolio_images.map((img, idx) => (
                     <div key={img.id || idx}>
                       <img
                         src={img.image_url}
-                        alt={`${user?.business_name} portfolio ${idx + 1}`}
-                        className="w-full h-72 sm:h-96 lg:h-[500px] object-cover"
+                        alt={`${profileData?.business_name} portfolio ${
+                          idx + 1
+                        }`}
+                        className="w-full h-72 sm:h-96 lg:h-[500px] object-contain" // changed here as well
                       />
                     </div>
                   ))}
@@ -86,7 +93,7 @@ export default function ShopDetailCards() {
               <img
                 src="https://via.placeholder.com/600x400?text=No+Images+Available"
                 alt="No portfolio"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain" // placeholder also uses object-contain for consistency
               />
             )}
           </div>
@@ -94,25 +101,25 @@ export default function ShopDetailCards() {
           {/* Details */}
           <div className="lg:w-1/2 w-full p-6 sm:p-8 flex flex-col justify-center gap-6 bg-gray-50">
             <h1 className="text-2xl sm:text-3xl font-bold text-[#EE4E34]">
-              {capitalizeFirstLetter(user?.business_name)}
+              {capitalizeFirstLetter(profileData?.business_name)}
             </h1>
 
             <p className="text-gray-700 italic text-sm sm:text-base">
-              {user?.business_description || "No description available."}
+              {profileData?.business_description || "No description available."}
             </p>
 
             <div className="space-y-4 text-gray-700 text-sm sm:text-base">
               <div className="flex items-center gap-3">
                 <FaUserAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Vendor:</span>
-                <span>{user?.name}</span>
+                <span>{profileData?.name}</span>
               </div>
               <div className="flex items-center gap-3">
                 <FaUserAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Business Category:</span>
                 <span>
                   {data?.data.find(
-                    (cat) => cat.id === Number(user?.service_category)
+                    (cat) => cat.id === Number(profileData?.service_category)
                   )?.name || "N/A"}
                 </span>
               </div>
@@ -120,14 +127,14 @@ export default function ShopDetailCards() {
               <div className="flex items-center gap-3">
                 <FaPhoneAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Mobile:</span>
-                <span>{user?.phone_number}</span>
+                <span>{profileData?.phone_number}</span>
               </div>
 
               <div className="flex items-center gap-3">
                 <FaMapMarkerAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Address:</span>
                 <span className="line-clamp-2">
-                  {user?.location_area_served}, {user?.exact_location}
+                  {profileData?.exact_location}
                 </span>
               </div>
 
@@ -135,27 +142,30 @@ export default function ShopDetailCards() {
                 <BsClock className="text-[#EE4E34]" />
                 <span className="font-semibold">Timings:</span>
                 <span>
-                  {user?.daily_start_time} - {user?.daily_end_time}
+                  {profileData?.daily_start_time} -{" "}
+                  {profileData?.daily_end_time}
                 </span>
               </div>
 
               <div className="flex items-center gap-3">
                 <FaCalendarAlt className="text-[#EE4E34]" />
                 <span className="font-semibold">Working Days:</span>
-                <span>{user?.working_days?.join(", ") || "Not specified"}</span>
+                <span>
+                  {profileData?.working_days?.join(", ") || "Not specified"}
+                </span>
               </div>
 
-              {user?.business_website && (
+              {profileData?.business_website && (
                 <div className="flex items-center gap-3">
                   <FaGlobe className="text-[#EE4E34]" />
                   <span className="font-semibold">Website:</span>
                   <a
-                    href={user.business_website}
+                    href={profileData.business_website}
                     target="_blank"
                     rel="noreferrer"
                     className="text-blue-600 hover:underline"
                   >
-                    {user.business_website}
+                    {profileData.business_website}
                   </a>
                 </div>
               )}

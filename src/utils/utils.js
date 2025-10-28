@@ -20,6 +20,11 @@ export function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+export const truncateText = (text, maxLength) => {
+  if (!text) return "NA";
+  return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+};
+
 // Function to get Lat $ Long
 export async function getLatLngFromAddress(address) {
   const apiKey = import.meta.env.VITE_MAP_KEY;
@@ -30,7 +35,7 @@ export async function getLatLngFromAddress(address) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    console.log("Geocode API Response:", data); // 👈 log full response
+    // console.log("Geocode API Response:", data); 
 
     if (data.status === "OK" && data.results.length > 0) {
       const location = data.results[0].geometry.location;

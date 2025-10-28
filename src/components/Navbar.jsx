@@ -9,6 +9,7 @@ import { useGetProfileQuery } from "../services/profileApi";
 import {
   getCityAndAreaFromAddress,
   getLatLngFromAddress,
+  truncateText,
 } from "../utils/utils";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoIosArrowDown } from "react-icons/io";
@@ -58,7 +59,7 @@ export default function Navbar() {
     fetchLatLng();
   }, [addressString]);
 
-  console.log(initialLocation);
+  // console.log(initialLocation);
 
   const navItems = [
     "Home",
@@ -166,8 +167,8 @@ export default function Navbar() {
                   aria-hidden="true"
                 />
                 <div className="flex flex-col leading-none">
-                  <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium overflow-hidden whitespace-nowrap truncate max-w-[120px]">
-                    {city || "NA"},{area || "NA"}{" "}
+                  <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium overflow-hidden whitespace-nowrap truncate ">
+                    {city || "NA"},{truncateText(area, 15)}
                     <span>
                       <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
                     </span>
@@ -190,8 +191,8 @@ export default function Navbar() {
                     aria-hidden="true"
                   />
                   <div className="flex flex-col leading-none">
-                    <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium overflow-hidden whitespace-nowrap truncate max-w-[120px]">
-                      {city || "NA"},{area || "NA"}{" "}
+                    <p className="text-[12px] flex items-center gap-1 justify-center text-gray-800 font-medium overflow-hidden whitespace-nowrap truncate">
+                      {city || "NA"},{truncateText(area, 15)}
                       <span>
                         <IoIosArrowDown className="w-4 h-4 text-[#EE4E34]" />
                       </span>

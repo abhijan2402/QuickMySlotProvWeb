@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const notificationApi = createApi({
   reducerPath: "notificationApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://lemonchiffon-walrus-503913.hostingersite.com/public/api/",
+    baseUrl: import.meta.env.VITE_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
       if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -20,11 +20,14 @@ export const notificationApi = createApi({
     }),
 
     readNotification: builder.mutation({
-      query: (id) => ({
-        url: `read-all?type=is_single_read&id=2`,
-        method: "POST",
-        body: {},
-      }),
+      query: ({ id, type }) => {
+        const baseUrl = `read-all?type=${type}`;
+        const url = id ? `${baseUrl}&id=${id}` : baseUrl;
+        return {
+          url,
+          method: "GET",
+        };
+      },
       invalidatesTags: ["notification"],
     }),
 

@@ -14,8 +14,8 @@ const { Option } = Select;
 
 const AccountManagement = () => {
   const { data, isLoading, refetch } = useGetbankQuery();
-  const [addbank] = useAddbankMutation();
-  const [updatebank] = useUpdatebankMutation();
+  const [addbank, { isLoading: IsAdding }] = useAddbankMutation();
+  const [updatebank, { isLoading: IsUpdating }] = useUpdatebankMutation();
   const [deletebank] = useDeletebankMutation();
   const [defalutbank] = useDefalutbankMutation();
 
@@ -69,6 +69,13 @@ const AccountManagement = () => {
       formData.append("account_number", values.account_number);
       formData.append("ifsc_code", values.ifsc_code);
       formData.append("bank_type", values.bank_type.toLowerCase());
+
+      formData.append("pan", values.pan);
+      formData.append("street1", values.street1);
+      formData.append("street2", values.street2 || "");
+      formData.append("city", values.city);
+      formData.append("state", values.state);
+      formData.append("postal_code", values.postal_code);
 
       if (editingAccount) {
         await updatebank({ id: editingAccount.id, formData }).unwrap();
@@ -209,6 +216,7 @@ const AccountManagement = () => {
         onOk={handleOk}
         onCancel={closeModal}
         okText={editingAccount ? "Update" : "Add"}
+        confirmLoading={editingAccount ? IsUpdating : IsAdding} // loading state
         destroyOnClose
       >
         <Form form={form} layout="vertical">
@@ -217,7 +225,7 @@ const AccountManagement = () => {
             name="bank_name"
             rules={[{ required: true, message: "Please enter bank name" }]}
           >
-            <Input />
+            <Input placeholder="Enter bank name" />
           </Form.Item>
 
           <Form.Item
@@ -228,7 +236,7 @@ const AccountManagement = () => {
               { pattern: /^\d+$/, message: "Account number must be numeric" },
             ]}
           >
-            <Input />
+            <Input placeholder="Enter account number" />
           </Form.Item>
 
           <Form.Item
@@ -236,12 +244,10 @@ const AccountManagement = () => {
             name="ifsc_code"
             rules={[
               { required: true, message: "Please enter IFSC code" },
-              {
-                message: "Invalid IFSC format (e.g., ABCD0123456)",
-              },
+              { message: "Invalid IFSC format (e.g., ABCD0123456)" },
             ]}
           >
-            <Input />
+            <Input placeholder="Enter IFSC code" />
           </Form.Item>
 
           <Form.Item
@@ -249,11 +255,69 @@ const AccountManagement = () => {
             name="bank_type"
             rules={[{ required: true, message: "Please select account type" }]}
           >
-            <Select>
+            <Select placeholder="Select account type">
               <Option value="Saving">Saving</Option>
               <Option value="Current">Current</Option>
             </Select>
           </Form.Item>
+
+          {!editingAccount && (
+            <>
+              <Form.Item
+                label="PAN"
+                name="pan"
+                rules={[{ required: true, message: "Please enter PAN number" }]}
+              >
+                <Input placeholder="Enter PAN number" />
+              </Form.Item>
+
+              <Form.Item
+                label="Address Line 1"
+                name="street1"
+                rules={[
+                  { required: true, message: "Please enter Address Line 1" },
+                ]}
+              >
+                <Input placeholder="House number, building, street" />
+              </Form.Item>
+
+              <Form.Item
+                label="Address Line 2"
+                name="street2"
+                rules={[
+                  { required: true, message: "Please enter Address Line 2" },
+                ]}
+              >
+                <Input placeholder="Apartment, suite, landmark (optional)" />
+              </Form.Item>
+
+              <Form.Item
+                label="City"
+                name="city"
+                rules={[{ required: true, message: "Please enter city" }]}
+              >
+                <Input placeholder="Enter city" />
+              </Form.Item>
+
+              <Form.Item
+                label="State"
+                name="state"
+                rules={[{ required: true, message: "Please enter state" }]}
+              >
+                <Input placeholder="Enter state" />
+              </Form.Item>
+
+              <Form.Item
+                label="Postal Code"
+                name="postal_code"
+                rules={[
+                  { required: true, message: "Please enter postal code" },
+                ]}
+              >
+                <Input placeholder="Enter postal code" />
+              </Form.Item>
+            </>
+          )}
         </Form>
       </Modal>
     </div>

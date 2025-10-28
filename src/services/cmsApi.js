@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const cmsApi = createApi({
   reducerPath: "cmsApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://lemonchiffon-walrus-503913.hostingersite.com/public/api/",
+    baseUrl: import.meta.env.VITE_BASE_URL,
   }),
   endpoints: (builder) => ({
     // Get cms (GET request)

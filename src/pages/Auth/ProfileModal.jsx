@@ -232,6 +232,8 @@ export default function ProfileModal({
       // Append business-related fields
       fd.append("business_description", values.about || "");
       fd.append("business_name", values.business_name || "");
+      fd.append("name", values.name || "");
+      fd.append("email", values.email || "");
       fd.append("years_of_experience", values.experience || "");
       fd.append("exact_location", values.location || "");
       fd.append("business_website", values.website || "");
@@ -282,11 +284,11 @@ export default function ProfileModal({
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setModalWidth("95%"); // mobile
+        setModalWidth("95%");
       } else if (window.innerWidth < 1024) {
-        setModalWidth("70%"); // tablet
+        setModalWidth("70%");
       } else {
-        setModalWidth("50%"); // desktop
+        setModalWidth("50%");
       }
     };
 
