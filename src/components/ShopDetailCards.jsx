@@ -65,25 +65,31 @@ export default function ShopDetailCards() {
           className="cursor-pointer px-2 bg-white rounded-xl shadow-lg overflow-hidden flex flex-col lg:flex-row border border-gray-200"
         >
           {/* Image / Slider */}
-          <div className="lg:w-1/2 w-full h-72 sm:h-96 lg:h-auto">
+          {/* Image / Slider */}
+          <div className="lg:w-1/2 w-full h-72 sm:h-96 lg:h-[420px] flex items-center justify-center bg-white rounded-xl overflow-hidden">
             {profileData?.portfolio_images &&
             profileData.portfolio_images.length > 0 ? (
               profileData.portfolio_images.length === 1 ? (
                 <img
                   src={profileData.portfolio_images[0].image_url}
                   alt={`${profileData?.business_name} portfolio`}
-                  className="w-full h-full object-contain" // changed to object-contain to preserve aspect ratio without cropping
+                  className="w-full h-full object-contain" // use object-cover for cropping but filling container
+                  style={{ borderRadius: "1rem", background: "#fff" }}
                 />
               ) : (
                 <Slider {...sliderSettings} className="h-full">
                   {profileData.portfolio_images.map((img, idx) => (
-                    <div key={img.id || idx}>
+                    <div
+                      key={img.id || idx}
+                      className="h-72 sm:h-96 lg:h-[420px] flex items-center justify-center"
+                    >
                       <img
                         src={img.image_url}
                         alt={`${profileData?.business_name} portfolio ${
                           idx + 1
                         }`}
-                        className="w-full h-72 sm:h-96 lg:h-[500px] object-contain" // changed here as well
+                        className="w-full h-full object-contain"
+                        style={{ borderRadius: "1rem", background: "#fff" }}
                       />
                     </div>
                   ))}
@@ -93,7 +99,8 @@ export default function ShopDetailCards() {
               <img
                 src="https://via.placeholder.com/600x400?text=No+Images+Available"
                 alt="No portfolio"
-                className="w-full h-full object-contain" // placeholder also uses object-contain for consistency
+                className="w-full h-full object-contain"
+                style={{ borderRadius: "1rem", background: "#fff" }}
               />
             )}
           </div>
