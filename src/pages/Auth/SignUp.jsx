@@ -240,7 +240,7 @@ export default function Signup() {
           {/* Logo for mobile */}
           <div className="block md:hidden mb-1 w-full text-center">
             <img
-              src="/provider/logo.png"
+              src="/logo.png"
               alt="QuickMySlot"
               className="mx-auto mb-1 h-24 object-contain"
             />
@@ -381,7 +381,7 @@ export default function Signup() {
         <div className="hidden md:flex flex-1 h-screen bg-[#EE4E34] items-center justify-center text-center p-10">
           <div>
             <img
-              src="/provider/logo1.png"
+              src="/logo1.png"
               alt="QuickMySlot"
               className="mx-auto mb-0 h-80 object-contain"
             />
