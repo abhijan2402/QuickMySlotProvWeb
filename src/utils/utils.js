@@ -21,7 +21,7 @@ export function capitalizeFirstLetter(str) {
 }
 
 export const truncateText = (text, maxLength) => {
-  if (!text) return "NA";
+  if (!text || text === "NA" || text === "undefined" || text === "null") return ""; // Return empty string for falsy or "NA"
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 };
 

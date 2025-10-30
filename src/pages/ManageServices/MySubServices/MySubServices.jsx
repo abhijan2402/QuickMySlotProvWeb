@@ -44,6 +44,7 @@ const { Option } = Select;
 export default function MySubServices() {
   const user = useSelector((state) => state.auth.user);
   const { data: myServices } = useGetmanageServicesQuery();
+
   const { data, isLoading: fetchingServices } = useGetServicesQuery();
   const [addServices, { isLoading: adding }] = useAddServicesMutation();
   const [updateServices, { isLoading: updating }] = useUpdateServicesMutation();
@@ -62,9 +63,11 @@ export default function MySubServices() {
 
   const openModal = (subService = null) => {
     setEditingSubService(subService);
+    console.log(subService);
     if (subService) {
       form.setFieldsValue({
         ...subService,
+        serviceId: subService.category.name,
         // ✅ Convert object { key: value } → array [{ key, value }]
         addons: subService.addons
           ? Object.entries(subService.addons).map(([key, value]) => ({
@@ -303,7 +306,9 @@ export default function MySubServices() {
             <Select placeholder="Select Service">
               {myServices?.data?.map((s) => (
                 <Option key={s.id} value={s.id}>
-                  {s.name}
+                  {" "}
+                  {/* value is service id */}
+                  {s.name} {/* label shown to user */}
                 </Option>
               ))}
             </Select>
@@ -322,7 +327,16 @@ export default function MySubServices() {
             name="duration"
             rules={[{ required: true, message: "Enter services duration" }]}
           >
-            <Input type="number" placeholder="e.g. 25, 45" />
+            <Input
+              placeholder="e.g. 25"
+              onKeyPress={(event) => {
+                const charCode = event.which ? event.which : event.keyCode;
+                // Allow only numbers (48-57 are char codes for digits 0-9)
+                if (charCode < 48 || charCode > 57) {
+                  event.preventDefault();
+                }
+              }}
+            />
           </Form.Item>
 
           <Form.Item
@@ -330,7 +344,7 @@ export default function MySubServices() {
             name="description"
             // rules={[{ required: true, message: "Enter description" }]}
           >
-            <Input.TextArea rows={2} />
+            <Input.TextArea rows={2} placeholder="Enter Description" />
           </Form.Item>
 
           <Form.Item
@@ -338,7 +352,16 @@ export default function MySubServices() {
             name="price"
             rules={[{ required: true, message: "Enter price" }]}
           >
-            <Input type="number" placeholder="e.g. 25" />
+            <Input
+              placeholder="e.g. 25"
+              onKeyPress={(event) => {
+                const charCode = event.which ? event.which : event.keyCode;
+                // Allow only numbers (48-57 are char codes for digits 0-9)
+                if (charCode < 48 || charCode > 57) {
+                  event.preventDefault();
+                }
+              }}
+            />
           </Form.Item>
 
           <Form.Item

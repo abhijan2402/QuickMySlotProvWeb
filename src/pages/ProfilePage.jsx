@@ -40,33 +40,6 @@ import ShopDetailCards from "../components/ShopDetailCards";
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 
-// Promotion Plans (editable)
-const promotionPlans = [
-  {
-    key: "basic",
-    name: "Basic Visibility Boost",
-    description: "Appear higher in search results for 7 days.",
-    price: 25,
-  },
-  {
-    key: "featured",
-    name: "Featured Listing (Weekly)",
-    description: "Highlighted spot on category pages for 7 days.",
-    price: 75,
-  },
-  {
-    key: "banner",
-    name: "Homepage Banner Ad (Weekly)",
-    description: "Prominent banner on app homepage for 7 days.",
-    price: 120,
-  },
-  {
-    key: "none",
-    name: "No Promotion",
-    description: "Continue with standard visibility.",
-    price: 0,
-  },
-];
 
 export default function ProfilePage() {
   const user = useSelector((state) => state.auth.user);
