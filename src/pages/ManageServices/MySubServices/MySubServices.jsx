@@ -36,7 +36,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import noimg from "/noimg.png";
 import { FaIndianRupeeSign } from "react-icons/fa6";
-import { truncateText } from "../../../utils/utils";
+import { capitalizeFirstLetter, truncateText } from "../../../utils/utils";
 
 const { Meta } = Card;
 const { Option } = Select;
@@ -54,12 +54,14 @@ export default function MySubServices() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSubService, setEditingSubService] = useState(null);
   const [form] = Form.useForm();
-  console.log(editingSubService);
   useEffect(() => {
     if (data?.data) {
       setSubServices(data.data);
     }
   }, [data]);
+
+  console.log(myServices);
+  console.log(editingSubService);
 
   const openModal = (subService = null) => {
     setEditingSubService(subService);
@@ -67,7 +69,7 @@ export default function MySubServices() {
     if (subService) {
       form.setFieldsValue({
         ...subService,
-        serviceId: subService.category.name,
+        serviceId: Number(subService.service_id),
         // ✅ Convert object { key: value } → array [{ key, value }]
         addons: subService.addons
           ? Object.entries(subService.addons).map(([key, value]) => ({
@@ -100,38 +102,60 @@ export default function MySubServices() {
 
   const handleSave = async (values) => {
     const formdata = new FormData();
-    formdata.append("category_id", user?.service_category);
-    formdata.append("service_id", values.serviceId);
-    formdata.append("name", values.name);
-    formdata.append("description", values.description);
-    formdata.append("price", values.price);
-    formdata.append("gender", values.gender?.toLowerCase());
-    formdata.append("duration", values.duration);
 
-    // Addons
-    values.addons?.forEach((a) => {
-      formdata.append(`addons[${a.key}]`, a.value);
-    });
+    // Helper to safely append only valid data
+    const safeAppend = (key, value) => {
+      if (value !== undefined && value !== null && value !== "") {
+        formdata.append(key, value);
+      }
+    };
 
-    // Peak Hours in HH:MM 12-hour format
-    values.peak_hours?.forEach((p) => {
-      const timeStr = p.key.format("HH:mm"); // 24-hour format without AM/PM
-      formdata.append(`peak_hours[${timeStr}]`, p.value);
-    });
+    safeAppend("category_id", user?.service_category);
+    safeAppend("service_id", values?.serviceId);
+    safeAppend("name", values?.name);
+    safeAppend("description", values?.description);
+    safeAppend("price", values?.price);
+    safeAppend("gender", values?.gender?.toLowerCase());
+    safeAppend("duration", values?.duration);
 
-    // Availability (Dates with multiple time slots)
-    values.availability?.forEach((item) => {
-      const dateStr = item.date.format("DD/MM/YYYY");
-      const slots = item.slots?.map((t) => t.format("HH:mm")) || []; // 24-hour format
-      slots.forEach((time) => {
-        formdata.append(`available_schedule[${time}]`, dateStr);
+    if (Array.isArray(values?.addons)) {
+      values.addons.forEach((a) => {
+        if (a?.key && a?.value) {
+          formdata.append(`addons[${a.key}]`, a.value);
+        }
       });
-    });
+    }
 
-    // Images
-    values.images?.forEach((file) => {
-      if (file.originFileObj) formdata.append("image", file.originFileObj);
-    });
+    if (Array.isArray(values?.peak_hours)) {
+      values.peak_hours.forEach((p) => {
+        if (p?.key && p?.value) {
+          const timeStr = p.key.format("HH:mm");
+          formdata.append(`peak_hours[${timeStr}]`, p.value);
+        }
+      });
+    }
+
+    if (Array.isArray(values?.availability)) {
+      values.availability.forEach((item) => {
+        if (item?.date && Array.isArray(item?.slots)) {
+          const dateStr = item.date.format("DD/MM/YYYY");
+          item.slots.forEach((t) => {
+            if (t) {
+              const timeStr = t.format("HH:mm");
+              formdata.append(`available_schedule[${timeStr}]`, dateStr);
+            }
+          });
+        }
+      });
+    }
+
+    if (Array.isArray(values?.images)) {
+      values.images.forEach((file) => {
+        if (file?.originFileObj) {
+          formdata.append("image", file.originFileObj);
+        }
+      });
+    }
 
     try {
       if (editingSubService) {
@@ -139,17 +163,17 @@ export default function MySubServices() {
           id: editingSubService.id,
           formData: formdata,
         }).unwrap();
-
         toast.success("Service updated successfully");
       } else {
         await addServices(formdata).unwrap();
         toast.success("Service added successfully");
-        setIsModalOpen(false);
       }
     } catch (err) {
+      console.error("Error while saving:", err);
       toast.error("Something went wrong!");
     }
 
+    // ✅ Cleanup
     setIsModalOpen(false);
     setEditingSubService(null);
   };
@@ -167,14 +191,26 @@ export default function MySubServices() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-        <h2 className="text-xl font-semibold text-black">My Services</h2>
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-5">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-800">
+          My Services
+        </h2>
+
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => openModal()}
-          style={{ background: "#EE4E34", borderColor: "#EE4E34" }}
           loading={adding || updating}
+          className="
+      w-full md:w-auto              
+      bg-[#EE4E34] !border-none     
+      hover:!bg-[#d8432d] 
+      text-white font-semibold 
+      flex items-center justify-center gap-2
+      rounded-lg px-6 py-2 
+      shadow-md hover:shadow-lg
+      transition-all duration-200
+    "
         >
           Add Service
         </Button>
@@ -197,7 +233,7 @@ export default function MySubServices() {
               {/* Header (Name + Gender) */}
               <div className="flex items-center justify-between mb-2">
                 <span className="text-lg font-semibold text-gray-800">
-                  {sub.name}
+                  {capitalizeFirstLetter(sub.name)}
                 </span>
                 <Tag color="blue" className="text-sm font-medium">
                   {sub.gender?.charAt(0).toUpperCase() + sub.gender?.slice(1)}
@@ -306,9 +342,7 @@ export default function MySubServices() {
             <Select placeholder="Select Service">
               {myServices?.data?.map((s) => (
                 <Option key={s.id} value={s.id}>
-                  {" "}
-                  {/* value is service id */}
-                  {s.name} {/* label shown to user */}
+                  {s.name}
                 </Option>
               ))}
             </Select>

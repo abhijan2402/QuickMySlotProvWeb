@@ -12,7 +12,7 @@ const initialState = {
   })(),
   token: localStorage.getItem("token") || null,
 };
-console.log("user after login", initialState?.user);
+// console.log("user after login", initialState?.user);
 
 const authSlice = createSlice({
   name: "auth",

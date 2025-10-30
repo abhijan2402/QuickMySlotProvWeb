@@ -21,7 +21,8 @@ export function capitalizeFirstLetter(str) {
 }
 
 export const truncateText = (text, maxLength) => {
-  if (!text || text === "NA" || text === "undefined" || text === "null") return ""; // Return empty string for falsy or "NA"
+  if (!text || text === "NA" || text === "undefined" || text === "null")
+    return "NA";
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 };
 
@@ -35,7 +36,7 @@ export async function getLatLngFromAddress(address) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    // console.log("Geocode API Response:", data); 
+    // console.log("Geocode API Response:", data);
 
     if (data.status === "OK" && data.results.length > 0) {
       const location = data.results[0].geometry.location;
@@ -49,7 +50,6 @@ export async function getLatLngFromAddress(address) {
     return null;
   }
 }
-
 
 export async function getCityAndAreaFromAddress(address) {
   const apiKey = import.meta.env.VITE_MAP_KEY;
