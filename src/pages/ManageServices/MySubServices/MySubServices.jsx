@@ -36,6 +36,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import noimg from "/noimg.png";
 import { FaIndianRupeeSign } from "react-icons/fa6";
+import { truncateText } from "../../../utils/utils";
 
 const { Meta } = Card;
 const { Option } = Select;
@@ -201,7 +202,9 @@ export default function MySubServices() {
               </div>
 
               {/* Description */}
-              <p className="text-sm text-gray-600 mb-3">{sub.description}</p>
+              <p className="text-sm text-gray-600 mb-3">
+                {truncateText(sub.description, 250)}
+              </p>
 
               {/* Price & Duration */}
               <div className="flex items-center justify-between text-gray-700 mb-3">

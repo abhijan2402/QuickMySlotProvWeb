@@ -236,6 +236,8 @@ export default function ProfileModal({
       fd.append("email", values.email || "");
       fd.append("years_of_experience", values.experience || "");
       fd.append("exact_location", values.location || "");
+      fd.append("FullAddress", values.FullAddress || "");
+      fd.append("Full", values.location || "");
       fd.append("business_website", values.website || "");
       fd.append("gstin_number", values.gstin || "");
       fd.append("user_id", userID);
@@ -511,9 +513,13 @@ export default function ProfileModal({
           />
         </Form.Item>
 
+        <Form.Item name="FullAddress" label="Enter Full Address">
+          <Input placeholder="Enter full address" />
+        </Form.Item>
+
         {/* Location Picker */}
         <Form.Item
-          label="Location"
+          label="Exact Pin Location"
           name="location"
           rules={[{ required: true, message: "Please select location" }]}
         >

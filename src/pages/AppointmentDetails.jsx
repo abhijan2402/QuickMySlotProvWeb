@@ -9,12 +9,13 @@ import {
 } from "@ant-design/icons";
 import { FaTimesCircle, FaChevronLeft } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetvendorBookingQuery } from "../services/vendorTransactionListApi";
+import { useGetvendorBookingDetailsQuery, useGetvendorBookingQuery } from "../services/vendorTransactionListApi";
 import SpinnerLodar from "../components/SpinnerLodar";
 
 export default function AppointmentDetails() {
   const { id } = useParams();
-  const { data, isLoading } = useGetvendorBookingQuery();
+  const { data, isLoading } = useGetvendorBookingDetailsQuery(id);
+  console.log(data);
   const navigate = useNavigate();
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
 

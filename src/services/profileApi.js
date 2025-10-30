@@ -27,7 +27,20 @@ export const profileApi = createApi({
       }),
       invalidatesTags: ["profile"],
     }),
+    // Add profile (POST request)
+    addGST: builder.mutation({
+      query: (formData) => ({
+        url: "profile/gst",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["profile"],
+    }),
   }),
 });
 
-export const { useGetProfileQuery, useUpdateProfileMutation } = profileApi;
+export const {
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+  useAddGSTMutation,
+} = profileApi;

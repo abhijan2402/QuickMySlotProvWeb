@@ -1,5 +1,6 @@
 import {
   BellOutlined,
+  CheckOutlined,
   ClockCircleOutlined,
   HomeOutlined,
 } from "@ant-design/icons";
@@ -10,9 +11,13 @@ import {
 import SpinnerLodar from "../components/SpinnerLodar";
 import { message } from "antd";
 import { toast } from "react-toastify";
+import { convertToIST } from "../utils/utils";
+import { useState } from "react";
 
 export default function NotificationsPage() {
   const { data, isLoading, refetch } = useGetnotificationQuery();
+  const [loadingId, setLoadingId] = useState(null);
+
   const [readNotification, { isLoading: readLoading }] =
     useReadNotificationMutation();
   const notifications = data?.data || [];
@@ -38,125 +43,132 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 mt-6 px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24">
-      <div className="max-w-6xl mx-auto py-10">
+    <div className="min-h-screen bg-gray-50 mt-6 px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 pb-8">
+      <div className="max-w-5xl mx-auto py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center text-gray-500 text-sm mb-6 font-medium select-none">
-          <HomeOutlined className="mr-2 text-lg" />
-          <span className="mr-2">/</span>
-          <span className="text-gray-800">Notifications</span>
+        <nav className="flex items-center text-sm mb-6 text-gray-500">
+          <HomeOutlined className="mr-2" />
+          <span className="mx-2">/</span>
+          <span className="text-gray-700 font-medium">Notifications</span>
         </nav>
 
-        {/* Title and All Read Button */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
-            Notifications
-          </h1>
+        {/* Title + Mark All Button */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-1">
+              Notifications
+            </h1>
+            <p className="text-sm text-gray-500">
+              Stay updated with your latest activities
+            </p>
+          </div>
+
           {notifications.length > 0 && (
             <button
               onClick={handleAllRead}
-              className="bg-[#EE4E34] hover:bg-[#EE4E34] text-white text-sm sm:text-base font-semibold px-4 py-2 rounded-lg shadow-sm transition-all duration-200 w-full sm:w-auto"
+              className="flex items-center justify-center gap-2 bg-[#EE4E34] hover:bg-[#d4452e] text-white text-sm font-medium px-5 py-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-200 w-full sm:w-auto cursor-pointer"
             >
+              <CheckOutlined />
               Mark All as Read
             </button>
           )}
         </div>
 
-        {/* Loading State */}
+        {/* States */}
         {isLoading ? (
-          <div className="h-[350px] flex items-center justify-center">
+          <div className="h-[400px] flex items-center justify-center">
             <SpinnerLodar />
           </div>
         ) : !notifications.length ? (
-          <div className="h-[350px] flex flex-col items-center justify-center text-gray-400 text-center px-4">
-            <BellOutlined className="text-6xl sm:text-7xl mb-4 animate-pulse text-gray-300" />
-            <h2 className="text-xl sm:text-2xl font-semibold mb-2">
-              No Notifications
+          <div className="h-[400px] flex flex-col items-center justify-center text-center px-4">
+            <div className="bg-gray-100 rounded-full p-8 mb-6">
+              <BellOutlined className="text-5xl text-gray-300" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-700 mb-2">
+              No Notifications Yet
             </h2>
-            <p className="text-gray-500 text-sm sm:text-base max-w-sm">
-              You don’t have any notifications right now. We’ll let you know
-              when something comes up.
+            <p className="text-gray-500 text-sm max-w-md">
+              You're all caught up! We'll notify you when there's something new.
             </p>
           </div>
         ) : (
-          <div className="grid gap-5 sm:gap-6 grid-cols-1 md:grid-cols-2">
+          <div className="space-y-3">
             {notifications.map((notif) => {
               const icon =
                 notif.type === "booking" || notif.type === "pending" ? (
-                  <ClockCircleOutlined className="text-[#EE4E34] text-2xl" />
+                  <ClockCircleOutlined className="text-[#EE4E34] text-xl" />
                 ) : (
-                  <BellOutlined className="text-[#EE4E34] text-2xl" />
+                  <BellOutlined className="text-[#EE4E34] text-xl" />
                 );
 
-              const statusStyles = {
-                read: {
-                  text: "text-green-700",
-                  bg: "bg-green-100",
-                  border: "border-l-green-600",
-                },
-                unread: {
-                  text: "text-orange-600",
-                  bg: "bg-orange-100",
-                  border: "border-l-orange-600",
-                },
-                New: {
-                  text: "text-blue-700",
-                  bg: "bg-blue-100",
-                  border: "border-l-blue-600",
-                },
-                Pending: {
-                  text: "text-yellow-700",
-                  bg: "bg-yellow-100",
-                  border: "border-l-yellow-600",
-                },
-                default: {
-                  text: "text-gray-600",
-                  bg: "bg-gray-100",
-                  border: "border-l-gray-400",
-                },
-              };
-
-              const styles = statusStyles[notif.status] || statusStyles.default;
+              const isUnread = notif.status !== "read";
 
               return (
                 <div
                   key={notif.id}
-                  className={`flex flex-col sm:flex-row sm:items-start gap-4 p-5 sm:p-6 rounded-xl shadow-sm border border-gray-200 bg-white hover:shadow-md transition-all duration-300 border-l-4 ${styles.border}`}
+                  className={`relative group flex gap-4 p-4 rounded-lg border transition-all duration-200 hover:shadow-md ${
+                    isUnread
+                      ? "bg-orange-50/50 border-orange-200 hover:border-orange-300"
+                      : "bg-white border-gray-200 hover:border-gray-300"
+                  }`}
                 >
-                  {/* Icon */}
-                  <div className="flex-shrink-0 p-3 rounded-lg bg-gray-50  sm:self-start">
-                    {icon}
+                  {isUnread && (
+                    <div className="absolute top-0 left-0 w-1 h-full bg-[#EE4E34] rounded-r" />
+                  )}
+
+                  <div className="flex-shrink-0">
+                    <div
+                      className={`p-3 rounded-lg ${
+                        isUnread ? "bg-orange-100" : "bg-gray-100"
+                      }`}
+                    >
+                      {icon}
+                    </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center justify-between mb-2 gap-2">
-                      <h2 className="font-semibold text-base sm:text-lg text-gray-900 break-words">
-                        {notif.title}
-                      </h2>
-                      <span
-                        className={`text-xs sm:text-sm px-3 py-1 rounded-full ${styles.bg} ${styles.text}`}
+                  <div className="flex-1 min-w-0 pr-20">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h3
+                        className={`font-semibold text-base leading-tight ${
+                          isUnread ? "text-gray-900" : "text-gray-700"
+                        }`}
                       >
-                        {notif.status}
-                      </span>
+                        {notif.title}
+                      </h3>
                     </div>
-                    <p className="text-gray-700 text-sm sm:text-base leading-relaxed mb-2 break-words">
+                    <p className="text-gray-600 text-sm leading-relaxed mb-2">
                       {notif.message}
                     </p>
-                    <span className="text-xs text-gray-400">{notif.time}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">
+                        {convertToIST(notif.created_at)}
+                      </span>
+                      {isUnread && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                          New
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Button */}
-                  {notif.status !== "read" && (
-                    <div className="mt-2 sm:mt-0 sm:self-center">
-                      <button
-                        onClick={() => handleRead(notif.id)}
-                        disabled={readLoading}
-                        className="w-full sm:w-auto text-sm font-semibold text-[#EE4E34] hover:text-purple-700 px-4 py-2 border border-purple-200 hover:border-purple-400 rounded-md transition-all duration-200"
-                      >
-                        {readLoading ? "Marking..." : "Mark as Read"}
-                      </button>
-                    </div>
+                  {isUnread && (
+                    <button
+                      onClick={() => handleRead(notif.id)}
+                      disabled={loadingId === notif.id}
+                      className="absolute bottom-4 right-4 inline-flex items-center gap-1.5 text-xs font-medium text-[#EE4E34] hover:text-white bg-white hover:bg-[#EE4E34] px-3 py-1.5 border border-[#EE4E34] rounded-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow"
+                    >
+                      {loadingId === notif.id ? (
+                        <>
+                          <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          <span>Marking...</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckOutlined className="text-xs cursor-pointer" />
+                          <span>Mark Read</span>
+                        </>
+                      )}
+                    </button>
                   )}
                 </div>
               );

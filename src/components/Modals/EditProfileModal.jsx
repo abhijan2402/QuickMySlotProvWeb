@@ -146,21 +146,25 @@ export default function EditProfileModal({ visible, onClose, user }) {
     try {
       const fd = new FormData();
 
-      // ✅ append cropped image (if selected)
+      // Handle cropped profile image (if selected)
       if (fileList.length > 0 && fileList[0].originFileObj) {
         fd.append("profile_picture", fileList[0].originFileObj);
       }
 
-      const pushSingleFile = (v, key) => {
-        if (v && v.length) {
-          const file = v[0].originFileObj || v[0];
-          if (file) fd.append(key, file);
+      // Helper to append files properly considering existing URLs vs new files
+      const pushSingleFile = (fileList, key) => {
+        if (fileList && fileList.length > 0) {
+          const file = fileList[0];
+          if (file.originFileObj) {
+            // New file upload
+            fd.append(key, file.originFileObj);
+          } else if (file.url) {
+            // Existing file: send URL or identifier for backend to keep reference
+            fd.append(`${key}_url`, file.url);
+          }
         }
       };
-      let coords = null;
-      if (values.exact_location) {
-        coords = await getLatLngFromAddress(values.exact_location);
-      }
+
       pushSingleFile(values.photo_verification, "photo_verification");
       pushSingleFile(values.business_proof, "business_proof");
       pushSingleFile(
@@ -168,18 +172,21 @@ export default function EditProfileModal({ visible, onClose, user }) {
         "adhaar_card_verification"
       );
       pushSingleFile(values.pan_card, "pan_card");
+
+      // Portfolio images (multiple files)
       if (values.portfolio_images && values.portfolio_images.length > 0) {
         values.portfolio_images.forEach((file, idx) => {
-          const actualFile = file.originFileObj || file;
-
-          if (actualFile instanceof File) {
-            // Append with index in brackets
-            fd.append(`portfolio_images[${idx}]`, actualFile);
-          } else {
-            console.warn("Skipping invalid file at index", idx);
+          if (file.originFileObj) {
+            // New file upload
+            fd.append(`portfolio_images[${idx}]`, file.originFileObj);
+          } else if (file.url) {
+            // Existing file URL
+            fd.append(`portfolio_images_url[${idx}]`, file.url);
           }
         });
       }
+
+      // Other form fields...
       fd.append("user_id", user.id);
       fd.append("business_name", values.business_name || "");
       fd.append("name", values.name || "");
@@ -189,9 +196,10 @@ export default function EditProfileModal({ visible, onClose, user }) {
       fd.append("business_description", values.business_description || "");
       fd.append("years_of_experience", values.years_of_experience || "");
       fd.append("exact_location", values.exact_location || "");
-      //   fd.append("location_area_served", values.location_area_served || "");
+      fd.append("FullAddress", values.FullAddress || "");
       fd.append("business_website", values.business_website || "");
       fd.append("gstin_number", values.gstin_number || "");
+
       if (values.working_days) {
         const dayMap = {
           Mon: "monday",
@@ -202,19 +210,25 @@ export default function EditProfileModal({ visible, onClose, user }) {
           Sat: "saturday",
           Sun: "sunday",
         };
-
-        (values.working_days || []).forEach((day, index) => {
+        values.working_days.forEach((day, index) => {
           fd.append(`working_days[${index}]`, dayMap[day] || day.toLowerCase());
         });
       }
+
       if (values.daily_start_time)
         fd.append("daily_start_time", values.daily_start_time.format("HH:mm"));
       if (values.daily_end_time)
         fd.append("daily_end_time", values.daily_end_time.format("HH:mm"));
+
+      const coords = values.exact_location
+        ? await getLatLngFromAddress(values.exact_location)
+        : null;
+
       if (coords) {
         fd.append("lat", coords.lat.toString());
         fd.append("long", coords.lng.toString());
       }
+
       const res = await updateProfile(fd).unwrap();
       dispatch(setUser(res?.data));
       toast.success(res.message || "Profile updated successfully");
@@ -224,6 +238,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
       toast.error("Failed to update profile.");
     }
   };
+
 
   const [modalWidth, setModalWidth] = useState("90%");
 
@@ -264,6 +279,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
           business_description: user?.business_description || "",
           years_of_experience: user?.years_of_experience || "",
           exact_location: user?.exact_location || "",
+          FullAddress: user?.FullAddress || "",
           location_area_served: user?.location_area_served || "",
           business_website: user?.business_website || "",
           gstin_number: user?.gstin_number || "",
@@ -274,12 +290,12 @@ export default function EditProfileModal({ visible, onClose, user }) {
           daily_end_time: user?.daily_end_time
             ? dayjs(user.daily_end_time, "HH:mm")
             : null,
-          photo_verification: urlToFileList(user?.photo_verification, "photo") || null,
-          business_proof: urlToFileList(user?.business_proof, "business_proof") || null,
-          adhaar_card_verification: urlToFileList(
-            user?.adhaar_card_verification,
-            "aadhaar"
-          ) || null,
+          photo_verification:
+            urlToFileList(user?.photo_verification, "photo") || null,
+          business_proof:
+            urlToFileList(user?.business_proof, "business_proof") || null,
+          adhaar_card_verification:
+            urlToFileList(user?.adhaar_card_verification, "aadhaar") || null,
           pan_card: urlToFileList(user?.pan_card, "pan") || null,
           portfolio_images: portfolioFileList || [],
         }}
@@ -346,6 +362,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
         <Form.Item name="gstin_number" label="GSTIN Number">
           <Input />
         </Form.Item>
+
         <Form.Item name="working_days" label="Working Days">
           <Checkbox.Group
             options={WORKING_DAYS.map((day) => ({
@@ -361,7 +378,11 @@ export default function EditProfileModal({ visible, onClose, user }) {
           <TimePicker format="HH:mm" minuteStep={30} />
         </Form.Item>
         {/* Location picker (with Google Maps) */}
-        <Form.Item name="exact_location" label="Exact Location">
+
+        <Form.Item name="FullAddress" label="Enter Full Address">
+          <Input placeholder="Enter full address" />
+        </Form.Item>
+        <Form.Item name="exact_location" label="Exact Pin Location">
           {isLoaded ? (
             <Autocomplete
               onLoad={(ac) => (autocompleteRef.current = ac)}

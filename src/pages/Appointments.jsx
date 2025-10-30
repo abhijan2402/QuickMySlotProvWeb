@@ -1,72 +1,90 @@
 import {
   FaCalendarAlt,
-  FaChartPie,
   FaCheckCircle,
+  FaChartPie,
   FaTimesCircle,
 } from "react-icons/fa";
-import Breadcrumb from "../components/Breadcrumb";
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Form, Input, Modal, Rate, Pagination } from "antd";
+import {
+  Form,
+  Input,
+  Modal,
+  Rate,
+  Pagination,
+  List,
+  Tag,
+  Button,
+  Skeleton,
+} from "antd";
 import {
   useAcceptBookingMutation,
   useCompletedBookingMutation,
   useGetvendorBookingQuery,
   useRejectBookingMutation,
 } from "../services/vendorTransactionListApi";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SpinnerLoder from "../components/SpinnerLodar";
-
-const noDataVariants = {
-  initial: { opacity: 0, y: -10 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 },
-};
-
-const tabVariants = {
-  initial: { opacity: 0, x: 20 },
-  animate: { opacity: 1, x: 0, transition: { duration: 0.3 } },
-  exit: { opacity: 0, x: -20, transition: { duration: 0.2 } },
-};
+import { convertToIST } from "../utils/utils";
+import Breadcrumb from "../components/Breadcrumb";
+import { useNavigate } from "react-router-dom";
 
 const statusMap = {
-  upcoming: "pending",
+  pending: "pending",
   accepted: "accepted",
   rejected: "rejected",
   past: "completed",
 };
 
+const tabs = [
+  { id: "pending", icon: <FaChartPie />, label: "Pending" },
+  { id: "accepted", icon: <FaCheckCircle />, label: "Accepted" },
+  { id: "rejected", icon: <FaTimesCircle />, label: "Cancelled" },
+  { id: "past", icon: <FaCalendarAlt />, label: "Completed" },
+];
+
 export default function Appointments() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("upcoming");
-  const apiStatus = statusMap[activeTab] || "";
-  const { data, isLoading } = useGetvendorBookingQuery({ status: apiStatus });
+  const [activeTab, setActiveTab] = useState("pending");
+  const apiStatus = statusMap[activeTab] || "pending";
+
+  // ✅ API with ensured default param
+  const { data, isLoading, refetch } = useGetvendorBookingQuery(
+    { status: apiStatus },
+    { refetchOnMountOrArgChange: true }
+  );
+
   const [acceptBooking] = useAcceptBookingMutation();
   const [rejectBooking] = useRejectBookingMutation();
   const [completedBooking] = useCompletedBookingMutation();
   const [currentPage, setCurrentPage] = useState(1);
   const [acceptingId, setAcceptingId] = useState(null);
-  const [pageSize] = useState(6);
+  const [pageSize] = useState(8);
 
-  // Feedback Modal State
+  // Feedback Modal
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
-  const [currentFeedbackId, setCurrentFeedbackId] = useState(null);
   const [feedbackForm] = Form.useForm();
 
-  // Pagination
-  const paginatedAppointments = data?.data?.slice(
+  const appointments = data?.data || [];
+  const paginatedAppointments = appointments.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
 
+  const statusColorMap = {
+    confirmed: "processing",
+    accepted: "success",
+    rejected: "error",
+    past: "default",
+  };
+
+  // --- Actions ---
   const handleAccept = async (id) => {
     setAcceptingId(id);
     try {
       await acceptBooking(id).unwrap();
       toast.success("Appointment accepted successfully");
-    } catch (error) {
-      toast.error("Failed to accept the appointment");
+      refetch();
+    } catch {
+      toast.error("Failed to accept appointment");
     } finally {
       setAcceptingId(null);
     }
@@ -76,29 +94,30 @@ export default function Appointments() {
     try {
       await rejectBooking(id).unwrap();
       toast.success("Appointment rejected successfully");
-    } catch (error) {
-      toast.error("Failed to reject the appointment");
+      refetch();
+    } catch {
+      toast.error("Failed to reject appointment");
     }
   };
 
   const handleComplete = async (id) => {
     try {
       await completedBooking(id).unwrap();
-      toast.success("Appointment completed successfully");
-    } catch (error) {
-      toast.error("Failed to complete the appointment");
+      toast.success("Appointment marked as completed");
+      refetch();
+    } catch {
+      toast.error("Failed to complete appointment");
     }
   };
 
-  const handleGiveFeedbackClick = (id) => {
-    setCurrentFeedbackId(id);
+  const handleGiveFeedbackClick = () => {
     feedbackForm.resetFields();
     setFeedbackModalVisible(true);
   };
 
   const handleFeedbackSubmit = () => {
-    feedbackForm.validateFields().then((values) => {
-      console.log("Feedback for appointment", currentFeedbackId, values);
+    feedbackForm.validateFields().then(() => {
+      toast.success("Feedback submitted!");
       setFeedbackModalVisible(false);
     });
   };
@@ -107,204 +126,228 @@ export default function Appointments() {
     navigate(`/appointments_details/${id}`);
   };
 
-  const renderAppointments = () => {
-    if (isLoading) {
-      return (
-        <div className="h-[50vh] flex items-center justify-center">
-          <SpinnerLoder title="Appointments" />
-        </div>
-      );
-    }
-
-    if (paginatedAppointments?.length === 0) {
-      return (
-        <motion.div
-          className="h-[50vh] flex flex-col items-center justify-center text-gray-400 select-none"
-          variants={noDataVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-        >
-          <FaTimesCircle className="text-6xl mb-4 animate-bounce" />
-          <p className="text-lg font-medium">No appointments found.</p>
-        </motion.div>
-      );
-    }
-
-    return (
-      <motion.ul
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        variants={tabVariants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-      >
-        {paginatedAppointments.map((appt) => (
-          <li
-            key={appt.id}
-            className="bg-white p-6 rounded-2xl shadow-md flex flex-col justify-between hover:shadow-xl transition"
-          >
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <h4 className="text-gray-800 font-semibold text-lg">
-                  {appt.service?.name || "Service"}
-                </h4>
-                <span
-                  onClick={() => handleViewDetails(appt.id)}
-                  className="text-orange-500 flex items-center gap-1 cursor-pointer hover:underline font-medium"
-                >
-                  View details <FaCalendarAlt />
-                </span>
-              </div>
-
-              <div className="text-gray-600 text-sm">
-                <p className="font-medium text-gray-800">Customer:</p>
-                <p>{appt.customer?.name}</p>
-              </div>
-
-              <div className="text-gray-600 text-sm">
-                <p className="font-medium text-gray-800">Booking Date:</p>
-                {appt.schedule_time &&
-                  Object.entries(appt.schedule_time).map(([time, date]) => (
-                    <p key={time}>
-                      {date} at {time}
-                    </p>
-                  ))}
-              </div>
-
-              <p className="flex justify-between items-center mt-1 text-gray-800 font-medium">
-                Amount:
-                <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full font-semibold">
-                  ₹{appt.amount}
-                </span>
-              </p>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-3 mt-4 flex-wrap">
-              {activeTab === "upcoming" && (
-                <>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAccept(appt.id);
-                    }}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition"
-                  >
-                    {acceptingId === appt.id ? "Accepting..." : "Accept"}
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleReject(appt.id);
-                    }}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition"
-                  >
-                    Reject
-                  </button>
-                </>
-              )}
-
-              {activeTab === "accepted" && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleComplete(appt.id);
-                  }}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
-                >
-                  Completed
-                </button>
-              )}
-            </div>
-          </li>
-        ))}
-      </motion.ul>
-    );
-  };
-
-  const tabs = [
-    { id: "upcoming", icon: <FaChartPie />, label: "Upcoming" },
-    { id: "accepted", icon: <FaCheckCircle />, label: "Accepted" },
-    { id: "rejected", icon: <FaTimesCircle />, label: "Rejected" },
-    { id: "past", icon: <FaCalendarAlt />, label: "Completed" },
-  ];
-
+  // --- UI ---
   return (
-    <>
-      <div className="max-w-6xl mx-auto p-4 sm:p-6">
-        <Breadcrumb propertyTitle={"My Appointments"} />
+    <div className="mt-10 px-3 sm:px-6">
+      <Breadcrumb propertyTitle={"My Appointments"} />
 
-        <div className="bg-white p-6 rounded-2xl shadow-md">
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-pink-500 inline-block">
-            Appointments
-          </h3>
+      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-md p-4 sm:p-6">
+        <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-6">
+          Appointments
+        </h3>
 
-          {/* Tabs */}
-          <div className="flex gap-3 mb-6 overflow-x-auto no-scrollbar">
-            {tabs.map(({ id, icon, label }) => (
-              <motion.button
-                key={id}
-                onClick={() => {
-                  setActiveTab(id);
-                  setCurrentPage(1);
-                }}
-                whileTap={{ scale: 0.95 }}
-                className={`flex items-center gap-2 whitespace-nowrap px-5 py-2 rounded-lg font-semibold text-sm transition ${
-                  activeTab === id
-                    ? "bg-[#EE4E34] text-white shadow-lg"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                {icon} {label}
-              </motion.button>
-            ))}
-          </div>
-
-          {renderAppointments()}
-
-          {/* Pagination */}
-          {paginatedAppointments?.length > 0 && (
-            <div className="flex justify-center mt-6">
-              <Pagination
-                current={currentPage}
-                pageSize={pageSize}
-                total={data?.data?.length || 0}
-                onChange={(page) => setCurrentPage(page)}
-                showSizeChanger={false}
-              />
-            </div>
-          )}
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-2 sm:gap-3 mb-6">
+          {tabs.map(({ id, icon, label }) => (
+            <Button
+              key={id}
+              type={activeTab === id ? "primary" : "default"}
+              onClick={() => {
+                setActiveTab(id);
+                setCurrentPage(1);
+              }}
+              icon={icon}
+              style={
+                activeTab === id
+                  ? { background: "#EE4E34", borderColor: "#EE4E34" }
+                  : {}
+              }
+              className="flex-1 sm:flex-none"
+            >
+              {label}
+            </Button>
+          ))}
         </div>
-      </div>
 
-      {/* Feedback Modal */}
-      <Modal
-        title="Give Feedback"
-        open={feedbackModalVisible}
-        onOk={handleFeedbackSubmit}
-        onCancel={() => setFeedbackModalVisible(false)}
-        okText="Submit"
-        cancelText="Cancel"
-        destroyOnClose
-      >
-        <Form form={feedbackForm} layout="vertical">
-          <Form.Item
-            name="rating"
-            label="Rate Customer"
-            rules={[{ required: true, message: "Please provide a rating" }]}
-          >
-            <Rate />
-          </Form.Item>
-          <Form.Item
-            name="review"
-            label="Review / Comments"
-            rules={[{ required: true, message: "Please write your review" }]}
-          >
-            <Input.TextArea rows={4} placeholder="Write your feedback here" />
-          </Form.Item>
-        </Form>
-      </Modal>
-    </>
+        {/* List */}
+        {isLoading ? (
+          <div className="min-h-[50vh] flex items-center justify-center">
+            <Skeleton active paragraph={{ rows: 4 }} className="w-full" />
+          </div>
+        ) : paginatedAppointments.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-[50vh] text-gray-400">
+            <FaTimesCircle className="text-5xl mb-3" />
+            <p className="text-lg font-medium">No appointments found</p>
+          </div>
+        ) : (
+          <List
+            itemLayout="vertical"
+            dataSource={paginatedAppointments}
+            renderItem={(appt) => (
+              <List.Item
+                key={appt.id}
+                className="rounded-xl border border-gray-200 bg-gray-50 mb-4 p-3 sm:p-5 shadow-sm hover:shadow-md transition"
+                actions={[
+                  activeTab === "pending" && (
+                    <div className="flex gap-2">
+                      <Button
+                        type="primary"
+                        loading={acceptingId === appt.id}
+                        onClick={() => handleAccept(appt.id)}
+                        style={{
+                          backgroundColor: "#16a34a",
+                          borderColor: "#16a34a",
+                          color: "#fff",
+                        }}
+                      >
+                        Accept
+                      </Button>
+                      <Button
+                        danger
+                        type="default"
+                        onClick={() => handleReject(appt.id)}
+                      >
+                        Reject
+                      </Button>
+                    </div>
+                  ),
+                  activeTab === "accepted" && (
+                    <Button onClick={() => handleComplete(appt.id)}>
+                      Mark Completed
+                    </Button>
+                  ),
+                  activeTab === "past" && (
+                    <Button onClick={handleGiveFeedbackClick}>
+                      Give Feedback
+                    </Button>
+                  ),
+                  <Button
+                    type="default"
+                    onClick={() => handleViewDetails(appt.id)}
+                    style={{
+                      backgroundColor: "#EE4E34",
+                      borderColor: "#EE4E34",
+                      color: "#fff",
+                    }}
+                  >
+                    View Details
+                  </Button>,
+                ].filter(Boolean)}
+                extra={
+                  <Tag color={statusColorMap[activeTab]}>
+                    {tabs.find((tab) => tab.id === activeTab)?.label}
+                  </Tag>
+                }
+                style={{
+                  marginBottom: 16,
+                  borderRadius: 12,
+                  boxShadow: "0 1px 8px rgba(0,0,0,0.06)",
+                  backgroundColor: "#F5F5F5",
+                  padding: 10,
+                }}
+              >
+                <List.Item.Meta
+                  title={
+                    <div className="flex flex-wrap gap-2">
+                      {Array.isArray(appt.services) && appt.services.length > 0
+                        ? appt.services.map((service) => (
+                            <span
+                              key={service.id || service.name}
+                              className="bg-orange-100 text-gray-700 px-3 py-1 rounded-full text-sm font-semibold"
+                            >
+                              {service.name}
+                            </span>
+                          ))
+                        : "Service"}
+                    </div>
+                  }
+                  description={
+                    <div className="grid sm:grid-cols-2 gap-2 sm:gap-3">
+                      <div className="p-2 border rounded-md">
+                        <span className="font-semibold text-gray-800">
+                          Shop Name:{" "}
+                        </span>
+                        <span>{appt.vendor?.business_name || "-"}</span>
+                      </div>
+
+                      <div className="p-2 border rounded-md">
+                        <span className="font-semibold text-gray-800">
+                          Customer:{" "}
+                        </span>
+                        <span>{appt.customer?.name || "-"}</span>
+                      </div>
+
+                      <div className="p-2 border rounded-md">
+                        <span className="font-semibold text-gray-800">
+                          Booking Date:{" "}
+                        </span>
+                        <span>{convertToIST(appt.created_at)}</span>
+                      </div>
+
+                      <div className="p-2 flex items-center gap-4 border rounded-md">
+                        <span className="font-semibold text-gray-800">
+                          Time Slots:{" "}
+                        </span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {appt.schedule_time &&
+                            Object.entries(appt.schedule_time).map(
+                              ([time, date]) => (
+                                <span
+                                  key={time}
+                                  className="border border-orange-500 bg-orange-50 px-2 py-1 rounded-md text-orange-700 text-xs font-semibold"
+                                >
+                                  {date}
+                                </span>
+                              )
+                            )}
+                        </div>
+                      </div>
+                    </div>
+                  }
+                />
+                <div className="mt-2 font-medium text-gray-800">
+                  Amount:{" "}
+                  <span className="ml-2 bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
+                    ₹{appt.amount}
+                  </span>
+                </div>
+              </List.Item>
+            )}
+          />
+        )}
+
+        {/* Pagination */}
+        {appointments.length > pageSize && (
+          <div className="flex justify-center mt-6">
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={appointments.length}
+              onChange={setCurrentPage}
+              showSizeChanger={false}
+              simple
+            />
+          </div>
+        )}
+
+        {/* Feedback Modal */}
+        <Modal
+          title="Give Feedback"
+          open={feedbackModalVisible}
+          onOk={handleFeedbackSubmit}
+          onCancel={() => setFeedbackModalVisible(false)}
+          okText="Submit"
+          cancelText="Cancel"
+          destroyOnClose
+        >
+          <Form form={feedbackForm} layout="vertical">
+            <Form.Item
+              name="rating"
+              label="Rate Customer"
+              rules={[{ required: true, message: "Please provide a rating" }]}
+            >
+              <Rate />
+            </Form.Item>
+            <Form.Item
+              name="review"
+              label="Review / Comments"
+              rules={[{ required: true, message: "Please write your review" }]}
+            >
+              <Input.TextArea rows={4} placeholder="Write your feedback..." />
+            </Form.Item>
+          </Form>
+        </Modal>
+      </div>
+    </div>
   );
 }

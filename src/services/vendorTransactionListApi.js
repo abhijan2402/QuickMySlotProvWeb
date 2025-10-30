@@ -19,10 +19,21 @@ export const vendorTransactionApi = createApi({
       providesTags: ["vendorTransaction"],
     }),
     getvendorBooking: builder.query({
-      query: ({ status } = {}) => {
-        const url = status ? `bookings/list?status=${status}` : `bookings/list`;
+      query: ({ status, id } = {}) => {
+        const url = status
+          ? `bookings/list?status=${status}`
+          : `bookings/list/${id}`;
         return {
           url,
+          method: "GET",
+        };
+      },
+      providesTags: ["vendorBooking"],
+    }),
+    getvendorBookingDetails: builder.query({
+      query: (id) => {
+        return {
+          url: `customer/booking/${id}`,
           method: "GET",
         };
       },
@@ -66,4 +77,5 @@ export const {
   useAcceptBookingMutation,
   useRejectBookingMutation,
   useCompletedBookingMutation,
+  useGetvendorBookingDetailsQuery
 } = vendorTransactionApi;

@@ -30,7 +30,7 @@ const BidSection = () => {
 
   console.log(profile);
 
-  // 🟩 Open Modal
+  //  Open Modal
   const handleOpen = (bid, type = "add") => {
     console.log(type);
     setSelectedBid(bid);
@@ -39,7 +39,7 @@ const BidSection = () => {
     setOpen(true);
   };
 
-  // 🟩 Submit or Update
+  //  Submit or Update
   const handleSubmit = async () => {
     const enteredAmount = parseFloat(amount || 0);
     const walletAmount = parseFloat(profile?.data?.wallet || 0);
@@ -75,7 +75,7 @@ const BidSection = () => {
     setAmount("");
   };
 
-  // 🟨 Loading State
+  //  Loading State
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-[40vh] text-lg text-gray-600">
@@ -100,8 +100,8 @@ const BidSection = () => {
   // console.log(bidShow);
 
   return (
-    <div className="bg-gray-50 flex flex-col">
-      {/* 🌟 Hero Section */}
+    <div className="bg-gray-100 flex flex-col">
+      {/* Hero Section */}
       <div className="relative bg-[#EE4E34] text-white py-16 px-6 text-center overflow-hidden">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
@@ -121,7 +121,7 @@ const BidSection = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent blur-3xl opacity-30 animate-pulse"></div>
       </div>
 
-      {/* 🏗️ Bid Cards Section */}
+      {/*  Bid Cards Section */}
       <div className="py-4 sm:py-4 max-w-7xl mx-auto w-full">
         {filteredBids.length > 0 ? (
           <div className="space-y-4">
@@ -225,14 +225,14 @@ const BidSection = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center justify-center min-h-[60vh] text-center"
+            className="flex flex-col items-center justify-center  min-h-[40vh] text-center"
           >
             <img
               src="https://illustrations.popsy.co/violet/online-shopping.svg"
               alt="No bids"
-              className="w-60 h-60 mb-6 animate-bounce-slow"
+              className="w-60 h-40 animate-bounce-slow"
             />
-            <h2 className="text-2xl font-semibold text-[#EE4E34] mb-2">
+            <h2 className="text-2xl font-semibold text-[#EE4E34] mb-0">
               No Active Bids Found
             </h2>
             <p className="text-gray-500 max-w-sm">
@@ -243,7 +243,7 @@ const BidSection = () => {
         )}
       </div>
 
-      {/* 💰 Universal Bid Modal */}
+      {/* Universal Bid Modal */}
       <Modal
         title={
           <span className="text-[#EE4E34] font-semibold text-lg">

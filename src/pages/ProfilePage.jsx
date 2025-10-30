@@ -92,10 +92,10 @@ export default function ProfilePage() {
   const showModal = () => setIsModalOpen(true);
 
   return (
-    <div className="max-w-full md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 space-y-8">
+    <div className="max-w-full md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 space-y-2">
       <div className="flex flex-col md:flex-row md:gap-4 max-w-7xl mx-auto py-6">
         {/* Left Section: Profile Card */}
-        <div className="bg-white p-6 rounded-2xl shadow-md flex flex-col gap-6 flex-grow md:w-2/3 relative">
+        <div className="bg-white p-6 rounded-2xl shadow-sm flex flex-col gap-6 flex-grow md:w-2/3 relative border">
           {/* Profile Info */}
           <div className="flex items-center gap-4 min-w-0">
             {previewImage ? (
@@ -144,8 +144,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Right Section: Upgrade your Business Plan */}
-        {/* Right Section: Upgrade your Business Plan */}
-        <div className="bg-purple-50 p-6 rounded-2xl shadow-md mt-8 md:mt-0 md:w-1/3 flex flex-col justify-center">
+        <div className="bg-purple-50 p-6 rounded-2xl shadow-sm border mt-8 md:mt-0 md:w-1/3 flex flex-col justify-center">
           {currentPlan?.subscription ? (
             <>
               <h3 className="text-black text-xl font-medium flex mb-2 justify-between">
