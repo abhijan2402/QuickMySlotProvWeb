@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -26,12 +26,20 @@ export default function ShopDetailCards() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const { data } = useGetCategoryQuery();
-  const { data: profile } = useGetProfileQuery();
+  const { data: profile, refetch } = useGetProfileQuery();
   const [addGST, { isLoading: isSaving }] = useAddGSTMutation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
 
   const profileData = profile?.data;
+  console.log("profile data", profileData)
+  console.log("profile data", profile)
+
+  useEffect(() => {
+    if (user) {
+      refetch();
+    }
+  }, [user]);
 
   const sliderSettings = {
     dots: true,
