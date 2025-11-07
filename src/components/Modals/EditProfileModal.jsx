@@ -234,11 +234,20 @@ export default function EditProfileModal({ visible, onClose, user }) {
       toast.success(res.message || "Profile updated successfully");
       onClose();
     } catch (err) {
+      const errorData = err?.data || err?.response?.data || {};
+      if (errorData.errors) {
+        const errorMessages = Object.entries(errorData.errors)
+          .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+          .join("\n");
+        toast.error(errorMessages);
+      } else if (errorData.message) {
+        toast.error(errorData.message);
+      } else {
+        toast.error("Failed to update profile.");
+      }
       console.error(err);
-      toast.error("Failed to update profile.");
     }
   };
-
 
   const [modalWidth, setModalWidth] = useState("90%");
 

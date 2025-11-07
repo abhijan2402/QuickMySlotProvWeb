@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ScrollTracker from "../components/ScrollTracker/ScrollTracker";
 import { Outlet } from "react-router-dom";
+import Chatbot from "../components/ChatBot/Chatbot";
 
 export default function MainLayout() {
   return (
@@ -13,6 +14,7 @@ export default function MainLayout() {
         <Outlet />
       </main>
       <Footer />
+      <Chatbot />
       <ScrollTracker />
     </div>
   );
