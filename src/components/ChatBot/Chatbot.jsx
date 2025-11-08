@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RobotOutlined, SendOutlined, CloseOutlined } from "@ant-design/icons";
+import { RobotOutlined, SendOutlined, CloseOutlined, RobotFilled } from "@ant-design/icons";
+import { BiSend } from "react-icons/bi";
+import { FaRobot } from "react-icons/fa6";
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -76,9 +78,12 @@ const Chatbot = () => {
       {/* Floating Chat Icon */}
       <button
         onClick={toggleChat}
-        className="fixed bottom-6 right-6 bg-[#EE5138] text-white p-4 rounded-full shadow-lg hover:scale-105 transition-transform z-[9999]"
+        className="fixed bottom-12 right-6 text-[#EE5138] p-4 rounded-full shadow-lg shadow-orange-300 hover:scale-105 transition-transform z-[9999]"
+        style={{
+          animation: "float 3s ease-in-out infinite",
+        }}
       >
-        <RobotOutlined style={{ fontSize: "22px" }} />
+        <FaRobot style={{ fontSize: "34px" }} />
       </button>
 
       {/* Chat Popup */}
@@ -94,8 +99,11 @@ const Chatbot = () => {
             {/* Header */}
             <div className="bg-[#EE5138] text-white p-3 text-lg font-semibold flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <RobotOutlined />
-                <span className="font-bold">QuickMySlot</span>
+                <FaRobot />
+                <div className="font-bold">
+                  <span className="text-black ">Quick</span>
+                  MySlot
+                </div>
               </div>
               <button
                 onClick={toggleChat}
