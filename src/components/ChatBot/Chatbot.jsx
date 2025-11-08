@@ -78,7 +78,7 @@ const Chatbot = () => {
       {/* Floating Chat Icon */}
       <button
         onClick={toggleChat}
-        className="fixed bottom-12 right-6 text-[#EE5138] p-4 rounded-full shadow-lg shadow-orange-300 hover:scale-105 transition-transform z-[9999]"
+        className="fixed bottom-12 right-6 bg-[#EE5138] text-[#ffff] p-4 rounded-full shadow-lg shadow-orange-300 hover:scale-105 transition-transform z-[9999]"
         style={{
           animation: "float 3s ease-in-out infinite",
         }}
