@@ -117,6 +117,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Right Section: Upgrade your Business Plan */}
+        {/*
         <div className="bg-purple-50 p-6 rounded-2xl shadow-sm border mt-8 md:mt-0 md:w-1/3 flex flex-col justify-center">
           {currentPlan?.subscription ? (
             <>
@@ -168,8 +169,13 @@ export default function ProfilePage() {
             </>
           )}
         </div>
+        
+        */}
       </div>
       {/*  Boost your Business  */}
+      {
+        /*
+        
       <div className="bg-purple-50 p-6 rounded-2xl shadow-md mt-2  flex justify-between items-center md:flex-row md:gap-8 max-w-7xl mx-auto ">
         <div>
           <h3 className="text-black text-xl font-medium ">
@@ -186,6 +192,8 @@ export default function ProfilePage() {
           Boost Profile
         </button>
       </div>
+        */
+      }
       <DashboardTabs />
       <ShopDetailCards />;{/* Edit Profile Modal */}
       <EditProfileModal
