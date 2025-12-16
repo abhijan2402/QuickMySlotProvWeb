@@ -257,6 +257,14 @@ export default function ProfileModal({
         fd.append("lat", coords.lat.toString());
         fd.append("long", coords.lng.toString());
       }
+
+      const formDataObj = {};
+      fd.forEach((value, key) => {
+        formDataObj[key] = value;
+      });
+
+      console.log(formDataObj);
+
       await setProfile(fd)
         .unwrap()
         .then(() => {

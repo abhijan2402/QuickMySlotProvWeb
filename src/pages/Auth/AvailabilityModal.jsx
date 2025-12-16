@@ -36,6 +36,13 @@ export default function AvailabilityModal({ visible, onClose, userID }) {
         fd.append(`working_days[${index}]`, dayMap[day] || day.toLowerCase());
       });
 
+      const formDataObj = {};
+
+      fd.forEach((value, key) => {
+        formDataObj[key] = value;
+      });
+
+      console.log(formDataObj);
       await setAvailability(fd).unwrap();
       toast.success("Availability Saved successfully.");
       form.resetFields();

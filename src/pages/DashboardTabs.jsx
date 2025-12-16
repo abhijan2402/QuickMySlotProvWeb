@@ -4,78 +4,24 @@ import Wallet from "../components/Wallet";
 import AccountManagement from "../components/AccountManagement";
 import TransactionHistory from "../components/TransactionHistory";
 import FAQ from "../components/FAQ";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Analytics from "../components/Analytics";
 import OfferManagement from "../components/OfferManagement";
 import PricingModal from "../components/PricingModal";
 
-const DashboardTabs = () => {
-  const [accounts, setAccounts] = useState([
-    {
-      id: 1,
-      name: "Primary Account",
-      email: "primary@example.com",
-      isDefault: true,
-    },
-  ]);
-  const [walletHistory, setWalletHistory] = useState([
-    { id: 1, type: "Credit", amount: 1500, date: "2025-08-20" },
-    { id: 2, type: "Debit", amount: 300, date: "2025-08-22" },
-  ]);
-  const [walletTotal, setWalletTotal] = useState(1200);
-  const [transactions, setTransactions] = useState([
-    {
-      id: "tx1",
-      amount: 2300,
-      date: "2025-07-15",
-      type: "credit",
-      userName: "Amit Sharma",
-      phone: "+91-9876543210",
-      account: "1234567890",
-      email: "amit.sharma@email.com",
-      // note: "Salary deposit",
-    },
-    {
-      id: "tx2",
-      amount: 500,
-      date: "2025-08-05",
-      type: "credit",
-      userName: "Priya Singh",
-      phone: "+91-9812345678",
-      account: "9876543210",
-      email: "priya.singh@email.com",
-      // note: "Mobile recharge",
-    },
-  ]);
+const DashboardTabs = ({ initialTab = "analytics", walletAmount }) => {
+  const [activeKey, setActiveKey] = useState(initialTab);
 
-  const setDefaultAccount = (id) => {
-    const updated = accounts.map((acc) => ({
-      ...acc,
-      isDefault: acc.id === id,
-    }));
-    setAccounts(updated);
-  };
-
-  const addAmount = (amount) => {
-    const amtNum = parseInt(amount, 10);
-    if (!isNaN(amtNum) && amtNum > 0) {
-      setWalletTotal(walletTotal + amtNum);
-      setWalletHistory([
-        ...walletHistory,
-        {
-          id: Date.now(),
-          type: "Credit",
-          amount: amtNum,
-          date: new Date().toISOString(),
-        },
-      ]);
-      message.success("Amount added successfully");
+  useEffect(() => {
+    if (initialTab === "wallet") {
+      setActiveKey("wallet");
     }
-  };
+  }, [initialTab]);
 
   return (
     <Tabs
-      defaultActiveKey="analytics"
+      activeKey={activeKey}
+      onChange={setActiveKey}
       type="line"
       className="bg-white rounded-2xl p-6 shadow-md"
     >
@@ -86,31 +32,24 @@ const DashboardTabs = () => {
 
       {/* Wallet Tab */}
       <TabPane tab="Wallet" key="wallet">
-        <Wallet
-          walletHistory={walletHistory}
-          walletTotal={walletTotal}
-          addAmount={addAmount}
-        />
+        <Wallet />
       </TabPane>
 
       {/* Account Management Tab */}
       <TabPane tab="Account Management" key="accountManagement">
-        <AccountManagement
-          accounts={accounts}
-          setAccounts={setAccounts}
-          setDefaultAccount={setDefaultAccount}
-        />
+        <AccountManagement />
       </TabPane>
 
       {/* Transaction History Tab */}
       <TabPane tab="Transaction History" key="transactionHistory">
-        <TransactionHistory transactions={transactions} />
+        <TransactionHistory />
       </TabPane>
 
       {/* Offer Managemnet */}
       <TabPane tab="Offer Management " key="offer">
         <OfferManagement />
       </TabPane>
+
       {/* Prcing Managemnet */}
       {/* <TabPane tab="Pricing Management " key="price">
         <PricingModal/>

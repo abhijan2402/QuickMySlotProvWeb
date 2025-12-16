@@ -6,9 +6,10 @@ import "slick-carousel/slick/slick-theme.css";
 import { useGetbannerQuery } from "../services/bannerApi";
 
 const HeroIntro = () => {
-  const { data, isLoading, isError } = useGetbannerQuery();
+  const { data, isLoading, isError, error } = useGetbannerQuery();
 
-  // console.log(data?.data?.banners);
+  console.log(data?.data?.banners);
+  console.log(error);
 
   // Filter banners: exclude top position and null images
   const filteredTopBanners =

@@ -5,6 +5,8 @@ import {
   FaTwitter,
   FaInstagram,
   FaYoutube,
+  FaGooglePlay,
+  FaApple,
 } from "react-icons/fa";
 import { FaSquareXTwitter } from "react-icons/fa6";
 
@@ -15,7 +17,7 @@ export default function Footer() {
   const navigate = useNavigate();
   return (
     <footer className="bg-[#0D1B2A] text-white pt-16 pb-6 px-6">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
         {/* Company Info */}
         <div>
           <div className="flex items-center gap-2 mb-4">
@@ -112,6 +114,48 @@ export default function Footer() {
               aria-label="LinkedIn"
             >
               <FaLinkedin />
+            </a>
+          </div>
+        </div>
+
+        {/* Download Apps - Prominent CTA */}
+        <div className="lg:col-span-1">
+          <h3 className="text-xl font-bold mb-6 text-white flex items-center gap-2">
+            Download QuickMySlot Now
+          </h3>
+
+          {/* Responsive Download Buttons */}
+          <div className="flex flex-col sm:flex-col gap-3 mb-6">
+            {/* App Store */}
+            <a
+              href="https://apps.apple.com/in/app/quickmyslot-provider/id6753897063"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1"
+            >
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-slate-900 via-slate-800 to-black hover:from-slate-900 hover:via-slate-700 hover:to-slate-900 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-gray-700 text-white text-sm font-semibold">
+                <FaApple className="text-xl text-orange-400" />
+                <div>
+                  <div className="font-bold">App Store</div>
+                  <div className="text-xs opacity-90">iOS</div>
+                </div>
+              </div>
+            </a>
+
+            {/* Google Play */}
+            <a
+              href="https://play.google.com/store/apps/details?id=com.qms_provider"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1"
+            >
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-green-600 hover:from-emerald-600 hover:via-emerald-700 hover:to-green-700 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-emerald-700 text-white text-sm font-semibold">
+                <FaGooglePlay className="text-xl" />
+                <div>
+                  <div className="font-bold">Google Play</div>
+                  <div className="text-xs opacity-90">Android</div>
+                </div>
+              </div>
             </a>
           </div>
         </div>

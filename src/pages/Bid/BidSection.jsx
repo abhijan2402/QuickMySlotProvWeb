@@ -12,8 +12,10 @@ import { toast } from "react-toastify";
 import { FaGavel, FaRupeeSign } from "react-icons/fa";
 import { useGetwalletQuery } from "../../services/walletApi";
 import { useGetProfileQuery } from "../../services/profileApi";
+import { useNavigate } from "react-router-dom";
 
 const BidSection = () => {
+  const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
   const { data, isLoading } = useGetbidQuery();
   const [open, setOpen] = useState(false);
@@ -28,7 +30,7 @@ const BidSection = () => {
 
   const dispatch = useDispatch();
 
-  console.log(profile);
+  // console.log(profile);
 
   //  Open Modal
   const handleOpen = (bid, type = "add") => {
@@ -51,6 +53,9 @@ const BidSection = () => {
 
     if (enteredAmount > walletAmount) {
       toast.error("Insufficient wallet balance to place this bid");
+      navigate("/profile", {
+        state: { wallet: walletAmount, showWallet: true },
+      });
       return;
     }
 
@@ -92,7 +97,7 @@ const BidSection = () => {
     userCategory && !isNaN(userCategory)
       ? bids.filter((b) => Number(b.category_id) === userCategory)
       : [];
-  console.log(filteredBids);
+  // console.log(filteredBids);
 
   // const bidToShowId = filteredBids[0]?.id;
 

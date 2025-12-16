@@ -5,7 +5,7 @@ import { useGetvendorTransactionQuery } from "../services/vendorTransactionListA
 
 const { Title } = Typography;
 
-const TransactionHistory = ({ transactions }) => {
+const TransactionHistory = () => {
   const { data, isFetching } = useGetvendorTransactionQuery();
   console.log(data?.data)
   const generatePDF = (transaction) => {

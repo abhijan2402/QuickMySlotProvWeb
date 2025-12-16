@@ -14,6 +14,7 @@ import PricingModal from "../components/PricingModal";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import TermsAndConditions from "../pages/TermsAndConditions";
 import AppointmentDetails from "../pages/AppointmentDetails";
+import DownloadAppPage from "../pages/DownloadAppPage/DownloadApp";
 
 export default function AppRoutes() {
   return (
@@ -44,6 +45,7 @@ export default function AppRoutes() {
       </Route>
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+      <Route path="/qrpromotional" element={<DownloadAppPage />} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

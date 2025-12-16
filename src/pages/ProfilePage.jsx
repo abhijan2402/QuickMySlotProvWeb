@@ -24,7 +24,7 @@ import { ArrowUpOutlined, UploadOutlined } from "@ant-design/icons";
 import DashboardTabs from "./DashboardTabs";
 import ShopDetails from "../components/ShopDetails";
 import { initialShopData } from "../utils/shopdata";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   useGetProfileQuery,
@@ -40,8 +40,10 @@ import ShopDetailCards from "../components/ShopDetailCards";
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 
-
 export default function ProfilePage() {
+  const location = useLocation();
+  const { wallet, showWallet } = location.state || {};
+
   const user = useSelector((state) => state.auth.user);
   const { data: currentPlan } = useGetSubscriptionCurrentQuery();
   const navigate = useNavigate();
@@ -173,8 +175,7 @@ export default function ProfilePage() {
         */}
       </div>
       {/*  Boost your Business  */}
-      {
-        /*
+      {/*
         
       <div className="bg-purple-50 p-6 rounded-2xl shadow-md mt-2  flex justify-between items-center md:flex-row md:gap-8 max-w-7xl mx-auto ">
         <div>
@@ -192,10 +193,12 @@ export default function ProfilePage() {
           Boost Profile
         </button>
       </div>
-        */
-      }
-      <DashboardTabs />
-      <ShopDetailCards />;{/* Edit Profile Modal */}
+        */}
+      <DashboardTabs
+        initialTab={showWallet ? "wallet" : "analytics"}
+        walletAmount={wallet}
+      />
+      <ShopDetailCards />;
       <EditProfileModal
         visible={isModalOpen}
         onClose={() => setIsModalOpen(false)}
