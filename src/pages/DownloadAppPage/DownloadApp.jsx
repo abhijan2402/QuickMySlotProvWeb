@@ -17,8 +17,8 @@ export default function DownloadAppPage() {
       <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-12 md:py-20">
         <Card className="w-full max-w-4xl xl:max-w-5xl 2xl:max-w-6xl rounded-3xl border-0 shadow-2xl bg-white backdrop-blur-xl relative overflow-hidden">
           {/* Logo positioned at top-left of card */}
-          <div className="absolute top-6 left-6 z-20">
-            <div className="p-3  rounded-2xl hover:scale-105 transition-all duration-300">
+          <div className="absolute top-6 left-1/2 lg:left-6 -translate-x-1/2 lg:translate-x-0 z-20 transition-all duration-300">
+            <div className="p-3  rounded-2xl hover:scale-105 transition-all duration-300 ">
               <img
                 src={logo}
                 alt="QuickMySlot Logo"
@@ -32,7 +32,7 @@ export default function DownloadAppPage() {
           {/* Glass effect decoration */}
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-orange-500 via-orange-600 to-pink-500"></div>
 
-          <div className="text-center space-y-8 p-4 mt-4 sm:mt-0 md:p-12 lg:p-16 pt-24 md:pt-28 relative z-10">
+          <div className="text-center p-4 mt-8 sm:mt-0 md:p-12 lg:p-16 pt-24 md:pt-24 relative z-10">
             {/* Hero Headline */}
             <div className="space-y-4 max-w-3xl mx-auto">
               <Title className="!text-3xl sm:!text-4xl md:!text-5xl lg:!text-6xl !font-black !leading-tight bg-gradient-to-r from-slate-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent !m-0">
@@ -47,18 +47,8 @@ export default function DownloadAppPage() {
               </Text>
             </div>
 
-            {/* Personalized Download Prompt */}
-            <div className="pt-4 pb-1">
-              <div className="max-w-md mx-auto text-center space-y-3">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-100 to-green-100 rounded-full text-sm font-semibold text-emerald-800 mx-auto">
-                  <FaMobileAlt className="text-emerald-600" />
-                  Download this app for YOU
-                </div>
-              </div>
-            </div>
-
             {/* Single Line CTA Buttons - Responsive */}
-            <div className="pt-0">
+            <div className="mt-8 mb-6">
               <div className="flex flex-col lg:flex-row gap-4 max-w-4xl mx-auto">
                 {/* App Store */}
                 <div className="flex-1">
@@ -66,10 +56,20 @@ export default function DownloadAppPage() {
                     href="https://apps.apple.com/in/app/quickmyslot-provider/id6753897063"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block h-16 lg:h-14 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-2xl hover:shadow-3xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-r from-slate-900 via-slate-800 to-black hover:from-slate-700 hover:to-slate-900 text-white text-base lg:text-lg border-0"
+                    className="block h-16 lg:h-16 rounded-2xl font-bold flex items-center justify-center gap-1 shadow-2xl hover:shadow-3xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-r from-slate-900 via-slate-800 to-black hover:from-slate-700 hover:to-slate-900 text-white text-base lg:text-lg border-0"
                   >
-                    <FaApple className="text-xl lg:text-2xl text-orange-400" />
-                    <span>App Store</span>
+                    <img
+                      src="/appstore.png"
+                      alt="App Store"
+                      width={60}
+                      height={40}
+                    />
+                    <p className="flex flex-col">
+                      App Store{" "}
+                      <span className="text-xs text-left md:text-center font-medium">
+                        IOS
+                      </span>
+                    </p>
                   </a>
                 </div>
 
@@ -80,16 +80,26 @@ export default function DownloadAppPage() {
 "
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block h-16 lg:h-14 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-2xl hover:shadow-3xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-r from-emerald-500 via-emerald-600 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-base lg:text-lg border-0"
+                    className="block h-16 lg:h-16 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-2xl hover:shadow-3xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-r from-emerald-500 via-emerald-600 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-base lg:text-lg border-0"
                   >
-                    <FaGooglePlay className="text-xl lg:text-2xl" />
-                    <span>Google Play</span>
+                    <img
+                      src="/playstore.png"
+                      alt="Play Store"
+                      width={40}
+                      height={40}
+                    />
+                    <p className="flex flex-col">
+                      Google Play{" "}
+                      <span className="text-xs text-left md:text-center font-medium">
+                        Android
+                      </span>
+                    </p>
                   </a>
                 </div>
               </div>
             </div>
-            <div>OR</div>
-            <div className="flex-1 lg:flex-none lg:w-full">
+            <div className="m-2">OR</div>
+            <div className="flex-1 mt-1 lg:flex-none lg:w-full">
               <a
                 href="https://provider.quickmyslot.com/"
                 target="_blank"
@@ -103,7 +113,7 @@ export default function DownloadAppPage() {
             </div>
 
             {/* Footer */}
-            <div className="pt-12 border-t border-orange-100 max-w-md mx-auto">
+            <div className="pt-8 border-t border-orange-100 max-w-md mx-auto">
               <Text className="text-lg font-bold text-slate-800 block mb-1">
                 © {new Date().getFullYear()} QuickMySlot
               </Text>

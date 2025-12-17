@@ -134,7 +134,12 @@ export default function Footer() {
               className="flex-1"
             >
               <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-slate-900 via-slate-800 to-black hover:from-slate-900 hover:via-slate-700 hover:to-slate-900 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-gray-700 text-white text-sm font-semibold">
-                <FaApple className="text-xl text-orange-400" />
+                <img
+                  src="/appstore.png"
+                  alt="App Store"
+                  width={60}
+                  height={40}
+                />
                 <div>
                   <div className="font-bold">App Store</div>
                   <div className="text-xs opacity-90">iOS</div>
@@ -150,7 +155,12 @@ export default function Footer() {
               className="flex-1"
             >
               <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-green-600 hover:from-emerald-600 hover:via-emerald-700 hover:to-green-700 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-emerald-700 text-white text-sm font-semibold">
-                <FaGooglePlay className="text-xl" />
+                <img
+                  src="/playstore.png"
+                  alt="Play Store"
+                  width={40}
+                  height={40}
+                />
                 <div>
                   <div className="font-bold">Google Play</div>
                   <div className="text-xs opacity-90">Android</div>
