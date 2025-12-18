@@ -32,8 +32,6 @@ export default function ShopDetailCards() {
   const [form] = Form.useForm();
 
   const profileData = profile?.data;
-  console.log("profile data", profileData)
-  console.log("profile data", profile)
 
   useEffect(() => {
     if (user) {
@@ -53,7 +51,6 @@ export default function ShopDetailCards() {
     pauseOnHover: true,
   };
 
-  console.log(profileData?.gst_setting);
 
   const handleOpenModal = () => {
     if (profileData?.gst_setting) {

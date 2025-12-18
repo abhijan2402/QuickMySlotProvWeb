@@ -118,31 +118,25 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Download Apps - Prominent CTA */}
+        {/* Download Apps - Official Store Badges */}
         <div className="lg:col-span-1">
-          <h3 className="text-xl font-bold mb-6 text-white flex items-center gap-2">
+          <h3 className="text-xl font-bold mb-6 text-white">
             Download QuickMySlot Now
           </h3>
 
-          {/* Responsive Download Buttons */}
-          <div className="flex flex-col sm:flex-col gap-3 mb-6">
+          <div className="flex flex-col sm:flex-col gap-4">
             {/* App Store */}
             <a
               href="https://apps.apple.com/in/app/quickmyslot-provider/id6753897063"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1"
+              className="group"
             >
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-slate-900 via-slate-800 to-black hover:from-slate-900 hover:via-slate-700 hover:to-slate-900 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-gray-700 text-white text-sm font-semibold">
-                <img
-                  src="/appstore.png"
-                  alt="App Store"
-                  width={60}
-                  height={40}
-                />
-                <div>
-                  <div className="font-bold">App Store</div>
-                  <div className="text-xs opacity-90">iOS</div>
+              <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-black text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.03]">
+                <img src="/appstore.png" alt="Apple" className="h-8 w-8" />
+                <div className="leading-tight">
+                  <p className="text-xs opacity-80">Download from</p>
+                  <p className="text-lg font-semibold">App Store</p>
                 </div>
               </div>
             </a>
@@ -152,18 +146,17 @@ export default function Footer() {
               href="https://play.google.com/store/apps/details?id=com.qms_provider"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1"
+              className="group"
             >
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-green-600 hover:from-emerald-600 hover:via-emerald-700 hover:to-green-700 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-emerald-700 text-white text-sm font-semibold">
+              <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-black text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.03]">
                 <img
-                  src="/playstore.png"
-                  alt="Play Store"
-                  width={40}
-                  height={40}
+                  src="/playstore.png" // Play icon
+                  alt="Google Play"
+                  className="h-8 w-8"
                 />
-                <div>
-                  <div className="font-bold">Google Play</div>
-                  <div className="text-xs opacity-90">Android</div>
+                <div className="leading-tight">
+                  <p className="text-xs opacity-90">Get it from</p>
+                  <p className="text-lg font-semibold">Google Play</p>
                 </div>
               </div>
             </a>

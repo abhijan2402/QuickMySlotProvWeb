@@ -49,51 +49,48 @@ export default function DownloadAppPage() {
 
             {/* Single Line CTA Buttons - Responsive */}
             <div className="mt-8 mb-6">
-              <div className="flex flex-col lg:flex-row gap-4 max-w-4xl mx-auto">
+              <div className="flex flex-col lg:flex-row gap-4 max-w-4xl mx-auto justify-center">
                 {/* App Store */}
-                <div className="flex-1">
+                <div className="">
                   <a
                     href="https://apps.apple.com/in/app/quickmyslot-provider/id6753897063"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block h-16 lg:h-16 rounded-2xl font-bold flex items-center justify-center gap-1 shadow-2xl hover:shadow-3xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-r from-slate-900 via-slate-800 to-black hover:from-slate-700 hover:to-slate-900 text-white text-base lg:text-lg border-0"
+                    className="group"
                   >
-                    <img
-                      src="/appstore.png"
-                      alt="App Store"
-                      width={60}
-                      height={40}
-                    />
-                    <p className="flex flex-col">
-                      App Store{" "}
-                      <span className="text-xs text-left md:text-center font-medium">
-                        IOS
-                      </span>
-                    </p>
+                    <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-black text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.03]">
+                      <img
+                        src="/appstore.png"
+                        alt="Apple"
+                        className="h-8 w-8"
+                      />
+                      <div className="leading-tight">
+                        <p className="text-xs opacity-80">Download from</p>
+                        <p className="text-lg font-semibold">App Store</p>
+                      </div>
+                    </div>
                   </a>
                 </div>
 
                 {/* Google Play */}
-                <div className="flex-1">
+                <div className="">
                   <a
-                    href="https://play.google.com/store/apps/details?id=com.qms_provider
-"
+                    href="https://play.google.com/store/apps/details?id=com.qms_provider"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block h-16 lg:h-16 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-2xl hover:shadow-3xl hover:-translate-y-1 transition-all duration-300 bg-gradient-to-r from-emerald-500 via-emerald-600 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-base lg:text-lg border-0"
+                    className="group"
                   >
-                    <img
-                      src="/playstore.png"
-                      alt="Play Store"
-                      width={40}
-                      height={40}
-                    />
-                    <p className="flex flex-col">
-                      Google Play{" "}
-                      <span className="text-xs text-left md:text-center font-medium">
-                        Android
-                      </span>
-                    </p>
+                    <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-black text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.03]">
+                      <img
+                        src="/playstore.png" // Play icon
+                        alt="Google Play"
+                        className="h-8 w-8"
+                      />
+                      <div className="leading-tight">
+                        <p className="text-xs opacity-90">Get it from</p>
+                        <p className="text-lg font-semibold">Google Play</p>
+                      </div>
+                    </div>
                   </a>
                 </div>
               </div>

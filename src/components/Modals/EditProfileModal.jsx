@@ -50,6 +50,8 @@ function urlToFileList(url, name) {
     : [];
 }
 
+const GOOGLE_MAP_LIBRARIES= ["places"];
+
 export default function EditProfileModal({ visible, onClose, user }) {
   const dispatch = useDispatch();
   // file list for image cropper
@@ -73,6 +75,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
   const { data: category } = useGetcategoryQuery();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
 
+
   // Google Map
   const [searchText, setSearchText] = useState(user?.exact_location || "");
   const [markerPos, setMarkerPos] = useState(null);
@@ -81,7 +84,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_MAP_KEY,
-    libraries: ["places"],
+    libraries: GOOGLE_MAP_LIBRARIES,
   });
 
   // On load, set marker and center from address

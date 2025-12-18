@@ -30,7 +30,6 @@ export default function Navbar() {
       if (user?.exact_location || userLocation) {
         const result = await getCityAndAreaFromAddress(user.exact_location);
         if (result) {
-          console.log(result.city, result.area);
           setCity(result.city);
           setArea(result.area);
         } else {
@@ -59,7 +58,6 @@ export default function Navbar() {
     fetchLatLng();
   }, [addressString]);
 
-  // console.log(initialLocation);
 
   const navItems = [
     "Home",
