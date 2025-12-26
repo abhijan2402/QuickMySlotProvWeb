@@ -31,7 +31,7 @@ const AccountManagement = () => {
     if (data?.data) {
       setAccounts(data.data);
       if (!defaultAccountId && data.data.length > 0) {
-        setDefaultAccountId(data.data[0].id); // first one default by default
+        setDefaultAccountId(data.data[0].id);
       }
     }
   }, [data]);
@@ -71,6 +71,7 @@ const AccountManagement = () => {
       formData.append("bank_type", values.bank_type.toLowerCase());
 
       formData.append("pan", values.pan);
+      formData.append("gst", values.gst);
       formData.append("street1", values.street1);
       formData.append("street2", values.street2 || "");
       formData.append("city", values.city);
@@ -137,6 +138,8 @@ const AccountManagement = () => {
         <h2 className="text-black text-sm sm:text-xl mb-2 sm:mb-1 font-medium">
           Manage Accounts
         </h2>
+        {data.data.length === 1 ? null : 
+        
         <Button
           onClick={() => showModal(null)}
           type="primary"
@@ -145,6 +148,7 @@ const AccountManagement = () => {
         >
           Add Bank Account
         </Button>
+        }
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -197,13 +201,13 @@ const AccountManagement = () => {
                 >
                   Delete
                 </Button>
-                <Button
+                {/* <Button
                   size="small"
                   type={item?.is_set === "1" ? "primary" : "default"}
                   onClick={() => handleSetDefault(item.id)}
                 >
                   {item?.is_set === "1" ? "Default" : "Set Default"}
-                </Button>
+                </Button> */}
               </div>
             </div>
           ))
@@ -315,6 +319,15 @@ const AccountManagement = () => {
                 ]}
               >
                 <Input placeholder="Enter postal code" />
+              </Form.Item>
+              <Form.Item
+                label="GST Number"
+                name="gst"
+                rules={[
+                  { required: true, message: "Please enter gst number" },
+                ]}
+              >
+                <Input placeholder="Enter gst number" />
               </Form.Item>
             </>
           )}
