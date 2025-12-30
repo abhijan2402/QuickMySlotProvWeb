@@ -49,7 +49,7 @@ export default function Appointments() {
   // ✅ API with ensured default param
   const { data, isLoading, refetch } = useGetvendorBookingQuery(
     { status: apiStatus },
-    { refetchOnMountOrArgChange: true }
+    // { refetchOnMountOrArgChange: true }
   );
 
   const [acceptBooking] = useAcceptBookingMutation();
@@ -58,6 +58,7 @@ export default function Appointments() {
   const [currentPage, setCurrentPage] = useState(1);
   const [acceptingId, setAcceptingId] = useState(null);
   const [pageSize] = useState(8);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
 
   // Feedback Modal
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
@@ -78,9 +79,17 @@ export default function Appointments() {
 
   // --- Actions ---
   const handleAccept = async (id) => {
+    if (!selectedTimeSlot) {
+      toast.warning("Please select time slots to accept the booking.");
+      return;
+    }
+
     setAcceptingId(id);
     try {
-      await acceptBooking(id).unwrap();
+      const formdata = new FormData();
+      formdata.append("accept_time", selectedTimeSlot);
+
+      await acceptBooking({ id, formdata }).unwrap();
       toast.success("Appointment accepted successfully");
       refetch();
     } catch {
@@ -128,10 +137,10 @@ export default function Appointments() {
 
   // --- UI ---
   return (
-    <div className="mt-10 px-3 sm:px-6">
+    <div className="mt-10 px-3 sm:px-6 mb-8  ">
       <Breadcrumb propertyTitle={"My Appointments"} />
 
-      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-md p-4 sm:p-6">
+      <div className="max-w-7xl mx-auto bg-white border rounded-2xl shadow-md p-4 sm:p-6">
         <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-6">
           Appointments
         </h3>
@@ -284,9 +293,18 @@ export default function Appointments() {
                               ([time, date]) => (
                                 <span
                                   key={time}
-                                  className="border border-orange-500 bg-orange-50 px-2 py-1 rounded-md text-orange-700 text-xs font-semibold"
+                                  onClick={() => {
+                                    setSelectedTimeSlot(
+                                      selectedTimeSlot === time ? null : time
+                                    );
+                                  }}
+                                  className={`cursor-pointer border px-2 py-1 rounded-md text-xs font-semibold transition-all duration-200 hover:shadow-md ${
+                                    selectedTimeSlot === time
+                                      ? "border-orange-500 bg-orange-500 text-white shadow-sm"
+                                      : " bg-gray-50 border-orange-400 text-gray-700 hover:border-orange-400 hover:bg-orange-50"
+                                  }`}
                                 >
-                                  {date}
+                                  {time}
                                 </span>
                               )
                             )}

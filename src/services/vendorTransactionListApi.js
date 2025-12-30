@@ -42,10 +42,10 @@ export const vendorTransactionApi = createApi({
 
     // Accept Booking
     acceptBooking: builder.mutation({
-      query: (id) => ({
+      query: ({ id, formdata }) => ({
         url: `booking/accepted/${id}`,
         method: "POST",
-        body: {},
+        body: formdata,
       }),
       invalidatesTags: ["vendorBooking"],
     }),
@@ -77,5 +77,5 @@ export const {
   useAcceptBookingMutation,
   useRejectBookingMutation,
   useCompletedBookingMutation,
-  useGetvendorBookingDetailsQuery
+  useGetvendorBookingDetailsQuery,
 } = vendorTransactionApi;
