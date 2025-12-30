@@ -47,8 +47,8 @@ export default function Appointments() {
   const apiStatus = statusMap[activeTab] || "pending";
 
   // ✅ API with ensured default param
-  const { data, isLoading, refetch } = useGetvendorBookingQuery(
-    { status: apiStatus },
+  const { data, isLoading, refetch, isFetching } = useGetvendorBookingQuery(
+    { status: apiStatus }
     // { refetchOnMountOrArgChange: true }
   );
 
@@ -58,7 +58,18 @@ export default function Appointments() {
   const [currentPage, setCurrentPage] = useState(1);
   const [acceptingId, setAcceptingId] = useState(null);
   const [pageSize] = useState(8);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState({});
+
+  const toggleTimeSlot = (appointmentId, time) => {
+    setSelectedTimeSlots((prev) => ({
+      ...prev,
+      [appointmentId]: prev[appointmentId] === time ? null : time,
+    }));
+  };
+
+  const getSelectedTimeSlot = (appointmentId) => {
+    return selectedTimeSlots[appointmentId] || null;
+  };
 
   // Feedback Modal
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
@@ -79,8 +90,9 @@ export default function Appointments() {
 
   // --- Actions ---
   const handleAccept = async (id) => {
+    const selectedTimeSlot = getSelectedTimeSlot(id);
     if (!selectedTimeSlot) {
-      toast.warning("Please select time slots to accept the booking.");
+      toast.warning("Please select a time slot to accept the booking.");
       return;
     }
 
@@ -92,6 +104,7 @@ export default function Appointments() {
       await acceptBooking({ id, formdata }).unwrap();
       toast.success("Appointment accepted successfully");
       refetch();
+      setSelectedTimeSlots((prev) => ({ ...prev, [id]: null }));
     } catch {
       toast.error("Failed to accept appointment");
     } finally {
@@ -169,7 +182,7 @@ export default function Appointments() {
         </div>
 
         {/* List */}
-        {isLoading ? (
+        {isFetching ? (
           <div className="min-h-[50vh] flex items-center justify-center">
             <Skeleton active paragraph={{ rows: 4 }} className="w-full" />
           </div>
@@ -290,23 +303,48 @@ export default function Appointments() {
                         <div className="flex flex-wrap gap-1 mt-1">
                           {appt.schedule_time &&
                             Object.entries(appt.schedule_time).map(
-                              ([time, date]) => (
-                                <span
-                                  key={time}
-                                  onClick={() => {
-                                    setSelectedTimeSlot(
-                                      selectedTimeSlot === time ? null : time
-                                    );
-                                  }}
-                                  className={`cursor-pointer border px-2 py-1 rounded-md text-xs font-semibold transition-all duration-200 hover:shadow-md ${
-                                    selectedTimeSlot === time
-                                      ? "border-orange-500 bg-orange-500 text-white shadow-sm"
-                                      : " bg-gray-50 border-orange-400 text-gray-700 hover:border-orange-400 hover:bg-orange-50"
-                                  }`}
-                                >
-                                  {time}
-                                </span>
-                              )
+                              ([time, date], index) => {
+                                const isPendingTab = activeTab === "pending";
+                                const isSelected = isPendingTab
+                                  ? getSelectedTimeSlot(appt.id) === time
+                                  : appt.accept_time === time;
+
+                                return (
+                                  <span
+                                    key={`${appt.id}-${time}-${index}`}
+                                    onClick={
+                                      isPendingTab
+                                        ? () => toggleTimeSlot(appt.id, time)
+                                        : undefined
+                                    }
+                                    className={`px-2 py-1 rounded-md text-xs font-semibold transition-all duration-200 relative group ${
+                                      isSelected
+                                        ? "border-2 border-orange-500 bg-orange-500 text-white shadow-lg scale-105"
+                                        : isPendingTab
+                                        ? "border-gray-300 bg-white hover:border-orange-400 hover:bg-orange-50 hover:shadow-md hover:scale-[1.02]"
+                                        : "border-gray-200 bg-gray-50 cursor-default"
+                                    } ${
+                                      isPendingTab
+                                        ? "cursor-pointer select-none"
+                                        : "cursor-default"
+                                    }`}
+                                    title={
+                                      isSelected && !isPendingTab
+                                        ? `Accepted time: ${time}`
+                                        : isPendingTab
+                                        ? "Click to select"
+                                        : ""
+                                    }
+                                  >
+                                    {time}
+                                    {isSelected && !isPendingTab && (
+                                      <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-500 border-2 border-white rounded-full flex items-center justify-center text-xs font-bold text-white shadow-sm">
+                                        ✓
+                                      </div>
+                                    )}
+                                  </span>
+                                );
+                              }
                             )}
                         </div>
                       </div>
