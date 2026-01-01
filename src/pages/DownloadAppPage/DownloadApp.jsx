@@ -49,7 +49,7 @@ export default function DownloadAppPage() {
 
             {/* Single Line CTA Buttons - Responsive */}
             <div className="mt-8 mb-6">
-              <div className="flex flex-col lg:flex-row gap-4 max-w-4xl mx-auto justify-center">
+              <div className="flex flex-col items-center lg:flex-row gap-4 max-w-4xl mx-auto justify-center">
                 {/* App Store */}
                 <div className="">
                   <a
@@ -58,16 +58,12 @@ export default function DownloadAppPage() {
                     rel="noopener noreferrer"
                     className="group"
                   >
-                    <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-black text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.03]">
+                    <div className="flex  items-center gap-4 px-5 rounded-xl  text-white transition-all duration-300 hover:scale-[1.03]">
                       <img
                         src="/appstore.png"
                         alt="Apple"
-                        className="h-8 w-8"
+                        className="w-46 sm:w-48 h-14"
                       />
-                      <div className="leading-tight">
-                        <p className="text-xs opacity-80">Download from</p>
-                        <p className="text-lg font-semibold">App Store</p>
-                      </div>
                     </div>
                   </a>
                 </div>
@@ -80,16 +76,12 @@ export default function DownloadAppPage() {
                     rel="noopener noreferrer"
                     className="group"
                   >
-                    <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-black text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.03]">
+                    <div className="flex  items-center gap-4 px-5 rounded-xl  text-white transition-all duration-300 hover:scale-[1.03]">
                       <img
-                        src="/playstore.png" // Play icon
-                        alt="Google Play"
-                        className="h-8 w-8"
+                        src="/playstore.png"
+                        alt="Apple"
+                        className="w-40 sm:w-48 h-14"
                       />
-                      <div className="leading-tight">
-                        <p className="text-xs opacity-90">Get it from</p>
-                        <p className="text-lg font-semibold">Google Play</p>
-                      </div>
                     </div>
                   </a>
                 </div>

@@ -5,10 +5,10 @@ import {
   useVerifySubscriptionMutation,
 } from "../services/subscriptionApi";
 import SpinnerLodar from "./SpinnerLodar";
-import { div } from "framer-motion/m";
 import { useSelector } from "react-redux";
 import { Form } from "antd";
 import { toast } from "react-toastify";
+import { capitalizeFirstLetter } from "../utils/utils";
 
 const tagColors = [
   "bg-blue-500",
@@ -38,14 +38,12 @@ const PricingModal = () => {
   };
 
   const handlePayment = async () => {
-    console.log("Payment started for plan:", selectedPlan);
     const formData = new FormData();
     formData.append("subscription_id", selectedPlan.id);
     formData.append("role", "vendor");
 
     // ✅ Create booking/order
     const order = await addSubscription(formData).unwrap();
-    console.log(order);
 
     // 🔹 Razorpay payment flow
     if (!order?.order_id) {
@@ -57,7 +55,7 @@ const PricingModal = () => {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: order?.amount,
       currency: "INR",
-      name: "Quickmyslot",
+      name: "QuickMySlot",
       description: "Add Subscription",
       image: "/logo1.png",
       order_id: order?.order_id,
@@ -70,7 +68,6 @@ const PricingModal = () => {
 
         try {
           const verifyRes = await verifySubscription(verifyData).unwrap();
-          console.log(verifyRes);
           if (verifyRes.status) {
             toast.success("Payment verified & booking confirmed!");
           } else {
@@ -78,7 +75,6 @@ const PricingModal = () => {
           }
         } catch (err) {
           toast.error("Error verifying payment");
-          console.error(err);
           setModalVisible(false);
         }
       },
@@ -160,7 +156,7 @@ const PricingModal = () => {
                       tagColors[idx % tagColors.length]
                     }`}
                   >
-                    {plan.extra?.key_word || "Plan"}
+                    {capitalizeFirstLetter(plan.extra?.key_word) || "Plan"}
                   </span>
                 </div>
 
@@ -233,16 +229,19 @@ const PricingModal = () => {
               <strong>₹{selectedPlan?.price}</strong> ({billingCycle} billing).
             </p>
 
-            <p className="mt-3 font-semibold text-gray-900">
-              Features included:
-            </p>
-            <ul className="list-disc ml-6 mt-2 text-gray-700">
-              {Object.keys(selectedPlan?.extra || {})
-                .filter((k) => k !== "key_word")
-                .map((key) => (
-                  <li key={key}>{selectedPlan.extra[key]}</li>
-                ))}
-            </ul>
+            <div className="flex flex-col items-start">
+              <p className="mt-3  font-semibold text-gray-900">
+                Features included:
+              </p>
+
+              <ul className="list-disc ml-4 text-left mt-2 text-gray-700">
+                {Object.keys(selectedPlan?.extra || {})
+                  .filter((k) => k !== "key_word")
+                  .map((key) => (
+                    <li key={key}>{selectedPlan.extra[key]}</li>
+                  ))}
+              </ul>
+            </div>
 
             <div className="flex justify-end space-x-3 mt-6">
               <button

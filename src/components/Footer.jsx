@@ -124,7 +124,7 @@ export default function Footer() {
             Download QuickMySlot Now
           </h3>
 
-          <div className="flex flex-col sm:flex-col gap-4">
+          <div className="flex flex-col md:flex-col gap-4">
             {/* App Store */}
             <a
               href="https://apps.apple.com/in/app/quickmyslot-provider/id6753897063"
@@ -132,12 +132,8 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="group"
             >
-              <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-black text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.03]">
-                <img src="/appstore.png" alt="Apple" className="h-8 w-8" />
-                <div className="leading-tight">
-                  <p className="text-xs opacity-80">Download from</p>
-                  <p className="text-lg font-semibold">App Store</p>
-                </div>
+              <div className="flex items-center gap-4 px-5 py-3 rounded-xl  text-white  transition-all duration-300 hover:scale-[1.03]">
+                <img src="/appstore.png" alt="Apple" className=" h-12 w-40" />
               </div>
             </a>
 
@@ -148,16 +144,12 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="group"
             >
-              <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-black text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.03]">
+              <div className="flex items-center gap-4 px-5 py-3 rounded-xl  text-white  transition-all duration-300 hover:scale-[1.03]">
                 <img
-                  src="/playstore.png" // Play icon
+                  src="/playstore.png"
                   alt="Google Play"
-                  className="h-8 w-8"
+                  className=" h-11 sm:h-full w-40"
                 />
-                <div className="leading-tight">
-                  <p className="text-xs opacity-90">Get it from</p>
-                  <p className="text-lg font-semibold">Google Play</p>
-                </div>
               </div>
             </a>
           </div>
