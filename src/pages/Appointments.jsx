@@ -31,14 +31,14 @@ const statusMap = {
   pending: "pending",
   accepted: "accepted",
   rejected: "rejected",
-  past: "completed",
+  completed: "completed",
 };
 
 const tabs = [
   { id: "pending", icon: <FaChartPie />, label: "Pending" },
   { id: "accepted", icon: <FaCheckCircle />, label: "Accepted" },
   { id: "rejected", icon: <FaTimesCircle />, label: "Cancelled" },
-  { id: "past", icon: <FaCalendarAlt />, label: "Completed" },
+  { id: "completed", icon: <FaCalendarAlt />, label: "Completed" },
 ];
 
 export default function Appointments() {
@@ -47,10 +47,15 @@ export default function Appointments() {
   const apiStatus = statusMap[activeTab] || "pending";
 
   // ✅ API with ensured default param
-  const { data, isLoading, refetch, isFetching } = useGetvendorBookingQuery(
-    { status: apiStatus }
-    // { refetchOnMountOrArgChange: true }
+  const { data, isLoading, refetch, error } = useGetvendorBookingQuery(
+    { status: apiStatus },
+    {
+      skip: !apiStatus, // Don't call empty status
+      refetchOnMountOrArgChange: 5, // Refetch on tab change
+    }
   );
+
+  console.log(error);
 
   const [acceptBooking] = useAcceptBookingMutation();
   const [rejectBooking] = useRejectBookingMutation();
@@ -182,7 +187,7 @@ export default function Appointments() {
         </div>
 
         {/* List */}
-        {isFetching ? (
+        {isLoading ? (
           <div className="min-h-[50vh] flex items-center justify-center">
             <Skeleton active paragraph={{ rows: 4 }} className="w-full" />
           </div>

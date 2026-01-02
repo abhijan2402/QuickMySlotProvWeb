@@ -234,7 +234,7 @@ const PricingModal = () => {
                 Features included:
               </p>
 
-              <ul className="list-disc ml-4 text-left mt-2 text-gray-700">
+              <ul className="list-disc text-left ml-4  mt-2 text-gray-700">
                 {Object.keys(selectedPlan?.extra || {})
                   .filter((k) => k !== "key_word")
                   .map((key) => (

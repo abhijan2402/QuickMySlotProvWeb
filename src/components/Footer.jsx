@@ -132,8 +132,12 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="group"
             >
-              <div className="flex items-center gap-4 px-5 py-3 rounded-xl  text-white  transition-all duration-300 hover:scale-[1.03]">
-                <img src="/appstore.png" alt="Apple" className=" h-12 w-40" />
+              <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-black text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.03]">
+                <img src="/appstoreicon.png" alt="Apple" className="h-8 w-8" />
+                <div className="leading-tight">
+                  <p className="text-xs opacity-80">Download from</p>
+                  <p className="text-lg font-semibold">App Store</p>
+                </div>
               </div>
             </a>
 
@@ -144,12 +148,16 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="group"
             >
-              <div className="flex items-center gap-4 px-5 py-3 rounded-xl  text-white  transition-all duration-300 hover:scale-[1.03]">
+              <div className="flex items-center gap-4 px-5 py-3 rounded-xl bg-black text-white shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.03]">
                 <img
-                  src="/playstore.png"
+                  src="/playstoreicon.png" // Play icon
                   alt="Google Play"
-                  className=" h-11 sm:h-full w-40"
+                  className="h-8 w-8"
                 />
+                <div className="leading-tight">
+                  <p className="text-xs opacity-90">Get it from</p>
+                  <p className="text-lg font-semibold">Google Play</p>
+                </div>
               </div>
             </a>
           </div>

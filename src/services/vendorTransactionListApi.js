@@ -3,9 +3,12 @@ export const vendorTransactionApi = createApi({
   reducerPath: "vendorTransactionApi",
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_URL,
+    // credentials: "include", 
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
-      if (token) headers.set("Authorization", `Bearer ${token}`);
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`); // ✅ Header fixed
+      }
       return headers;
     },
   }),
@@ -21,7 +24,7 @@ export const vendorTransactionApi = createApi({
     getvendorBooking: builder.query({
       query: ({ status, id } = {}) => {
         const url = status
-          ? `bookings/list?status=${status}`
+          ? `appointment/list?status=${status}`
           : `bookings/list/${id}`;
         return {
           url,
