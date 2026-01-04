@@ -8,8 +8,8 @@ export const cmsApi = createApi({
     // Get cms (GET request)
     // [{"key":"slug","value":"privacy-policy","equals":true,"description":"privacy-policy,about-us,terms-condition","enabled":true,"uuid":"600cafc6-a933-4dc6-87ab-de4fd5959681"}]
     getcms: builder.query({
-      query: (slug) => ({
-        url: `cms-page?type=vendor&slug=${slug}`,
+      query: ({ slug, type }) => ({
+        url: `cms-page?type=${type}&slug=${slug}`,
         method: "GET",
       }),
       providesTags: ["cms"],

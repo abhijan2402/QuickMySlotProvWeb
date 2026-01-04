@@ -24,8 +24,8 @@ export default function NotificationsPage() {
 
   const handleRead = async (id) => {
     const res = await readNotification({ id, type: "is_single_read" });
-    if (res?.data?.success) {
-      toast.success("Marked as read");
+    if (res?.status === "success") {
+      toast.success(res?.status?.message || "Marked as read");
       refetch();
     } else {
       toast.error("Failed to update status");
@@ -34,8 +34,8 @@ export default function NotificationsPage() {
 
   const handleAllRead = async () => {
     const res = await readNotification({ id: "", type: "is_all_read" });
-    if (res?.data?.success) {
-      toast.success("All notifications marked as read");
+    if (res?.status === "success") {
+      toast.success(res?.status?.message || "All notifications marked as read");
       refetch();
     } else {
       toast.error("Failed to update all");

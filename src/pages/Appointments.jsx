@@ -55,8 +55,6 @@ export default function Appointments() {
     }
   );
 
-  console.log(error);
-
   const [acceptBooking] = useAcceptBookingMutation();
   const [rejectBooking] = useRejectBookingMutation();
   const [completedBooking] = useCompletedBookingMutation();
@@ -205,56 +203,66 @@ export default function Appointments() {
                 key={appt.id}
                 className="rounded-xl border border-gray-200 bg-gray-50 mb-4 p-3 sm:p-5 shadow-sm hover:shadow-md transition"
                 actions={[
-                  activeTab === "pending" && (
-                    <div className="flex gap-2">
-                      <Button
-                        type="primary"
-                        loading={acceptingId === appt.id}
-                        onClick={() => handleAccept(appt.id)}
-                        style={{
-                          backgroundColor: "#16a34a",
-                          borderColor: "#16a34a",
-                          color: "#fff",
-                        }}
-                      >
-                        Accept
-                      </Button>
-                      <Button
-                        danger
-                        type="default"
-                        onClick={() => handleReject(appt.id)}
-                      >
-                        Reject
-                      </Button>
-                    </div>
-                  ),
-                  activeTab === "accepted" && (
-                    <Button onClick={() => handleComplete(appt.id)}>
-                      Mark Completed
-                    </Button>
-                  ),
-                  activeTab === "past" && (
-                    <Button onClick={handleGiveFeedbackClick}>
-                      Give Feedback
-                    </Button>
-                  ),
-                  <Button
-                    type="default"
-                    onClick={() => handleViewDetails(appt.id)}
-                    style={{
-                      backgroundColor: "#EE4E34",
-                      borderColor: "#EE4E34",
-                      color: "#fff",
-                    }}
+                  <div
+                    key="actions"
+                    className="w-full flex flex-col sm:flex-row gap-2 justify-stretch sm:justify-start"
                   >
-                    View Details
-                  </Button>,
+                    {/* Pending */}
+                    {activeTab === "pending" && (
+                      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        <button
+                          className="w-full sm:w-auto px-4 py-2 text-white bg-green-700 hover:bg-green-800 rounded-md text-sm font-medium flex items-center justify-center h-8"
+                          disabled={acceptingId === appt.id}
+                          onClick={() => handleAccept(appt.id)}
+                        >
+                          {acceptingId === appt.id ? (
+                            <span className="flex items-center gap-2">
+                              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              Accepting...
+                            </span>
+                          ) : (
+                            "Accept"
+                          )}
+                        </button>
+
+                        <button
+                          className="w-full sm:w-auto px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-md text-sm font-medium flex items-center justify-center h-8"
+                          onClick={() => handleReject(appt.id)}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Accepted */}
+                    {activeTab === "accepted" && (
+                      <button
+                        className="w-full sm:w-auto px-6 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-md text-sm font-semibold flex items-center justify-center h-8"
+                        onClick={() => handleComplete(appt.id)}
+                      >
+                        Mark Completed
+                      </button>
+                    )}
+
+                    {/* Past */}
+                    {activeTab === "past" && (
+                      <button
+                        className="w-full sm:w-auto px-6 py-2 text-white bg-purple-500 hover:bg-purple-600 rounded-md text-sm font-semibold flex items-center justify-center h-8"
+                        onClick={handleGiveFeedbackClick}
+                      >
+                        Give Feedback
+                      </button>
+                    )}
+
+                    {/* Always visible */}
+                    <button
+                      className="w-full sm:w-auto px-6 py-2 text-white bg-[#EE4E34] hover:bg-[#d43c2c] rounded-md text-sm font-semibold flex items-center justify-center h-8"
+                      onClick={() => handleViewDetails(appt.id)}
+                    >
+                      View Details
+                    </button>
+                  </div>,
                 ].filter(Boolean)}
-                extra={
-                  <Tag color={statusColorMap[activeTab]}>
-                    {tabs.find((tab) => tab.id === activeTab)?.label}
-                  </Tag>
-                }
                 style={{
                   marginBottom: 16,
                   borderRadius: 12,
@@ -265,7 +273,7 @@ export default function Appointments() {
               >
                 <List.Item.Meta
                   title={
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex  justify-between items-center gap-2">
                       {Array.isArray(appt.services) && appt.services.length > 0
                         ? appt.services.map((service) => (
                             <span
@@ -276,6 +284,16 @@ export default function Appointments() {
                             </span>
                           ))
                         : "Service"}
+
+                      <div>
+                        {/* Status Tag */}
+                        <Tag
+                          color={statusColorMap[activeTab]}
+                          className="w-full  p-1 text-center  flex items-center justify-center text-xs"
+                        >
+                          {tabs.find((tab) => tab.id === activeTab)?.label}
+                        </Tag>
+                      </div>
                     </div>
                   }
                   description={
@@ -359,7 +377,7 @@ export default function Appointments() {
                 <div className="mt-2 font-medium text-gray-800">
                   Amount:{" "}
                   <span className="ml-2 bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
-                    ₹{appt.amount}
+                    ₹{appt.amount || appt.final_amount}
                   </span>
                 </div>
               </List.Item>

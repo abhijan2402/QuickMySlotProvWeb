@@ -226,7 +226,7 @@ export default function Navbar() {
             >
               ✕
             </button>
-            <ul className="flex flex-col gap-6 text-xl items-center mb-8">
+            <ul className="flex flex-col gap-6 text-xl items-center mb-0">
               {navItems.map((item) => (
                 <li
                   key={item}
@@ -243,18 +243,18 @@ export default function Navbar() {
               ))}
               <li>
                 <div
-                  className="relative cursor-pointer text-xl text-black mt-4"
+                  className="relative cursor-pointer py-2 text-xl text-black"
                   onClick={() => {
                     setIsMobileMenuOpen(false);
                     navigate("/notifications");
                   }}
                 >
-                  <span>Notification</span>
+                  Notification
                 </div>
               </li>
               <li>
                 <div
-                  className="cursor-pointer text-black text-xl "
+                  className="cursor-pointer py-2 text-black text-xl "
                   onClick={() => {
                     setIsMobileMenuOpen(false);
                     navigate("/profile");

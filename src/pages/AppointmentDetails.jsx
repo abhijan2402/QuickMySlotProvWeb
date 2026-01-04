@@ -70,56 +70,59 @@ export default function AppointmentDetails() {
         Appointment Details
       </h2>
 
-      {/* Shop Details */}
-      <div className="bg-white rounded-xl shadow p-4 mb-4">
-        <img
+      <div className="flex flex-col md:flex-row gap-4 mb-4">
+        {/* Shop Details */}
+
+        <div className="bg-white w-full rounded-xl shadow p-4 mb-4 md:mb-0">
+          {/* <img
           src={appointment.vendor?.image}
           alt="shop"
           className="w-full h-40 object-cover rounded-lg mb-3"
-        />
-        <h3 className="text-lg font-semibold text-black">
-          {appointment.vendor?.business_name || appointment.vendor?.name}
-        </h3>
-        <p className="text-gray-600 flex items-center gap-2">
-          <EnvironmentOutlined />{" "}
-          {appointment.vendor?.location_area_served ||
-            appointment.vendor?.FullAddress}
-        </p>
-        <p className="text-gray-600 flex items-center gap-2">
-          <PhoneOutlined /> {appointment.vendor?.phone_number}
-        </p>
-        <div className="flex justify-end">
+        /> */}
+          <h3 className="text-lg font-semibold text-black">
+            {appointment.vendor?.business_name || appointment.vendor?.name}
+          </h3>
+          <p className="text-gray-600 flex items-center gap-2">
+            <EnvironmentOutlined />{" "}
+            {appointment.vendor?.location_area_served ||
+              appointment.vendor?.FullAddress}
+          </p>
+          <p className="text-gray-600 flex items-center gap-2">
+            <PhoneOutlined /> {appointment.vendor?.phone_number}
+          </p>
+          {/* <div className="flex justify-end">
           <Button type="primary" className="mt-2 bg-[#EE4E34]">
             Chat
           </Button>
+        </div> */}
         </div>
-      </div>
 
-      {/* Customer Details */}
-      <div className="bg-white rounded-xl shadow p-4 mb-4">
-        <h4 className="font-semibold mb-2 text-black">Customer Details</h4>
-        <p className="text-gray-700 flex items-center gap-2">
-          <UserOutlined /> {appointment.customer?.name}
-        </p>
-        <p className="text-gray-700 flex items-center gap-2">
-          <PhoneOutlined /> {appointment.customer?.phone_number}
-        </p>
-        <p className="text-gray-700 flex items-center gap-2">
-          <EnvironmentOutlined />{" "}
-          {appointment.customer?.address ||
-            appointment.customer?.FullAddress ||
-            "Not provided"}
-        </p>
-        <p className="text-gray-700 flex items-center gap-2 flex-wrap">
-          <CalendarOutlined />{" "}
-          {Object.entries(appointment.schedule_time || {}).map(
-            ([time, date]) => (
-              <span key={time} className="mr-3">
-                {date} - {time}
-              </span>
-            )
-          )}
-        </p>
+        {/* Customer Details */}
+        <div className="bg-white w-full rounded-xl shadow p-4 mb-4 md:mb-0">
+          <h4 className="font-semibold mb-2 text-black">Customer Details</h4>
+          <p className="text-gray-700 flex items-center gap-2">
+            <UserOutlined /> {appointment.customer?.name}
+          </p>
+          <p className="text-gray-700 flex items-center gap-2">
+            <PhoneOutlined /> {appointment.customer?.phone_number}
+          </p>
+          <p className="text-gray-700 flex items-center gap-2">
+            <EnvironmentOutlined />{" "}
+            {appointment.customer?.address ||
+              appointment.customer?.FullAddress ||
+              "Not provided"}
+          </p>
+          <p className="text-gray-700 flex items-center gap-2 flex-wrap">
+            <CalendarOutlined />{" "}
+            {Object.entries(appointment.schedule_time || {}).map(
+              ([time, date]) => (
+                <span key={time} className="mr-3">
+                  {date} - {time}
+                </span>
+              )
+            )}
+          </p>
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4">
