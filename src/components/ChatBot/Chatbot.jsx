@@ -66,7 +66,7 @@ const Chatbot = () => {
       return `🤖 It looks like you have multiple queries! Please reach our [Support Page](https://provider.quickmyslot.com/support) for quick help.`;
 
     // ---- Default Fallback ----
-    return "🤔 I'm not sure about that. Please check your Provider Dashboard or visit our Support Page for more help!";
+    return "🤔 I'm not sure about that. Please check your Provider Dashboard or visit our Support Page (https://provider.quickmyslot.com/support) for more help!";
   };
 
   const handleKeyPress = (e) => {

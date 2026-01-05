@@ -218,10 +218,11 @@ export default function AppointmentDetails() {
       </div>
 
       {/* Payment Method */}
-      <div className="bg-white rounded-xl text-black shadow mt-4 p-4 mb-4">
+      <div className="bg-white flex items-center justify-between rounded-xl text-black shadow mt-4 p-4 mb-4">
         <h4 className="font-semibold mb-2">Payment Status</h4>
         <p className="text-gray-700 flex items-center gap-2">
-          <FaRupeeSign /> {appointment.payment_status || "Pending"}
+          {/* <FaRupeeSign /> */}
+           {appointment.status || "Pending"}
         </p>
       </div>
 

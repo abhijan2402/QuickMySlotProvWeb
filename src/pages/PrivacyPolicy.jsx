@@ -4,7 +4,7 @@ import { useGetcmsQuery } from "../services/cmsApi";
 export default function PrivacyPolicy() {
   const { data, isLoading } = useGetcmsQuery({
     slug: "privacy-policy",
-    type: "customer",
+    type: "provider",
   });
 
   if (isLoading) {

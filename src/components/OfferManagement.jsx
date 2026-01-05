@@ -41,17 +41,28 @@ const OfferManagement = () => {
   const [updateOffer] = useUpdateofferMutation();
   const [deleteOffer] = useDeleteofferMutation();
 
+  // ✅ DISABLE PAST DATES
+  const disabledDate = (current) => {
+    return current && current < moment().startOf("day");
+  };
+
+  // ✅ FORCE UPPERCASE PROMO CODE
+  const handlePromoCodeChange = (e) => {
+    const value = e.target.value.toUpperCase();
+    offerForm.setFieldsValue({ promo_code: value });
+  };
+
   // Open modal
   const openOfferModal = (offer) => {
     if (offer) {
       setEditingOffer(offer);
       offerForm.setFieldsValue({
-        promo_code: offer.promo_code,
+        promo_code: offer.promo_code?.toUpperCase(),
         type: offer.type,
         amount: offer.amount,
         description: offer.description,
         isActive: offer.isActive === true,
-        is_highlighted: offer.is_highlighted === 1, // new field
+        is_highlighted: offer.is_highlighted === 1,
         validity:
           offer.start_on && offer.expired_on
             ? [moment(offer.start_on), moment(offer.expired_on)]
@@ -69,12 +80,13 @@ const OfferManagement = () => {
     try {
       const values = await offerForm.validateFields();
       const formData = new FormData();
-      formData.append("promo_code", values.promo_code);
+        const uppercasePromoCode = values.promo_code.toUpperCase();
+        formData.append("promo_code", uppercasePromoCode);
       formData.append("type", values.type);
       formData.append("amount", values.amount);
       formData.append("description", values.description || "");
       formData.append("isActive", values.isActive ? 1 : 0);
-      formData.append("is_highlighted", values.is_highlighted ? 1 : 0); // new field
+      formData.append("is_highlighted", values.is_highlighted ? 1 : 0);
       if (values.validity) {
         formData.append("start_on", values.validity[0].format("YYYY-MM-DD"));
         formData.append("expired_on", values.validity[1].format("YYYY-MM-DD"));
@@ -109,7 +121,7 @@ const OfferManagement = () => {
     <div className="p-4">
       <Row justify="space-between" align="middle" className="mb-6">
         <Col>
-          <h2  className="text-md sm:text-xl font-semibold">Offer Management</h2>
+          <h2 className="text-md sm:text-xl font-semibold">Offer Management</h2>
         </Col>
         <Col>
           <Button type="primary" onClick={() => openOfferModal(null)}>
@@ -209,11 +221,26 @@ const OfferManagement = () => {
       >
         <Form form={offerForm} layout="vertical">
           <Form.Item
-            label="Promo Code"
+            label="Promo Code *"
             name="promo_code"
-            rules={[{ required: true, message: "Please enter promo code" }]}
+            rules={[
+              { required: true, message: "Please enter promo code" },
+              {
+                min: 3,
+                max: 32,
+                message: "Promo code must be 3-12 characters",
+              },
+              {
+                pattern: /^[A-Z0-9]+$/,
+                message: "Only uppercase letters and numbers allowed",
+              },
+            ]}
           >
-            <Input />
+            <Input
+              onChange={handlePromoCodeChange}
+              placeholder="Enter promo code (auto uppercase)"
+              maxLength={12}
+            />
           </Form.Item>
 
           <Form.Item
@@ -236,8 +263,23 @@ const OfferManagement = () => {
             <Input.TextArea rows={3} />
           </Form.Item>
 
-          <Form.Item label="Validity" name="validity">
-            <RangePicker />
+          <Form.Item
+            label="Validity *"
+            name="validity"
+            rules={[
+              {
+                required: true,
+                type: "array",
+                min: 2,
+                message: "Please select date range",
+              },
+            ]}
+          >
+            <RangePicker
+              disabledDate={disabledDate}
+              format="YYYY-MM-DD"
+              placeholder={["Start Date", "End Date"]}
+            />
           </Form.Item>
 
           <Form.Item

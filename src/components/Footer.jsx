@@ -46,7 +46,7 @@ export default function Footer() {
           <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
           <ul className="space-y-2 text-gray-300 text-sm">
             <li
-              onClick={() => navigate("/services")}
+              onClick={() => navigate("/manageshop")}
               className="hover:text-[#007FFF] transition cursor-pointer"
             >
               Services

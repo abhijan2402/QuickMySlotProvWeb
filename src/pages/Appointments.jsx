@@ -85,8 +85,9 @@ export default function Appointments() {
   );
 
   const statusColorMap = {
-    confirmed: "processing",
-    accepted: "success",
+    pending: "orange",
+    completed: "green",
+    accepted: "blue",
     rejected: "error",
     past: "default",
   };

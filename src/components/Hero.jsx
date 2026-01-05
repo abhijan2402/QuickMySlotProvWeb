@@ -8,9 +8,6 @@ import { useGetbannerQuery } from "../services/bannerApi";
 const HeroIntro = () => {
   const { data, isLoading, isError, error } = useGetbannerQuery();
 
-  console.log(data?.data?.banners);
-  console.log(error);
-
   // Filter banners: exclude top position and null images
   const filteredTopBanners =
     data?.data?.banners?.filter(
@@ -32,13 +29,12 @@ const HeroIntro = () => {
     pauseOnHover: true,
   };
 
-
   if (filteredTopBanners.length === 0) return null;
 
   return (
     <section
       className="relative w-full mb-16"
-      style={{ height: "50vh", minHeight: 400 }}
+      style={{ height: "60vh", minHeight: 500 }}
     >
       <Slider {...settings}>
         {filteredTopBanners.map(({ id, image, position }) => (
@@ -47,7 +43,7 @@ const HeroIntro = () => {
             initial={{ opacity: 0.8 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5 }}
-            className=" h-[50vh] min-h-[400px]"
+            className=" h-[60vh] min-h-[500px]"
           >
             <img
               src={image}
