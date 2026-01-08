@@ -45,6 +45,12 @@ const AccountManagement = () => {
         account_number: account.account_number,
         ifsc_code: account.ifsc_code,
         bank_type: account.bank_type,
+        pan: account.pan,
+        street1: account.street1,
+        street2: account.street2,
+        city: account.city,
+        state: account.state,
+        postal_code: account.postal_code,
       });
     } else {
       form.resetFields();
@@ -192,14 +198,14 @@ const AccountManagement = () => {
                 >
                   Edit
                 </Button>
-                <Button
+                {/* <Button
                   size="small"
                   danger
                   onClick={() => handleDelete(item.id)}
                   icon={<FaTrash />}
                 >
                   Delete
-                </Button>
+                </Button> */}
                 {/* <Button
                   size="small"
                   type={item?.is_set === "1" ? "primary" : "default"}
@@ -271,70 +277,68 @@ const AccountManagement = () => {
             </Select>
           </Form.Item>
 
-          {!editingAccount && (
-            <>
-              <Form.Item
-                label="PAN"
-                name="pan"
-                rules={[{ required: true, message: "Please enter PAN number" }]}
-              >
-                <Input placeholder="Enter PAN number" />
-              </Form.Item>
+          {/* {!editingAccount && ( */}
+          <>
+            <Form.Item
+              label="PAN"
+              name="pan"
+              rules={[{ required: true, message: "Please enter PAN number" }]}
+            >
+              <Input placeholder="Enter PAN number" />
+            </Form.Item>
 
-              <Form.Item
-                label="Address Line 1"
-                name="street1"
-                rules={[
-                  { required: true, message: "Please enter Address Line 1" },
-                ]}
-              >
-                <Input placeholder="House number, building, street" />
-              </Form.Item>
+            <Form.Item
+              label="Address Line 1"
+              name="street1"
+              rules={[
+                { required: true, message: "Please enter Address Line 1" },
+              ]}
+            >
+              <Input placeholder="House number, building, street" />
+            </Form.Item>
 
-              <Form.Item
-                label="Address Line 2"
-                name="street2"
-                rules={[
-                  { required: true, message: "Please enter Address Line 2" },
-                ]}
-              >
-                <Input placeholder="Apartment, suite, landmark (optional)" />
-              </Form.Item>
+            <Form.Item
+              label="Address Line 2"
+              name="street2"
+              rules={[
+                { required: true, message: "Please enter Address Line 2" },
+              ]}
+            >
+              <Input placeholder="Apartment, suite, landmark (optional)" />
+            </Form.Item>
 
-              <Form.Item
-                label="City"
-                name="city"
-                rules={[{ required: true, message: "Please enter city" }]}
-              >
-                <Input placeholder="Enter city" />
-              </Form.Item>
+            <Form.Item
+              label="City"
+              name="city"
+              rules={[{ required: true, message: "Please enter city" }]}
+            >
+              <Input placeholder="Enter city" />
+            </Form.Item>
 
-              <Form.Item
-                label="State"
-                name="state"
-                rules={[{ required: true, message: "Please enter state" }]}
-              >
-                <Input placeholder="Enter state" />
-              </Form.Item>
+            <Form.Item
+              label="State"
+              name="state"
+              rules={[{ required: true, message: "Please enter state" }]}
+            >
+              <Input placeholder="Enter state" />
+            </Form.Item>
 
-              <Form.Item
-                label="Postal Code"
-                name="postal_code"
-                rules={[
-                  { required: true, message: "Please enter postal code" },
-                ]}
-              >
-                <Input placeholder="Enter postal code" />
-              </Form.Item>
-              {/* <Form.Item
+            <Form.Item
+              label="Postal Code"
+              name="postal_code"
+              rules={[{ required: true, message: "Please enter postal code" }]}
+            >
+              <Input placeholder="Enter postal code" />
+            </Form.Item>
+            {/* <Form.Item
                 label="GST Number"
                 name="gst"
                 rules={[{ required: true, message: "Please enter gst number" }]}
               >
                 <Input placeholder="Enter gst number" />
               </Form.Item> */}
-            </>
-          )}
+          </>
+          {/* )} */}
         </Form>
       </Modal>
     </div>

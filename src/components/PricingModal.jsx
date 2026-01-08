@@ -12,20 +12,22 @@ import { capitalizeFirstLetter } from "../utils/utils";
 
 export function PlanDescription({ description }) {
   return (
-    <div className="text-gray-700 space-y-3">
+    <div className="text-gray-700 flex flex-col items-start space-y-3 p-0">
       <div className="font-semibold text-lg mb-2">
         Subscription Plan Benefits:
       </div>
       {description.split("\r\n\r\n").map((item, index) => (
-        <div key={index} className="flex items-start space-x-3 py-1">
-          <span className="text-gray-500 font-bold text-lg mt-0.5 min-w-[20px]">
-          </span>
-          <span>{item.trim()}</span>
+        <div key={index} className="flex items-start space-x-3 py-1 w-full">
+          {/* <span className="text-blue-500 font-bold text-lg mt-0.5 min-w-[20px] flex-shrink-0">
+          
+          </span> */}
+          <span className="text-left flex-1">{item.trim()}</span>
         </div>
       ))}
     </div>
   );
 }
+
 
 const tagColors = [
   "bg-blue-500",
@@ -163,25 +165,33 @@ const PricingModal = () => {
               {/* Header */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-lg text-gray-700 font-semibold">
+                  <span className="text-md text-gray-700 font-semibold">
                     {plan.subscription_name}
-                  </span>
-                  <span
-                    className={`text-xs text-white px-3 py-1 rounded-full ${
-                      tagColors[idx % tagColors.length]
-                    }`}
-                  >
-                    {capitalizeFirstLetter(plan.extra?.key_word) || "Plan"}
                   </span>
                 </div>
 
                 {/* Price */}
                 <h3 className="text-2xl text-gray-700 font-bold mb-4">
                   ₹{plan.price}
-                  <span className="text-base font-normal text-gray-500">
+                  {/* <span className="text-base font-normal text-gray-500">
                     /{plan.validity === "monthly" ? "mo" : "yr"}
-                  </span>
+                  </span> */}
                 </h3>
+                <div className="flex items-center justify-center">
+                  <span
+                    className={`text-xs text-white px-3 py-1 rounded-full flex items-center gap-1 ${
+                      tagColors[idx % tagColors.length]
+                    }`}
+                  >
+                    {/* {capitalizeFirstLetter(plan.extra?.key_word) || "Plan"} */}{" "}
+                    Validity
+                    {plan.validity && (
+                      <span className="text-xs font-normal">
+                        {plan.validity} days
+                      </span>
+                    )}
+                  </span>
+                </div>
 
                 {/* Features */}
                 <ul className="list-disc ml-5 space-y-2 text-left mb-6 text-gray-700">
@@ -191,7 +201,7 @@ const PricingModal = () => {
                       <li key={key}>{plan.extra[key]}</li>
                     ))}
                 </ul>
-                <div className="text-gray-700">
+                <div className="text-gray-700 flex items-start justify-start ">
                   <PlanDescription description={plan.description} />
                 </div>
               </div>

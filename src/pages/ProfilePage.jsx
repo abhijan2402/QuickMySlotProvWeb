@@ -40,6 +40,8 @@ import ShopDetailCards from "../components/ShopDetailCards";
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
 
+const baseUrl = import.meta.env.VITE_BASE_URL;
+
 export default function ProfilePage() {
   const location = useLocation();
   const { wallet, showWallet } = location.state || {};
@@ -56,9 +58,40 @@ export default function ProfilePage() {
   useEffect(() => {
     setPreviewImage(user?.url_image || user?.image || "");
   }, [user]);
-  // console.log(category?.data);
+
+  console.log(user);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token"); 
+
+        if (!token) {
+          console.log("No token found in localStorage");
+          toast.error("Please login first");
+          return;
+        }
+        const profileResponse = await fetch(`${baseUrl}profile`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!profileResponse.ok) {
+          throw new Error("Failed to fetch profile");
+        }
+
+        const profileData = await profileResponse.json();
+        console.log(profileData);
+        dispatch(setUser(profileData?.data));
+      } catch (error) {
+        console.error("Profile fetch error:", error);
+        toast.error("Failed to load profile");
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   // For image preview
 
