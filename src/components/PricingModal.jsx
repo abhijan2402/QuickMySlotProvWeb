@@ -10,6 +10,23 @@ import { Form } from "antd";
 import { toast } from "react-toastify";
 import { capitalizeFirstLetter } from "../utils/utils";
 
+export function PlanDescription({ description }) {
+  return (
+    <div className="text-gray-700 space-y-3">
+      <div className="font-semibold text-lg mb-2">
+        Subscription Plan Benefits:
+      </div>
+      {description.split("\r\n\r\n").map((item, index) => (
+        <div key={index} className="flex items-start space-x-3 py-1">
+          <span className="text-gray-500 font-bold text-lg mt-0.5 min-w-[20px]">
+          </span>
+          <span>{item.trim()}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const tagColors = [
   "bg-blue-500",
   "bg-green-500",
@@ -27,10 +44,8 @@ const PricingModal = () => {
   // ✅ Fetch API
   const [addSubscription] = useAddSubscriptionMutation();
   const [verifySubscription] = useVerifySubscriptionMutation();
-  const { data, isLoading } = useGetsubscriptionQuery({
-    validity: billingCycle,
-    type: "vendor",
-  });
+  const { data, isLoading } = useGetsubscriptionQuery();
+
 
   const openModal = (plan) => {
     setSelectedPlan(plan);
@@ -96,7 +111,7 @@ const PricingModal = () => {
   return (
     <div className="max-w-6xl mx-auto p-4 text-center">
       {/* Heading */}
-      <div className="mt-4 text-center max-w-lg mx-auto">
+      <div className="mt-4 mb-4 text-center max-w-lg mx-auto">
         <h2 className="text-3xl mb-2 font-bold text-orange-600">
           Boost Your Profile Visibility
         </h2>
@@ -110,7 +125,7 @@ const PricingModal = () => {
       </div>
 
       {/* Billing Toggle */}
-      <div className="flex justify-center mb-8 mt-4 bg-gray-100 rounded-lg p-1 w-max mx-auto shadow-sm">
+      {/* <div className="flex justify-center mb-8 mt-4 bg-gray-100 rounded-lg p-1 w-max mx-auto shadow-sm">
         <button
           onClick={() => setBillingCycle("monthly")}
           className={`px-6 py-2 rounded-sm transition-all font-medium ${
@@ -131,7 +146,7 @@ const PricingModal = () => {
         >
           Yearly
         </button>
-      </div>
+      </div> */}
 
       {/* Pricing Cards */}
       {isLoading ? (
@@ -176,6 +191,9 @@ const PricingModal = () => {
                       <li key={key}>{plan.extra[key]}</li>
                     ))}
                 </ul>
+                <div className="text-gray-700">
+                  <PlanDescription description={plan.description} />
+                </div>
               </div>
 
               {/* Button always bottom */}

@@ -213,7 +213,7 @@ export default function ShopDetailCards() {
                 Manage Services
               </Button>
 
-              {location.pathname === "/profile" && (
+              {/* {location.pathname === "/profile" && (
                 <Button
                   icon={<FaPercentage />}
                   onClick={handleOpenModal}
@@ -225,12 +225,13 @@ export default function ShopDetailCards() {
                 >
                   GST Setting
                 </Button>
-              )}
+              )} */}
             </div>
           </div>
         </motion.div>
 
         {/* Documents Section */}
+{/* 
 
         {location.pathname === "/profile" && (
           <section className="mt-4 bg-white rounded-2xl shadow-md p-8">
@@ -269,7 +270,6 @@ export default function ShopDetailCards() {
                     {doc.title}
                   </h3>
 
-                  {/* Show image or link depending on file type */}
                   {doc.url ? (
                     doc.url.endsWith(".pdf") ? (
                       <a
@@ -299,6 +299,7 @@ export default function ShopDetailCards() {
             </div>
           </section>
         )}
+*/}
       </div>
 
       {/* GST Modal */}

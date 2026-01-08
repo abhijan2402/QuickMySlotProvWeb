@@ -50,13 +50,14 @@ function urlToFileList(url, name) {
     : [];
 }
 
-const GOOGLE_MAP_LIBRARIES= ["places"];
+const GOOGLE_MAP_LIBRARIES = ["places"];
 
 export default function EditProfileModal({ visible, onClose, user }) {
   const dispatch = useDispatch();
   // file list for image cropper
   const [fileList, setFileList] = useState([]);
-  const [previewImage, setPreviewImage] = useState(user?.image || null);
+  const [initialFileList, setInitialFileList] = useState([]);
+  const [previewImage, setPreviewImage] = useState(null);
 
   // handle crop & preview updates
   const handleUploadChange = ({ fileList: newFileList }) => {
@@ -75,7 +76,6 @@ export default function EditProfileModal({ visible, onClose, user }) {
   const { data: category } = useGetcategoryQuery();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
 
-
   // Google Map
   const [searchText, setSearchText] = useState(user?.exact_location || "");
   const [markerPos, setMarkerPos] = useState(null);
@@ -86,6 +86,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
     googleMapsApiKey: import.meta.env.VITE_MAP_KEY,
     libraries: GOOGLE_MAP_LIBRARIES,
   });
+
 
   // On load, set marker and center from address
   useEffect(() => {
@@ -168,13 +169,13 @@ export default function EditProfileModal({ visible, onClose, user }) {
         }
       };
 
-      pushSingleFile(values.photo_verification, "photo_verification");
-      pushSingleFile(values.business_proof, "business_proof");
-      pushSingleFile(
-        values.adhaar_card_verification,
-        "adhaar_card_verification"
-      );
-      pushSingleFile(values.pan_card, "pan_card");
+      // pushSingleFile(values.photo_verification, "photo_verification");
+      // pushSingleFile(values.business_proof, "business_proof");
+      // pushSingleFile(
+      //   values.adhaar_card_verification,
+      //   "adhaar_card_verification"
+      // );
+      // pushSingleFile(values.pan_card, "pan_card");
 
       // Portfolio images (multiple files)
       if (values.portfolio_images && values.portfolio_images.length > 0) {
@@ -270,6 +271,19 @@ export default function EditProfileModal({ visible, onClose, user }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    if (user?.image) {
+      const initialList = urlToFileList(user.image, "profile_image");
+      setInitialFileList(initialList);
+      setFileList(initialList);
+      setPreviewImage(user.image);
+    } else {
+      setInitialFileList([]);
+      setFileList([]);
+      setPreviewImage(null);
+    }
+  }, [user?.image]);
+
   return (
     <Modal
       open={visible}
@@ -285,6 +299,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
         initialValues={{
           business_name: user?.business_name || "",
           name: user?.name || "",
+          image: user?.image || "",
           service_category: user?.service_category,
           email: user?.email || "",
           phone_number: user?.phone_number || "",
@@ -302,22 +317,24 @@ export default function EditProfileModal({ visible, onClose, user }) {
           daily_end_time: user?.daily_end_time
             ? dayjs(user.daily_end_time, "HH:mm")
             : null,
-          photo_verification:
-            urlToFileList(user?.photo_verification, "photo") || null,
-          business_proof:
-            urlToFileList(user?.business_proof, "business_proof") || null,
-          adhaar_card_verification:
-            urlToFileList(user?.adhaar_card_verification, "aadhaar") || null,
-          pan_card: urlToFileList(user?.pan_card, "pan") || null,
+          // photo_verification:
+          //   urlToFileList(user?.photo_verification, "photo") || null,
+          // business_proof:
+          //   urlToFileList(user?.business_proof, "business_proof") || null,
+          // adhaar_card_verification:
+          //   urlToFileList(user?.adhaar_card_verification, "aadhaar") || null,
+          // pan_card: urlToFileList(user?.pan_card, "pan") || null,
           portfolio_images: portfolioFileList || [],
         }}
         onFinish={handleFinish}
       >
+
+        
         <Form.Item
           label="Profile Image"
           name="image"
           valuePropName="fileList"
-          getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+          getValueFromEvent={normFile}
         >
           <ImgCrop rotationSlider>
             <Upload
@@ -365,9 +382,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
         <Form.Item name="years_of_experience" label="Years of Experience">
           <Input type="number" />
         </Form.Item>
-        {/* <Form.Item name="location_area_served" label="Service Location Area">
-          <Input />
-        </Form.Item> */}
+
         <Form.Item name="business_website" label="Business Website">
           <Input />
         </Form.Item>
@@ -436,7 +451,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
           )}
         </div>
         {/* Uploaders */}
-        <Form.Item
+        {/* <Form.Item
           name="photo_verification"
           label="Photo Verification"
           valuePropName="fileList"
@@ -450,8 +465,8 @@ export default function EditProfileModal({ visible, onClose, user }) {
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
             <p>Upload photo(Image/Pdf)</p>
           </Upload.Dragger>
-        </Form.Item>
-        <Form.Item
+        </Form.Item> */}
+        {/* <Form.Item
           name="business_proof"
           label="Business Proof"
           valuePropName="fileList"
@@ -465,8 +480,8 @@ export default function EditProfileModal({ visible, onClose, user }) {
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
             <p>Upload Business Proof(Image/Pdf)</p>
           </Upload.Dragger>
-        </Form.Item>
-        <Form.Item
+        </Form.Item> */}
+        {/* <Form.Item
           name="adhaar_card_verification"
           label="Aadhaar Card"
           valuePropName="fileList"
@@ -480,8 +495,8 @@ export default function EditProfileModal({ visible, onClose, user }) {
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
             <p>Upload Aadhaar(Image/Pdf)</p>
           </Upload.Dragger>
-        </Form.Item>
-        <Form.Item
+        </Form.Item> */}
+        {/* <Form.Item
           name="pan_card"
           label="PAN Card"
           valuePropName="fileList"
@@ -495,7 +510,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
             <InboxOutlined style={{ color: "#EE4E34", fontSize: 24 }} />
             <p>Upload PAN(Image/Pdf)</p>
           </Upload.Dragger>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           name="portfolio_images"
           label="Portfolio Images"

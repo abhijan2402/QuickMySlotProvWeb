@@ -26,12 +26,8 @@ const FAQ = () => {
       <h3 className="mb-4 font-semibold text-lg">FAQs</h3>
       <Collapse accordion>
         {data.data.map((faq) => (
-          <Panel header={faq.category} key={faq.id}>
-            <Collapse ghost>
-              <Panel header={faq.question} key={`q-${faq.id}`}>
-                <p>{faq.answer}</p>
-              </Panel>
-            </Collapse>
+          <Panel header={faq.question} key={faq.id}>
+            <p>{faq.answer}</p>
           </Panel>
         ))}
       </Collapse>

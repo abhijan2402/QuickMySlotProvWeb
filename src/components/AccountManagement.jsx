@@ -71,7 +71,7 @@ const AccountManagement = () => {
       formData.append("bank_type", values.bank_type.toLowerCase());
 
       formData.append("pan", values.pan);
-      formData.append("gst", values.gst);
+      // formData.append("gst", values.gst);
       formData.append("street1", values.street1);
       formData.append("street2", values.street2 || "");
       formData.append("city", values.city);
@@ -138,17 +138,16 @@ const AccountManagement = () => {
         <h2 className="text-black text-sm sm:text-xl mb-2 sm:mb-1 font-medium">
           Manage Accounts
         </h2>
-        {data.data.length === 1 ? null : 
-        
-        <Button
-          onClick={() => showModal(null)}
-          type="primary"
-          className="mb-6"
-          icon={<FaPlus />}
-        >
-          Add Bank Account
-        </Button>
-        }
+        {data.data.length === 1 ? null : (
+          <Button
+            onClick={() => showModal(null)}
+            type="primary"
+            className="mb-6"
+            icon={<FaPlus />}
+          >
+            Add Bank Account
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -170,11 +169,11 @@ const AccountManagement = () => {
                   <h3 className="text-lg font-semibold text-gray-900">
                     {item.bank_name}
                   </h3>
-                  {item?.is_set === "1" && (
+                  {/* {item?.is_set === "1" && (
                     <span className="text-xs text-white bg-indigo-600 px-2 py-1 rounded flex items-center gap-1">
                       <FaCheckCircle /> Default
                     </span>
-                  )}
+                  )} */}
                 </div>
                 <p className="text-gray-600 mt-3 text-sm">
                   <span className="block">Acc No: {item.account_number}</span>
@@ -220,9 +219,16 @@ const AccountManagement = () => {
         onOk={handleOk}
         onCancel={closeModal}
         okText={editingAccount ? "Update" : "Add"}
-        confirmLoading={editingAccount ? IsUpdating : IsAdding} // loading state
+        confirmLoading={editingAccount ? IsUpdating : IsAdding}
         destroyOnClose
       >
+        <div className="mb-2">
+          <h4 className="text-orange-600 font-semibold text-sm">
+            Please verify that all bank details are correct. Payment cannot be
+            proceed to invalid or incorrect accounts.
+          </h4>
+        </div>
+
         <Form form={form} layout="vertical">
           <Form.Item
             label="Bank Name"
@@ -320,15 +326,13 @@ const AccountManagement = () => {
               >
                 <Input placeholder="Enter postal code" />
               </Form.Item>
-              <Form.Item
+              {/* <Form.Item
                 label="GST Number"
                 name="gst"
-                rules={[
-                  { required: true, message: "Please enter gst number" },
-                ]}
+                rules={[{ required: true, message: "Please enter gst number" }]}
               >
                 <Input placeholder="Enter gst number" />
-              </Form.Item>
+              </Form.Item> */}
             </>
           )}
         </Form>

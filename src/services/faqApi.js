@@ -13,7 +13,7 @@ export const faqApi = createApi({
     // Get faq (GET request)
     getfaq: builder.query({
       query: () => ({
-        url: "faq-support",
+        url: "faq-support?role=vendor",
         method: "GET",
       }),
       providesTags: ["faq"],

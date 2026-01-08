@@ -12,8 +12,8 @@ export const subscriptionApi = createApi({
   endpoints: (builder) => ({
     // Get subscription (GET request)
     getsubscription: builder.query({
-      query: ({ validity, type }) => ({
-        url: `subscriptions?validity=${validity}&type=${type}`,
+      query: () => ({
+        url: `subscriptions`,
         method: "GET",
       }),
       providesTags: ["subscription"],
