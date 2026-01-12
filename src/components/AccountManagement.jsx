@@ -41,6 +41,7 @@ const AccountManagement = () => {
     setEditingAccount(account || null);
     if (account) {
       form.setFieldsValue({
+        holdername: account.holdername,
         bank_name: account.bank_name,
         account_number: account.account_number,
         ifsc_code: account.ifsc_code,
@@ -71,6 +72,7 @@ const AccountManagement = () => {
       const values = await form.validateFields();
 
       const formData = new FormData();
+      formData.append("account_holder_name", values.holdername);
       formData.append("bank_name", values.bank_name);
       formData.append("account_number", values.account_number);
       formData.append("ifsc_code", values.ifsc_code);
@@ -236,6 +238,16 @@ const AccountManagement = () => {
         </div>
 
         <Form form={form} layout="vertical">
+          <Form.Item
+            label="Account Holder Name"
+            name="holdername"
+            rules={[
+              { required: true, message: "Please enter account holder name" },
+            ]}
+          >
+            <Input placeholder="Enter bank account holder name" />
+          </Form.Item>
+
           <Form.Item
             label="Bank Name"
             name="bank_name"

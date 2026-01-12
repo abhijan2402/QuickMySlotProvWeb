@@ -7,7 +7,7 @@ import {
   useSignupMutation,
   useVerifyOtpMutation,
 } from "../../services/authApi";
-import { logout, setToken, setUser } from "../../slices/authSlice";
+import { logout, setQpToken, setUser } from "../../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Password from "antd/es/input/Password";
@@ -96,7 +96,7 @@ export default function Signup() {
         user_id: userID,
       }).unwrap();
 
-      dispatch(setToken(res.token));
+      dispatch(setQpToken(res.token));
       if (!res?.user?.steps || res?.user?.steps === "1") {
         setShowProfileModal(true);
       } else if (res?.user?.steps === "2") {
@@ -114,7 +114,7 @@ export default function Signup() {
         const profileData = await profileResponse.json();
 
         // Save token only after profile success
-        dispatch(setToken(res.token));
+        dispatch(setQpToken(res.token));
         dispatch(setUser(profileData?.data));
 
         toast.success("Signup successful!");

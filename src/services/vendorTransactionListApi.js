@@ -3,11 +3,11 @@ export const vendorTransactionApi = createApi({
   reducerPath: "vendorTransactionApi",
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_URL,
-    // credentials: "include", 
+    // credentials: "include",
     prepareHeaders: (headers, { getState }) => {
-      const token = getState().auth.token;
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`); // ✅ Header fixed
+      const qptoken = getState().auth.qptoken;
+      if (qptoken) {
+        headers.set("Authorization", `Bearer ${qptoken}`);
       }
       return headers;
     },

@@ -66,7 +66,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token"); 
+        const token = localStorage.getItem("qptoken"); 
 
         if (!token) {
           console.log("No token found in localStorage");

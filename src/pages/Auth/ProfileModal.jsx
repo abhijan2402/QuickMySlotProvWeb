@@ -40,7 +40,7 @@ export default function ProfileModal({
   const [searchText, setSearchText] = useState("");
   const autocompleteRef = useRef(null);
 
-  console.log(isError);
+  
 
   useEffect(() => {
     if (gName || gEmail) {

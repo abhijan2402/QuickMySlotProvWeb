@@ -4,8 +4,10 @@ export const analyticsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
-      const token = getState().auth.token;
-      if (token) headers.set("Authorization", `Bearer ${token}`);
+      const qptoken = getState().auth.qptoken;
+      if (qptoken) {
+        headers.set("Authorization", `Bearer ${qptoken}`);
+      }
       return headers;
     },
   }),
