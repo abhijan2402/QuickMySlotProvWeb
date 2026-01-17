@@ -28,7 +28,7 @@ export default function AppointmentDetails() {
         <SpinnerLodar title="Loading Appointment..." />
       </div>
     );
-  }
+  }  
 
   // const appointment = data?.data?.find((appt) => String(appt.id) === id);
   const appointment = data?.data;
