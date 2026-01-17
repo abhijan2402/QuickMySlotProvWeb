@@ -30,7 +30,7 @@ const HeroIntro = () => {
   return (
     <section
       className={`min-h-[80vh] flex flex-col ${
-        hasBanners ? "md:flex-row" : "md:flex-col"
+        hasBanners ? "lg:flex-row" : "md:flex-col"
       } items-center justify-between px-6 md:px-20 py-16 bg-gradient-to-br from-violet-100 via-white to-blue-50`}
     >
       {/* Text Section */}
@@ -70,7 +70,7 @@ const HeroIntro = () => {
       {/* Image or Slider Section */}
       {hasBanners && (
         <motion.div
-          className="w-full md:w-1/2"
+          className="w-full lg:w-1/2"
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -82,7 +82,7 @@ const HeroIntro = () => {
                   key={index}
                   src={image}
                   alt={title || `Banner ${index + 1}`}
-                  className="w-full h-[320px] sm:h-[400px] object-cover rounded-xl"
+                  className="w-full h-full sm:h-[400px] object-cover rounded-xl"
                 />
               ))}
             </Slider>
@@ -90,7 +90,7 @@ const HeroIntro = () => {
             <img
               src={filteredBanners[0].image}
               alt={filteredBanners[0].title || "Banner"}
-              className="w-full h-[320px] sm:h-[400px] object-cover rounded-xl shadow-lg"
+              className="w-full h-full sm:h-[400px] object-cover rounded-xl shadow-lg"
             />
           )}
         </motion.div>
