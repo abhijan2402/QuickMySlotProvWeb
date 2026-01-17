@@ -307,8 +307,8 @@ export default function Signup() {
                 >
                   Continue
                 </Button>
-                <p className="text-center py-2 text-gray-500 font-medium">Or</p>
-                <Button
+                {/* <p className="text-center py-2 text-gray-500 font-medium">Or</p> */}
+                {/* <Button
                   type="primary"
                   htmlType="button"
                   block
@@ -326,7 +326,7 @@ export default function Signup() {
                 >
                   <FcGoogle size={24} />
                   Continue with Google
-                </Button>
+                </Button> */}
               </Form>
             )}
 

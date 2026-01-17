@@ -6,6 +6,7 @@ import {
   UserOutlined,
   CalendarOutlined,
   DollarOutlined,
+  SyncOutlined,
 } from "@ant-design/icons";
 import { FaTimesCircle, FaChevronLeft, FaRupeeSign } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
@@ -17,11 +18,11 @@ import SpinnerLodar from "../components/SpinnerLodar";
 
 export default function AppointmentDetails() {
   const { id } = useParams();
-  const { data, isLoading } = useGetvendorBookingDetailsQuery(id);
+  const { data, isLoading, refetch, isFetching } = useGetvendorBookingDetailsQuery(id);
   const navigate = useNavigate();
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
 
-  if (isLoading) {
+  if (isFetching) {
     return (
       <div className="flex items-center justify-center h-screen">
         <SpinnerLodar title="Loading Appointment..." />
@@ -59,12 +60,24 @@ export default function AppointmentDetails() {
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-8 bg-gray-50 min-h-screen">
       {/* Back Button */}
-      <p
-        className="text-[#EE4E34] flex items-center cursor-pointer font-medium underline mb-4"
-        onClick={() => navigate(-1)}
-      >
-        <FaChevronLeft className="mx-2 text-[#EE4E34]" /> Back
-      </p>
+      <div className="flex items-center justify-between mb-6">
+        <p
+          className="text-[#EE4E34] flex items-center cursor-pointer font-medium underline"
+          onClick={() => navigate(-1)}
+        >
+          <FaChevronLeft className="mx-2 text-[#EE4E34]" /> Back
+        </p>
+
+        {/* 🔹 Refresh Button */}
+        <Button
+          onClick={() => refetch()}
+          className="flex items-center gap-2 bg-blue-500 hover:bg-orange-600 text-white"
+          icon={<SyncOutlined spin={isFetching} />}
+          loading={isFetching}
+        >
+          Refresh
+        </Button>
+      </div>
 
       <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-[#EE4E34]">
         Appointment Details
@@ -221,8 +234,11 @@ export default function AppointmentDetails() {
       <div className="bg-white flex items-center justify-between rounded-xl text-black shadow mt-4 p-4 mb-4">
         <h4 className="font-semibold mb-2">Payment Status</h4>
         <p className="text-gray-700 flex items-center gap-2">
-          {/* <FaRupeeSign /> */}
-           {appointment.status || "Pending"}
+          {appointment.payment_status == "0"
+            ? "Pending"
+            : appointment.payment_status == "1"
+            ? "Success"
+            : appointment.payment_status || "Pending"}
         </p>
       </div>
 

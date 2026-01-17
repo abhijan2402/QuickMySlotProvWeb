@@ -115,3 +115,6 @@ input[type="number"] {
 .ant-list-item-action>li {
     width: 100%;
 }
+.ant-list-item-action{
+    margin-inline-start: 0 !important;
+}

@@ -32,10 +32,7 @@ const HeroIntro = () => {
   if (filteredTopBanners.length === 0) return null;
 
   return (
-    <section
-      className="relative w-full mb-16"
-      style={{ height: "60vh", minHeight: 500 }}
-    >
+    <section className="relative mb-10 sm:mb-16 ">
       <Slider {...settings}>
         {filteredTopBanners.map(({ id, image, position }) => (
           <motion.div
@@ -43,12 +40,12 @@ const HeroIntro = () => {
             initial={{ opacity: 0.8 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.5 }}
-            className=" h-[60vh] min-h-[500px]"
+            className="w-full h-[30vh] min-h-[250px] max-h-[50vh] sm:h-[50vh] sm:min-h-[350px] md:h-[60vh] md:min-h-[500px]"
           >
             <img
               src={image}
               alt={`Banner ${id} - ${position}`}
-              className="w-full h-full object-fill"
+              className="w-full h-full object-fill object-center sm:object-cover md:object-fill"
               loading="lazy"
             />
           </motion.div>

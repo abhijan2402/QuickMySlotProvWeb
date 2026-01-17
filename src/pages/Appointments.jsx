@@ -16,6 +16,7 @@ import {
   Button,
   Skeleton,
 } from "antd";
+import { SyncOutlined } from "@ant-design/icons";
 import {
   useAcceptBookingMutation,
   useCompletedBookingMutation,
@@ -46,12 +47,12 @@ export default function Appointments() {
   const [activeTab, setActiveTab] = useState("pending");
   const apiStatus = statusMap[activeTab] || "pending";
 
-  // ✅ API with ensured default param
-  const { data, isLoading, refetch, error } = useGetvendorBookingQuery(
+  // API with ensured default param
+  const { data, isLoading, refetch, error, isFetching } = useGetvendorBookingQuery(
     { status: apiStatus },
     {
-      skip: !apiStatus, // Don't call empty status
-      refetchOnMountOrArgChange: 5, // Refetch on tab change
+      skip: !apiStatus,
+      refetchOnMountOrArgChange: 5,
     }
   );
 
@@ -126,9 +127,13 @@ export default function Appointments() {
     }
   };
 
-  const handleComplete = async (id) => {
+  const handleComplete = async (app) => {
+    if (app.payment_status === "0" || app.payment_status === 0) {
+      toast.warn("Until payment is not done you cannot mark it as complete.");
+      return;
+    }
     try {
-      await completedBooking(id).unwrap();
+      await completedBooking(app.id).unwrap();
       toast.success("Appointment marked as completed");
       refetch();
     } catch {
@@ -158,9 +163,19 @@ export default function Appointments() {
       <Breadcrumb propertyTitle={"My Appointments"} />
 
       <div className="max-w-7xl mx-auto bg-white border rounded-2xl shadow-md p-4 sm:p-6">
-        <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-6">
-          Appointments
-        </h3>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-6">
+            Appointments
+          </h3>
+          <Button
+            onClick={() => refetch()}
+            className="flex items-center gap-2 bg-blue-500 hover:bg-orange-600 text-white"
+            icon={<SyncOutlined spin={isFetching} />}
+            loading={isFetching}
+          >
+            Refresh
+          </Button>
+        </div>
 
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 sm:gap-3 mb-6">
@@ -239,7 +254,7 @@ export default function Appointments() {
                     {activeTab === "accepted" && (
                       <button
                         className="w-full sm:w-auto px-6 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-md text-sm font-semibold flex items-center justify-center h-8"
-                        onClick={() => handleComplete(appt.id)}
+                        onClick={() => handleComplete(appt)}
                       >
                         Mark Completed
                       </button>
@@ -381,6 +396,27 @@ export default function Appointments() {
                     ₹{appt.amount || appt.final_amount}
                   </span>
                 </div>
+
+                {activeTab === "accepted" && (
+                  <div className="flex items-center  gap-4 py-4">
+                    <span className="font-medium">Payment Status:</span>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 ${
+                        appt.payment_status == "0"
+                          ? "bg-orange-100 text-orange-800"
+                          : appt.payment_status == "1"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {appt.payment_status == "0"
+                        ? "Pending"
+                        : appt.payment_status == "1"
+                        ? "Success"
+                        : appt.payment_status || "Pending"}
+                    </span>
+                  </div>
+                )}
               </List.Item>
             )}
           />

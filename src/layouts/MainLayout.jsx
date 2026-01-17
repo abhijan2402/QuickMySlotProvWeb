@@ -10,7 +10,7 @@ export default function MainLayout() {
     <div className="bg-white text-gray-900 dark:bg-background dark:text-white font-sans">
       <Navbar />
       {/* Add padding top equal to navbar height */}
-      <main className="pt-[85px]">
+      <main className="pt-[66px]">
         <Outlet />
       </main>
       <Footer />
