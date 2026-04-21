@@ -87,7 +87,6 @@ export default function EditProfileModal({ visible, onClose, user }) {
     libraries: GOOGLE_MAP_LIBRARIES,
   });
 
-
   // On load, set marker and center from address
   useEffect(() => {
     if (user?.exact_location) {
@@ -290,7 +289,7 @@ export default function EditProfileModal({ visible, onClose, user }) {
       onCancel={onClose}
       footer={null}
       title="Edit Profile"
-      destroyOnClose
+      destroyOnHidden
       width={modalWidth}
     >
       <Form
@@ -328,8 +327,6 @@ export default function EditProfileModal({ visible, onClose, user }) {
         }}
         onFinish={handleFinish}
       >
-
-        
         <Form.Item
           label="Profile Image"
           name="image"

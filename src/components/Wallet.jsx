@@ -163,7 +163,7 @@ const Wallet = () => {
         onCancel={() => setIsAddModalVisible(false)}
         okText="Add"
         cancelText="Cancel"
-        destroyOnClose
+        destroyOnHidden
       >
         <Form form={form} layout="vertical">
           <Form.Item

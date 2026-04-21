@@ -24,6 +24,8 @@ const containerStyle = {
 
 const DEFAULT_CENTER = { lat: 20.5937, lng: 78.9629 };
 
+const LIBRARIES = ["places"];
+
 export default function ProfileModal({
   visible,
   onClose,
@@ -40,21 +42,23 @@ export default function ProfileModal({
   const [searchText, setSearchText] = useState("");
   const autocompleteRef = useRef(null);
 
-  
+  console.log(category);
 
   useEffect(() => {
+    if (!visible) return;
+
     if (gName || gEmail) {
       form.setFieldsValue({
         ...(gName ? { name: gName } : {}),
         ...(gEmail ? { email: gEmail } : {}),
       });
     }
-  }, [gName, gEmail, form]);
+  }, [visible, gName, gEmail, form]);
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_MAP_KEY,
-    libraries: ["places"],
+    libraries: LIBRARIES,
   });
 
   // Get current location on mount
@@ -78,8 +82,9 @@ export default function ProfileModal({
 
   // Sync search field with form
   useEffect(() => {
+    if (!visible) return;
     setSearchText(form.getFieldValue("location") || "");
-  }, [form]);
+  }, [visible, form]);
 
   // Helper: geocode and update fields
   const geocodeAndSet = (pos) => {
@@ -158,7 +163,6 @@ export default function ProfileModal({
   // Handle form submission
   const handleFinish = async (values) => {
     try {
-      // ✅ Validation Config
       const requiredFields = [
         { key: "service_category", msg: "Please select a business category." },
         { key: "photo", msg: "Please upload a photo verification image." },
@@ -177,7 +181,6 @@ export default function ProfileModal({
         { key: "location", msg: "Please select a location." },
       ];
 
-      // ✅ Check required fields
       for (const field of requiredFields) {
         const value = values[field.key];
         if (
@@ -190,7 +193,6 @@ export default function ProfileModal({
         }
       }
 
-      // ✅ Special Validations
       if (!/^[0-9]+$/.test(values.experience)) {
         toast.error("Years of experience must be a valid number.");
         return;
@@ -263,8 +265,6 @@ export default function ProfileModal({
         formDataObj[key] = value;
       });
 
-      console.log(formDataObj);
-
       await setProfile(fd)
         .unwrap()
         .then(() => {
@@ -302,7 +302,7 @@ export default function ProfileModal({
       }
     };
 
-    handleResize(); // run once
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -313,7 +313,7 @@ export default function ProfileModal({
       onCancel={onClose}
       footer={null}
       title="Complete Your Profile"
-      destroyOnClose
+      destroyOnHidden
       width={modalWidth}
     >
       <p style={{ color: "#555", marginBottom: 16, fontSize: 13 }}>

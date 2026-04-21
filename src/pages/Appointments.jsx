@@ -48,13 +48,14 @@ export default function Appointments() {
   const apiStatus = statusMap[activeTab] || "pending";
 
   // API with ensured default param
-  const { data, isLoading, refetch, error, isFetching } = useGetvendorBookingQuery(
-    { status: apiStatus },
-    {
-      skip: !apiStatus,
-      refetchOnMountOrArgChange: 5,
-    }
-  );
+  const { data, isLoading, refetch, error, isFetching } =
+    useGetvendorBookingQuery(
+      { status: apiStatus },
+      {
+        skip: !apiStatus,
+        refetchOnMountOrArgChange: 5,
+      }
+    );
 
   const [acceptBooking] = useAcceptBookingMutation();
   const [rejectBooking] = useRejectBookingMutation();
@@ -444,7 +445,7 @@ export default function Appointments() {
           onCancel={() => setFeedbackModalVisible(false)}
           okText="Submit"
           cancelText="Cancel"
-          destroyOnClose
+          destroyOnHidden
         >
           <Form form={feedbackForm} layout="vertical">
             <Form.Item

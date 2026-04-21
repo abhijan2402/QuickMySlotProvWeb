@@ -52,6 +52,7 @@ const AccountManagement = () => {
         city: account.city,
         state: account.state,
         postal_code: account.postal_code,
+        gst: account.gst,
       });
     } else {
       form.resetFields();
@@ -79,7 +80,7 @@ const AccountManagement = () => {
       formData.append("bank_type", values.bank_type.toLowerCase());
 
       formData.append("pan", values.pan);
-      // formData.append("gst", values.gst);
+      formData.append("gst", values.gst);
       formData.append("street1", values.street1);
       formData.append("street2", values.street2 || "");
       formData.append("city", values.city);
@@ -228,7 +229,7 @@ const AccountManagement = () => {
         onCancel={closeModal}
         okText={editingAccount ? "Update" : "Add"}
         confirmLoading={editingAccount ? IsUpdating : IsAdding}
-        destroyOnClose
+        destroyOnHidden
       >
         <div className="mb-2">
           <h4 className="text-orange-600 font-semibold text-sm">
@@ -342,15 +343,14 @@ const AccountManagement = () => {
             >
               <Input placeholder="Enter postal code" />
             </Form.Item>
-            {/* <Form.Item
-                label="GST Number"
-                name="gst"
-                rules={[{ required: true, message: "Please enter gst number" }]}
-              >
-                <Input placeholder="Enter gst number" />
-              </Form.Item> */}
+            <Form.Item
+              label="GST Number"
+              name="gst"
+              rules={[{ required: true, message: "Please enter gst number" }]}
+            >
+              <Input placeholder="Enter gst number" />
+            </Form.Item>
           </>
-          {/* )} */}
         </Form>
       </Modal>
     </div>

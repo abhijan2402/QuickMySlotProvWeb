@@ -80,8 +80,8 @@ const OfferManagement = () => {
     try {
       const values = await offerForm.validateFields();
       const formData = new FormData();
-        const uppercasePromoCode = values.promo_code.toUpperCase();
-        formData.append("promo_code", uppercasePromoCode);
+      const uppercasePromoCode = values.promo_code.toUpperCase();
+      formData.append("promo_code", uppercasePromoCode);
       formData.append("type", values.type);
       formData.append("amount", values.amount);
       formData.append("description", values.description || "");
@@ -217,7 +217,7 @@ const OfferManagement = () => {
         onOk={handleOfferSubmit}
         onCancel={() => setModalVisible(false)}
         okText={editingOffer ? "Update" : "Add"}
-        destroyOnClose
+        destroyOnHidden
       >
         <Form form={offerForm} layout="vertical">
           <Form.Item

@@ -60,7 +60,7 @@ export default function AvailabilityModal({ visible, onClose, userID }) {
       onCancel={onClose}
       footer={null}
       title="Set Your Availability"
-      destroyOnClose
+      destroyOnHidden
     >
       <Form form={form} layout="vertical" onFinish={handleFinish}>
         <Form.Item

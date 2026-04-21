@@ -54,14 +54,14 @@ const LocationModal = ({ open, initialLocation, onOk, onCancel }) => {
       //   <Button
       //     key="ok"
       //     type="primary"
-      //     onClick={() => onOk(markerPos)} 
+      //     onClick={() => onOk(markerPos)}
       //   >
       //     Save Location
       //   </Button>,
       // ]}
       width={600}
       centered
-      destroyOnClose
+      destroyOnHidden
     >
       {isLoaded ? (
         <>
